@@ -1,0 +1,10 @@
+<test-run id="2" duration="0.01659" testcasecount="1" total="1" passed="1" failed="0" inconclusive="0" skipped="0" result="Passed" start-time="2024-01-20T 21:52:10Z" end-time="2024-01-20T 21:52:10Z">
+  <test-suite type="Assembly" name="API Tests.dll" fullname="C:\Users\sgk07\OneDrive\Documents\Class Work\Spring 2024\CS4982\Project\CapstoneGroup2\API Tests\bin\Debug\net8.0\API Tests.dll" total="1" passed="1" failed="0" inconclusive="0" skipped="0" result="Passed" start-time="2024-01-20T 21:52:10Z" end-time="2024-01-20T 21:52:10Z" duration="0.01659">
+    <test-suite type="TestSuite" name="API_Tests" fullname="API_Tests" total="1" passed="1" failed="0" inconclusive="0" skipped="0" result="Passed" start-time="2024-01-20T 21:52:10Z" end-time="2024-01-20T 21:52:10Z" duration="0.01659">
+      <test-suite type="TestFixture" name="Tests" fullname="API_Tests.Tests" classname="API_Tests.Tests" total="1" passed="1" failed="0" inconclusive="0" skipped="0" result="Passed" start-time="2024-01-20T 21:52:10Z" end-time="2024-01-20T 21:52:10Z" duration="0.01659">
+        <test-case name="Test1" fullname="API_Tests.Tests.Test1" methodname="Test1" classname="Tests" result="Passed" start-time="2024-01-20T 21:52:10Z" end-time="2024-01-20T 21:52:10Z" duration="0.01659" asserts="0" seed="851453460" />
+      </test-suite>
+    </test-suite>
+    <errors />
+  </test-suite>
+</test-run>

@@ -1,4 +1,4 @@
-namespace API_Tests;
+namespace Desktop_Client_Tests;
 
 public class Tests
 {
