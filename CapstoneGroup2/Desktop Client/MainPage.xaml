@@ -1,0 +1,25 @@
+﻿<Page
+    x:Class="Desktop_Client.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid >
+        <TextBlock HorizontalAlignment="Center" Margin="0,150,0,0" TextWrapping="Wrap" Text="Weather forecast" VerticalAlignment="Top" TextAlignment="Center" FontSize="50" Height="77" Width="416"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,234,0,0" TextWrapping="Wrap" Text="This component demonstrates fetching data from the server." VerticalAlignment="Top" FontSize="30"/>
+        <ListView Name="ForecastListView" Margin="326,329,325,117">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Date}" Width="200"/>
+                        <TextBlock Text="{Binding TemperatureC}" Width="100"/>
+                        <TextBlock Text="{Binding Summary}" Width="100"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>
