@@ -10,13 +10,13 @@ public class WeatherForecastController : ControllerBase
 {
     #region Data members
 
-    //private static readonly string[] Summaries =
-    //{
-    //    "Freezing", "Bracing", "Chilly", "Cool", "Mild",
-    //    "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    //};
+    private static readonly string[] Summaries =
+    {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
 
     private readonly ILogger<WeatherForecastController> logger;
+
     private readonly DataContext context;
 
     #endregion
@@ -34,7 +34,7 @@ public class WeatherForecastController : ControllerBase
     #region Methods
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public ActionResult<IEnumerable<WeatherForecast>> Get()
     {
         //return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         //    {
@@ -44,7 +44,7 @@ public class WeatherForecastController : ControllerBase
         //    })
         //    .ToArray();
 
-        return this.context.WeatherForecasts;
+        return Ok(this.context.WeatherForecasts);
     }
 
     #endregion

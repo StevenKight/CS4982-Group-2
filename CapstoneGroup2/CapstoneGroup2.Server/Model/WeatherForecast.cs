@@ -26,7 +26,7 @@ public class WeatherForecastConfiguration : IEntityTypeConfiguration<WeatherFore
 
     public void Configure(EntityTypeBuilder<WeatherForecast> builder)
     {
-        builder.ToTable("WeatherForecast");
+        builder.ToTable("Weather");
         builder.HasKey(x => x.Date);
         builder.Property(x => x.TemperatureC).IsRequired();
         builder.Property(x => x.Summary).HasMaxLength(100);
