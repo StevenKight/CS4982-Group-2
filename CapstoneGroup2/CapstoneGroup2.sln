@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "CapstoneGroup2.Server\API.csproj", "{1E111992-0A27-452F-BA07-860EAF4A7300}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D4FC4971-DE8F-458A-986C-E23EF2976E9B} = {D4FC4971-DE8F-458A-986C-E23EF2976E9B}
-	EndProjectSection
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Web Client", "capstonegroup2.client\Web Client.esproj", "{9CCBE39E-FD9B-4192-9834-1EC39B13A72B}"
 	ProjectSection(ProjectDependencies) = postProject

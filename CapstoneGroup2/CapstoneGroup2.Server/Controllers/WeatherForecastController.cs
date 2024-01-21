@@ -34,7 +34,7 @@ public class WeatherForecastController : ControllerBase
     #region Methods
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public ActionResult<IEnumerable<WeatherForecast>> Get()
+    public IEnumerable<WeatherForecast> Get()
     {
         //return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         //    {
@@ -44,7 +44,7 @@ public class WeatherForecastController : ControllerBase
         //    })
         //    .ToArray();
 
-        return Ok(this.context.WeatherForecasts);
+        return this.context.WeatherForecasts;
     }
 
     #endregion
