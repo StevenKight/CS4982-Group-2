@@ -72,21 +72,9 @@ function App() {
 
 function NoteDisplay(note: Note) {
 
-    const PdfNoteDisplay = (note: Note) => {
-        return (
-            <div>
-                <embed src={note.objectLink} />
-            </div>
-        );
-    }
+    const PdfNoteDisplay = (note: Note) => <embed src={note.objectLink} />;
 
-    const VideoNoteDisplay = (note: Note) => {
-        return (
-            <div>
-                <ReactPlayer url={note.objectLink} controls/>
-            </div>
-        );
-    }
+    const VideoNoteDisplay = (note: Note) => <ReactPlayer url={note.objectLink} controls/>;
 
     return (
         <div>

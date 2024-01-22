@@ -64,4 +64,7 @@
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="UserNoteDummyData.sql" />
+  </ItemGroup>
 </Project>
