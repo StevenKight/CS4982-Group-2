@@ -4,11 +4,14 @@ using System.IO;
 using System.Linq;
 using Windows.Data.Pdf;
 using Windows.Media.Core;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using Desktop_Client.Dal;
+using Desktop_Client.Model;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -23,6 +26,8 @@ namespace Desktop_Client
 
         private PdfDocument pdfDocument;
 
+        private List<UserNote> userNotes;
+
         #endregion
 
         #region Constructors
@@ -30,27 +35,80 @@ namespace Desktop_Client
         public MainPage()
         {
             this.InitializeComponent();
+
+            this.loadNotes();
         }
 
         #endregion
 
         #region Methods
 
-        private async void loadDocument(object sender, RoutedEventArgs args)
+        private async void loadNotes()
         {
-            this.videoDisplay.Visibility = Visibility.Collapsed;
+            this.progressControl.Visibility = Visibility.Visible;
+
+            this.userNotes = await NotesDal.GetUsersNotesAsync();
+            this.documentsListView.ItemsSource = this.userNotes;
+
+            this.progressControl.Visibility = Visibility.Collapsed;
+        }
+
+        private void documentsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedNote = (UserNote)this.documentsListView.SelectedItem;
+
+            if (selectedNote == null)
+            {
+                return;
+            }
+
+            this.documentOptions.Visibility = Visibility.Collapsed;
             this.videoOptions.Visibility = Visibility.Collapsed;
 
-            this.pdfDocument = null;
-            this.objectRender.Source = null;
+            this.progressControl.Visibility = Visibility.Visible;
+
+            switch (selectedNote.NoteType)
+            {
+                case NoteType.Pdf:
+                    Console.WriteLine("Pdf");
+                    break;
+                case NoteType.Vid:
+                    this.videoUrl.Text = selectedNote.ObjectLink;
+                    this.renderVideo(sender, e);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private async void loadDocument(object sender, RoutedEventArgs args)
+        {
+            this.documentsListView.SelectedItem = null;
 
             this.progressControl.Visibility = Visibility.Visible;
 
             var picker = new FileOpenPicker();
             picker.FileTypeFilter.Add(".pdf");
             var file = await picker.PickSingleFileAsync();
+
+            this.gatherDocument(file);
+
+            this.progressControl.Visibility = Visibility.Collapsed;
+        }
+
+        private async void gatherDocument(IStorageFile file)
+        {
+            this.webPlayer.Navigate(new Uri("about:blank"));
+            this.mediaPlayer.Source = null;
+
+            this.videoDisplay.Visibility = Visibility.Collapsed;
+            this.videoOptions.Visibility = Visibility.Collapsed;
+
             if (file != null)
             {
+                this.pdfDocument = null;
+                this.objectRender.Source = null;
+
                 try
                 {
                     this.pdfDocument = await PdfDocument.LoadFromFileAsync(file);
@@ -75,13 +133,11 @@ namespace Desktop_Client
                     }
                 }
 
-                this.progressControl.Visibility = Visibility.Collapsed;
-
                 this.pageSelector.SelectedIndex = 0;
                 this.documentOptions.Visibility = Visibility.Visible;
                 this.documentDisplay.Visibility = Visibility.Visible;
 
-                this.viewPage(sender, null);
+                this.viewPage(null, null);
             }
         }
 
@@ -123,15 +179,23 @@ namespace Desktop_Client
 
         private void loadVideo(object sender, RoutedEventArgs args)
         {
-            this.documentDisplay.Visibility = Visibility.Collapsed;
-            this.documentOptions.Visibility = Visibility.Collapsed;
+            this.documentsListView.SelectedItem = null;
 
+            this.webPlayer.Navigate(new Uri("about:blank"));
+            this.mediaPlayer.Source = null;
+
+            this.documentOptions.Visibility = Visibility.Collapsed;
             this.videoOptions.Visibility = Visibility.Visible;
+
+            this.documentDisplay.Visibility = Visibility.Collapsed;
             this.videoDisplay.Visibility = Visibility.Visible;
         }
 
         private void renderVideo(object sender, RoutedEventArgs args)
         {
+            this.documentDisplay.Visibility = Visibility.Collapsed;
+            this.videoDisplay.Visibility = Visibility.Visible;
+
             var videoUrl = this.videoUrl.Text;
 
             if (string.IsNullOrEmpty(videoUrl))
