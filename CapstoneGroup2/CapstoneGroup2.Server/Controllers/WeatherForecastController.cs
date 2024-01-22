@@ -10,13 +10,13 @@ public class WeatherForecastController : ControllerBase
 {
     #region Data members
 
-    //private static readonly string[] Summaries =
-    //{
-    //    "Freezing", "Bracing", "Chilly", "Cool", "Mild",
-    //    "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    //};
+    private static readonly string[] Summaries =
+    {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
 
     private readonly ILogger<WeatherForecastController> logger;
+
     private readonly DataContext context;
 
     #endregion

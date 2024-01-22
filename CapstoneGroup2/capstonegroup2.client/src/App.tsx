@@ -1,56 +1,90 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
+import ReactPlayer from 'react-player';
+
+enum NoteType {
+    Pdf = 1,
+    Vid = 2
+}
+
+interface Note {
+    id: number;
+    objectLink: string;
+    Note: string;
+    noteType: NoteType;
 }
 
 function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+    const [notes, setNotes] = useState<Note[]>();
+    const [selectedNote, setSelectedNote] = useState<Note>();
 
     useEffect(() => {
-        populateWeatherData();
+        populateNoteData();
     }, []);
 
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
+    const contents = notes === undefined
+        ? <p><em>Loading...</em></p>
         : <table className="table table-striped" aria-labelledby="tabelLabel">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
+                    <th>Id</th>
+                    <th>Note Type</th>
                 </tr>
             </thead>
             <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
+                {
+                    notes.map(note =>
+                        <tr key={note.id} onClick={() => setSelectedNote(note)}>
+                            <td>{note.id}</td>
+                            <td>{NoteType[note.noteType]}</td>
+                        </tr>
+                    )
+                }
             </tbody>
         </table>;
 
     return (
-        <div>
-            <h1 id="tabelLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
+        <div style={{display: "flex"}}>
+            <div style={{textAlign: "left", marginRight: "4em"}}>
+                <h1 id="tabelLabel">Notes Prototype</h1>
+                <p>This component demonstrates fetching data from the server <br/> and database.</p>
+                <div className='table-container'>
+                    {contents}
+                </div>
+            </div>
+            <div>
+                {
+                    selectedNote !== undefined
+                        ? <NoteDisplay {...selectedNote} />
+                        : <p><em>Select a note to view</em></p>
+                }
+            </div>
         </div>
     );
 
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
+    async function populateNoteData() {
+        const response = await fetch('notes');
         const data = await response.json();
-        setForecasts(data);
+        setNotes(data);
     }
+}
+
+function NoteDisplay(note: Note) {
+
+    const PdfNoteDisplay = (note: Note) => <embed src={note.objectLink} />;
+
+    const VideoNoteDisplay = (note: Note) => <ReactPlayer url={note.objectLink} controls/>;
+
+    return (
+        <div>
+            {
+                note.noteType === NoteType.Pdf
+                    ? <PdfNoteDisplay {...note} />
+                    : <VideoNoteDisplay {...note} />
+            }
+        </div>
+    );
 }
 
 export default App;

@@ -1,0 +1,10 @@
+<test-run id="2" duration="0.019889" testcasecount="1" total="1" passed="1" failed="0" inconclusive="0" skipped="0" result="Passed" start-time="2024-01-21T 03:49:17Z" end-time="2024-01-21T 03:49:18Z">
+  <test-suite type="Assembly" name="Desktop Client Tests.dll" fullname="C:\Users\sgk07\OneDrive\Documents\Class Work\Spring 2024\CS4982\Project\CapstoneGroup2\Desktop Client Tests\bin\Debug\net8.0\Desktop Client Tests.dll" total="1" passed="1" failed="0" inconclusive="0" skipped="0" result="Passed" start-time="2024-01-21T 03:49:18Z" end-time="2024-01-21T 03:49:18Z" duration="0.019889">
+    <test-suite type="TestSuite" name="Desktop_Client_Tests" fullname="Desktop_Client_Tests" total="1" passed="1" failed="0" inconclusive="0" skipped="0" result="Passed" start-time="2024-01-21T 03:49:18Z" end-time="2024-01-21T 03:49:18Z" duration="0.019889">
+      <test-suite type="TestFixture" name="Tests" fullname="Desktop_Client_Tests.Tests" classname="Desktop_Client_Tests.Tests" total="1" passed="1" failed="0" inconclusive="0" skipped="0" result="Passed" start-time="2024-01-21T 03:49:18Z" end-time="2024-01-21T 03:49:18Z" duration="0.019889">
+        <test-case name="Test1" fullname="Desktop_Client_Tests.Tests.Test1" methodname="Test1" classname="Tests" result="Passed" start-time="2024-01-21T 03:49:18Z" end-time="2024-01-21T 03:49:18Z" duration="0.019889" asserts="0" seed="718857747" />
+      </test-suite>
+    </test-suite>
+    <errors />
+  </test-suite>
+</test-run>
