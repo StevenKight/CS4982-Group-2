@@ -14,7 +14,7 @@ const Login: React.FC<LoginProps> = ({ users, onLogin }) => {
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        const isValidUser = users?.some((user) => user.username === username && user.password === password);
+        const isValidUser = users?.some((user) => user.username == username && user.password == password);
 
         if (isValidUser) {
             onLogin();
