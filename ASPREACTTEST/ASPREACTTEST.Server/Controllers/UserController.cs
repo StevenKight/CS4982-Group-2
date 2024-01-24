@@ -6,19 +6,26 @@ namespace ASPREACTTEST.Server.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private static readonly string[] Names = new[]
-{
-            "StevenC", "StevenK", "Aaron"
-        };
 
-        private static readonly string[] Passwords = new[]
-{
-            "Password", "1234567890", "0987654321", "qwertyuiop", "asdfghjkl"
-        };
-
-        private static readonly string[] Descriptions = new[]
+        User user1 = new User
         {
-            "Cool User", "New User", "Experienced User", "Intermediate User"
+            username = "StevenC",
+            password = "1234567890",
+            description = "New User"
+        };
+
+        User user2 = new User
+        {
+            username = "StevenK",
+            password = "Password",
+            description = "Experienced User"
+        };
+
+        User user3 = new User
+        {
+            username = "Aaron",
+            password = "0987654321",
+            description = "Cool User"
         };
 
         private readonly ILogger<UserController> _logger;
@@ -31,13 +38,8 @@ namespace ASPREACTTEST.Server.Controllers
         [HttpGet(Name = "GetUser")]
         public IEnumerable<User> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new User
-            {
-                username = Names[Random.Shared.Next(Names.Length)],
-                password = Passwords[Random.Shared.Next(Passwords.Length)],
-                description = Descriptions[Random.Shared.Next(Descriptions.Length)]
-            })
-            .ToArray();
+            IEnumerable<User> users = new List<User> { user1, user2, user3};
+            return users;
         }
     }
 }
