@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import "./Login.css" 
+import { User } from './App';
 
 interface LoginProps {
+    users: User[];
+    onLogin: () => void;
 }
 
-const Login: React.FC<LoginProps> = () => {
+const Login: React.FC<LoginProps> = ({ users, onLogin }) => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const navigate = useNavigate();
 
     const handleLogin = () => {
+        const isValidUser = users?.some((user) => user.username === username && user.password === password);
+
+        if (isValidUser) {
+            onLogin();
+            navigate('/home');
+        } else {
+            alert('Invalid username or password');
+        }
     };
 
     return (
