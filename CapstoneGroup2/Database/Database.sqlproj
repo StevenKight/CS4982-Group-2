@@ -58,7 +58,6 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Weather.sql" />
     <Build Include="UserNote.sql" />
   </ItemGroup>
   <ItemGroup>

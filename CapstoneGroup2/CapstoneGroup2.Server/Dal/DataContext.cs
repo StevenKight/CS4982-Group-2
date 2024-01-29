@@ -7,8 +7,6 @@ public class DataContext : DbContext
 {
     #region Properties
 
-    public DbSet<WeatherForecast> WeatherForecasts { get; set; } = null!;
-
     public DbSet<UserNote> UserNotes { get; set; } = null!;
 
     #endregion
@@ -25,8 +23,6 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<WeatherForecast>().ToTable("Weather");
-
         modelBuilder.Entity<UserNote>().ToTable("UserNote");
     }
 
