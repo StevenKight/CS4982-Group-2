@@ -1,22 +1,17 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
-import './App.css';
-import Dashboard from './pages/Dashboard';
-
-export interface User {
-    username: string;
-    password: string;
-    description: string;
-}
+import Home from './pages/Home';
 
 function App() {
-
-    const [auth, setAuth] = useState<boolean>(false); // TODO: check auth
+    const [auth, setAuth] = useState<boolean>(false);
 
     const handleLogin = () => {
         setAuth(true);
+    };
+
+    const handleLogout = () => {
+        setAuth(false);
     };
 
     return (
@@ -24,7 +19,7 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Login onLogin={handleLogin} />} />
-                    <Route path="/home" element={auth ? <Dashboard /> : null} />
+                    <Route path="/home" element={auth ? <Home onLogout={handleLogout} /> : null} />
                 </Routes>
             </BrowserRouter>
         </div>

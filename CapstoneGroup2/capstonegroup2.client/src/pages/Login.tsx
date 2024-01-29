@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
     onLogin: () => void;
@@ -8,19 +8,15 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
+            const result = 1;
 
-            if (response.ok) {
+            if (result === 1) {
                 onLogin();
+                navigate('/home');
             } else {
                 alert('Invalid username or password');
             }
