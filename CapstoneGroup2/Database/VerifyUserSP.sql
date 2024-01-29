@@ -1,0 +1,20 @@
+﻿CREATE PROCEDURE VerifyUser
+    @p_username VARCHAR(100),
+    @p_password VARCHAR(100),
+    @p_result INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @v_count INT;
+
+    SELECT @v_count = COUNT(*)
+    FROM [dbo].[User]
+    WHERE [username] = @p_username AND [password] = @p_password;
+
+    IF @v_count = 1
+        SET @p_result = 1;
+    ELSE
+        SET @p_result = 0;
+END;
+

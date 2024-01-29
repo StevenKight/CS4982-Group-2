@@ -1,35 +1,30 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import PostAuthorize from './pages/PostAuthorize';
-
+import Login from './pages/Login';
 import './App.css';
+import Dashboard from './pages/Dashboard';
+
+export interface User {
+    username: string;
+    password: string;
+    description: string;
+}
 
 function App() {
 
     const [auth, setAuth] = useState<boolean>(false); // TODO: check auth
-    
-    function checkAuth() {
-        return auth; // TODO: check auth
-    }
 
-    function mockLogin(): void {
+    const handleLogin = () => {
         setAuth(true);
-    }
-
-    function mockLogout(): void {
-        setAuth(false);
-    }
+    };
 
     return (
         <div>
             <BrowserRouter>
                 <Routes>
-                    { 
-                        checkAuth() ? 
-                            <Route path="*" index element={<PostAuthorize onLogout={mockLogout} />} /> :
-                            <Route path="*" element={<button onClick={mockLogin}>Login</button>} /> /* TODO: Make login page */
-                    }
+                    <Route path="/" element={<Login onLogin={handleLogin} />} />
+                    <Route path="/home" element={auth ? <Dashboard /> : null} />
                 </Routes>
             </BrowserRouter>
         </div>
