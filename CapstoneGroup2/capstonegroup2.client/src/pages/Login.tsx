@@ -12,13 +12,26 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     const handleLogin = async () => {
         try {
-            const result = 1;
+            const response = await fetch('/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
 
-            if (result === 1) {
-                onLogin();
-                navigate('/home');
+            const result = await response.json();
+            console.log(result);
+
+            if (response.ok) {
+                if (result.success) {
+                    onLogin();
+                    navigate('/home');
+                } else {
+                    alert('Invalid username or password');
+                }
             } else {
-                alert('Invalid username or password');
+                alert('An error occurred during login');
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -45,3 +58,4 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 };
 
 export default Login;
+

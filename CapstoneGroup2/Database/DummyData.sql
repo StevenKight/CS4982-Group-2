@@ -14,6 +14,8 @@ INSERT INTO [dbo].[User] ([username], [password])
 		(N'StevenC', N'Carriger'),
 		(N'Aaron', N'Hanson')
 
+Select * FROM [dbo].[User];
+
 -- TODO: PDFs, images, etc. and link vs file
 SET IDENTITY_INSERT [dbo].[Source] ON
 INSERT INTO [dbo].[Source] ([source_id], [type], [name], [is_link], [link]) 
