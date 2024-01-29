@@ -14,13 +14,13 @@ public class NotesController : ControllerBase
 
     private readonly ILogger<NotesController> logger;
 
-    private readonly DataContext context;
+    private readonly IDbDal<Note> context;
 
     #endregion
 
     #region Constructors
 
-    public NotesController(ILogger<NotesController> logger, DataContext context)
+    public NotesController(ILogger<NotesController> logger, IDbDal<Note> context)
     {
         this.logger = logger;
         this.context = context;
@@ -32,9 +32,9 @@ public class NotesController : ControllerBase
 
     // GET: <NotesController>
     [HttpGet]
-    public IEnumerable<UserNote> Get()
+    public IEnumerable<Note> Get()
     {
-        return this.context.UserNotes;
+        return this.context.GetAll();
     }
 
     #endregion
