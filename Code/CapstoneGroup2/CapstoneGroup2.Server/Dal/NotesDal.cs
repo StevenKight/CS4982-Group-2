@@ -8,16 +8,16 @@ public class NotesDal : IDbDal<Note>
 
     private readonly StudyApiDbContext context;
 
-    private readonly SourceDal sourceDal;
+    //private readonly IDbDal<Source> sourceDal;
 
     #endregion
 
     #region Constructors
 
-    public NotesDal(StudyApiDbContext context, SourceDal sourceDal)
+    public NotesDal(StudyApiDbContext context) // , IDbDal<Source> sourceDal
     {
         this.context = context;
-        this.sourceDal = sourceDal;
+        //this.sourceDal = sourceDal;
     }
 
     #endregion
@@ -41,7 +41,7 @@ public class NotesDal : IDbDal<Note>
         var note = this.context.Notes
             .Find(sourceId, username) ?? throw new InvalidOperationException();
 
-        note.Source = this.sourceDal.Get(note.SourceId);
+        //note.Source = this.sourceDal.Get(note.SourceId);
 
         return note;
     }
@@ -50,7 +50,7 @@ public class NotesDal : IDbDal<Note>
     {
         var notes = this.context.Notes;
 
-        Parallel.ForEach(notes, note => note.Source = this.sourceDal.Get(note.SourceId));
+        //Parallel.ForEach(notes, note => note.Source = this.sourceDal.Get(note.SourceId));
 
         return notes;
     }

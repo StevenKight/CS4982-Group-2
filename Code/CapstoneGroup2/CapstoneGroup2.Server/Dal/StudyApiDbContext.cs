@@ -29,10 +29,11 @@ public class StudyApiDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Note>().ToTable("Note");
-        modelBuilder.Entity<Shared>().ToTable("Shared");
-        modelBuilder.Entity<Source>().ToTable("Source");
-        modelBuilder.Entity<User>().ToTable("User");
+        modelBuilder
+            .ApplyConfiguration(new NoteConfiguration())
+            .ApplyConfiguration(new SharedConfiguration())
+            .ApplyConfiguration(new SourceConfiguration())
+            .ApplyConfiguration(new UserConfiguration());
     }
 
     #endregion

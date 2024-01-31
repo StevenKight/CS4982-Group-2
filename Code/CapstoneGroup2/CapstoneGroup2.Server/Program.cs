@@ -19,10 +19,10 @@ builder.Services.AddDbContext<StudyApiDbContext>(options =>
 
 // Add Dal classes
 builder.Services
-    .AddSingleton<IDbDal<User>, UserDal>()
-    .AddSingleton<IDbDal<Note>, NotesDal>()
-    .AddSingleton<IDbDal<Source>, SourceDal>()
-    .AddSingleton<IDbDal<Shared>, SharedDal>();
+    .AddTransient<IDbDal<User>, UserDal>()
+    .AddTransient<IDbDal<Source>, SourceDal>()
+    .AddTransient<IDbDal<Note>, NotesDal>()
+    .AddTransient<IDbDal<Shared>, SharedDal>();
 
 // Build and configure the app.
 var app = builder.Build();

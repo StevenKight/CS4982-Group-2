@@ -27,7 +27,7 @@ public class UserDal : IDbDal<User>
         {
             throw new InvalidCastException();
         }
-        
+
         var username = (string)(keyValues[0] ?? throw new ArgumentNullException());
         if (string.IsNullOrWhiteSpace(username))
         {
@@ -40,7 +40,7 @@ public class UserDal : IDbDal<User>
 
     public IEnumerable<User> GetAll()
     {
-        throw new NotImplementedException();
+        return this.context.Users;
     }
 
     public bool Add(User entity)

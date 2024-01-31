@@ -12,7 +12,9 @@ public class Note
     
     public string NoteText { get; set; }
 
-    public List<string> Tags { get; set; }
+    public string TagsString { get; set; }
+
+    public List<string> Tags => TagsString.Split(",").ToList();
 
     public Source Source { get; set; }
 }
@@ -26,6 +28,6 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.Property(n => n.SourceId).HasColumnName("source_id");
         builder.Property(n => n.Username).HasColumnName("username");
         builder.Property(n => n.NoteText).HasColumnName("note");
-        builder.Property(n => n.Tags).HasColumnName("tags");
+        builder.Property(n => n.TagsString).HasColumnName("tags");
     }
 }

@@ -32,8 +32,8 @@ public class SharedDal : IDbDal<Shared>
         var sourceId = (int)(keyValues[0] ?? throw new ArgumentNullException());
         var username = (string)(keyValues[1] ?? throw new ArgumentNullException());
         var sharedUsername = (string)(keyValues[2] ?? throw new ArgumentNullException());
-        if (sourceId < 1 || 
-            string.IsNullOrWhiteSpace(username) || 
+        if (sourceId < 1 ||
+            string.IsNullOrWhiteSpace(username) ||
             string.IsNullOrWhiteSpace(sharedUsername))
         {
             throw new ArgumentOutOfRangeException();
