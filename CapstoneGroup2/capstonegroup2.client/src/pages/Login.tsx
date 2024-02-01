@@ -12,27 +12,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('/user/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
-
-            const result = await response.json();
-            console.log(result);
-
-            if (response.ok) {
-                if (result.success) {
-                    onLogin();
-                    navigate('/home');
-                } else {
-                    alert('Invalid username or password');
-                }
-            } else {
-                alert('An error occurred during login');
-            }
+            onLogin();
+            navigate('/home');
         } catch (error) {
             console.error('Login error:', error);
             alert('An error occurred during login');

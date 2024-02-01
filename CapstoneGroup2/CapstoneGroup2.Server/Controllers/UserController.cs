@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Linq;
 using LoginRequest = API.Model.Requests.LoginRequest;
-using RegisterRequest = API.Model.Requests.RegisterRequest;
 
 namespace API.Controllers
 {

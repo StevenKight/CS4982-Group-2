@@ -1,4 +1,6 @@
-﻿namespace API.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API.Model
 {
     /// <summary>
     /// User data class
@@ -11,6 +13,7 @@
         /// <value>
         /// The username.
         /// </value>
+        [Key]
         public string Username { get; set; }
         /// <summary>
         /// Gets or sets the password.
