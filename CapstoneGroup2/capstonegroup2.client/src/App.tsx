@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
-import Home from './pages/Home';
+import Register from './pages/Register';
+import PostAuthorize from './pages/PostAuthorize';
+import Dashboard from './pages/Dashboard';
 
 function App() {
     const [auth, setAuth] = useState<boolean>(false);
@@ -14,12 +16,18 @@ function App() {
         setAuth(false);
     };
 
+    const handleRegister = () => {
+        setAuth(true);
+    };
+
     return (
         <div>
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Login onLogin={handleLogin} />} />
-                    <Route path="/home" element={auth ? <Home onLogout={handleLogout} /> : null} />
+                    <Route path="/register" element={<Register onRegister={handleRegister} />} />
+                    <Route path="/postauthorize" element={auth ? <PostAuthorize onLogout={handleLogout} /> : null} />
+                    <Route path="/dashboard" element={auth ? <Dashboard /> : null} />
                 </Routes>
             </BrowserRouter>
         </div>
