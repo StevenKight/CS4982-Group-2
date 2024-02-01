@@ -1,0 +1,23 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Desktop_Client"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Custom="using:Microsoft.UI.Xaml.Controls"
+    x:Class="Desktop_Client.HomePage"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Button Content="Home" VerticalAlignment="Top" Width="380" Height="85" FontSize="30"/>
+        <Button Content="My Notes" Margin="380,0,0,0" VerticalAlignment="Top"  Width="380" Height="85" FontSize="30"/>
+        <Button Content="Shared Notes" Margin="760,0,0,0" VerticalAlignment="Top" Width="380" Height="85" FontSize="30"/>
+        <TextBlock HorizontalAlignment="Left" Margin="36,90,0,0" TextWrapping="Wrap" Text="Recent Notes:" VerticalAlignment="Top" FontSize="35"/>
+        <ListView ></ListView>
+
+
+
+
+    </Grid>
+</Page>
