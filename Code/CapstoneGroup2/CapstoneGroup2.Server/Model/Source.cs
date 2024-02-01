@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace API.Model;
+
 public enum SourceType
 {
     #region Enum members
@@ -15,21 +15,27 @@ public enum SourceType
 
 public class Source
 {
+    #region Properties
+
     public int SourceId { get; set; }
 
     public string Type { get; set; }
 
-    public SourceType NoteType => (SourceType)Enum.Parse(typeof(NoteType), this.Type, true);
+    public SourceType NoteType => (SourceType)Enum.Parse(typeof(SourceType), this.Type, true);
 
     public string Name { get; set; }
 
     public bool IsLink { get; set; }
 
     public string Link { get; set; }
+
+    #endregion
 }
 
 public class SourceConfiguration : IEntityTypeConfiguration<Source>
 {
+    #region Methods
+
     public void Configure(EntityTypeBuilder<Source> builder)
     {
         builder.ToTable("Source");
@@ -40,4 +46,6 @@ public class SourceConfiguration : IEntityTypeConfiguration<Source>
         builder.Property(s => s.IsLink).HasColumnName("is_link");
         builder.Property(s => s.Link).HasColumnName("link");
     }
-}   
+
+    #endregion
+}

@@ -19,6 +19,8 @@ public class SourceDal : IDbDal<Source>
 
     #endregion
 
+    #region Methods
+
     public Source Get(params object?[]? keyValues) // TODO: Only if current user has access
     {
         if (keyValues is not { Length: 1 } ||
@@ -56,4 +58,6 @@ public class SourceDal : IDbDal<Source>
     {
         throw new NotImplementedException();
     }
+
+    #endregion
 }

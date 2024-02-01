@@ -6,7 +6,9 @@ namespace API.Dal;
 public class StudyApiDbContext : DbContext
 {
     #region Properties
-    
+
+    public User? CurrentUser { get; set; }
+
     public DbSet<Note> Notes { get; set; }
 
     public DbSet<Shared> SharedNotes { get; set; }

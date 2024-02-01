@@ -19,7 +19,9 @@ public class SharedDal : IDbDal<Shared>
 
     #endregion
 
-    public Shared Get(params object?[]? keyValues) // TODO: Only if current user has access
+    #region Methods
+
+    public Shared Get(params object?[]? keyValues)
     {
         if (keyValues is not { Length: 3 } ||
             keyValues[0] == null || typeof(int) != keyValues[0]?.GetType() ||
@@ -31,21 +33,24 @@ public class SharedDal : IDbDal<Shared>
 
         var sourceId = (int)(keyValues[0] ?? throw new ArgumentNullException());
         var username = (string)(keyValues[1] ?? throw new ArgumentNullException());
-        var sharedUsername = (string)(keyValues[2] ?? throw new ArgumentNullException());
         if (sourceId < 1 ||
-            string.IsNullOrWhiteSpace(username) ||
-            string.IsNullOrWhiteSpace(sharedUsername))
+            string.IsNullOrWhiteSpace(username))
         {
             throw new ArgumentOutOfRangeException();
         }
+
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new InvalidOperationException();
 
         return this.context.SharedNotes
             .Find(sourceId, username, sharedUsername) ?? throw new InvalidOperationException();
     }
 
-    public IEnumerable<Shared> GetAll() // TODO: Only current user's shared notes
+    public IEnumerable<Shared> GetAll()
     {
-        return this.context.SharedNotes;
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new InvalidOperationException();
+
+        return this.context.SharedNotes
+            .Where(x => x.Username.Equals(sharedUsername));
     }
 
     public bool Add(Shared entity)
@@ -62,4 +67,6 @@ public class SharedDal : IDbDal<Shared>
     {
         throw new NotImplementedException();
     }
+
+    #endregion
 }

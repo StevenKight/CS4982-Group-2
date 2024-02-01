@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using API.Dal;
 using API.Model;
 using Microsoft.EntityFrameworkCore;
@@ -44,5 +45,21 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
+
+// Get the token from the request header and set the current user
+app.Use(async (context, next) =>
+{
+    var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+    if (!string.IsNullOrWhiteSpace(token))
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+        var username = jsonToken?.Claims.First(claim => claim.Type == "unique_name").Value;
+        var dbContext = context.RequestServices.GetRequiredService<StudyApiDbContext>();
+        dbContext.CurrentUser = dbContext.Users.Find(username);
+    }
+
+    await next();
+});
 
 app.Run();

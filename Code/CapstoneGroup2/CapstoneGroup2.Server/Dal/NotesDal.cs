@@ -8,8 +8,6 @@ public class NotesDal : IDbDal<Note>
 
     private readonly StudyApiDbContext context;
 
-    //private readonly IDbDal<Source> sourceDal;
-
     #endregion
 
     #region Constructors
@@ -22,21 +20,23 @@ public class NotesDal : IDbDal<Note>
 
     #endregion
 
-    public Note Get(params object?[]? keyValues) // TODO: Only if current user has access
+    #region Methods
+
+    public Note Get(params object?[]? keyValues)
     {
-        if (keyValues is not { Length: 2 } ||
-            keyValues[0] == null || typeof(int) != keyValues[0]?.GetType() ||
-            keyValues[1] == null || typeof(string) != keyValues[1]?.GetType())
+        if (keyValues is not { Length: 1 } ||
+            keyValues[0] == null || typeof(int) != keyValues[0]?.GetType())
         {
             throw new InvalidCastException();
         }
 
         var sourceId = (int)(keyValues[0] ?? throw new ArgumentNullException());
-        var username = (string)(keyValues[1] ?? throw new ArgumentNullException());
-        if (sourceId < 1 || string.IsNullOrWhiteSpace(username))
+        if (sourceId < 1)
         {
             throw new ArgumentOutOfRangeException();
         }
+
+        var username = this.context.CurrentUser?.Username ?? throw new InvalidOperationException();
 
         var note = this.context.Notes
             .Find(sourceId, username) ?? throw new InvalidOperationException();
@@ -46,9 +46,12 @@ public class NotesDal : IDbDal<Note>
         return note;
     }
 
-    public IEnumerable<Note> GetAll() // TODO: Only current user's notes
+    public IEnumerable<Note> GetAll()
     {
-        var notes = this.context.Notes;
+        var username = this.context.CurrentUser?.Username ?? throw new InvalidOperationException();
+
+        var notes = this.context.Notes
+            .Where(note => note.Username == username);
 
         //Parallel.ForEach(notes, note => note.Source = this.sourceDal.Get(note.SourceId));
 
@@ -69,4 +72,8 @@ public class NotesDal : IDbDal<Note>
     {
         throw new NotImplementedException();
     }
+
+    #endregion
+
+    //private readonly IDbDal<Source> sourceDal;
 }
