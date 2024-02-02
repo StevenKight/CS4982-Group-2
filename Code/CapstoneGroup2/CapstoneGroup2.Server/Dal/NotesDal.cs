@@ -6,15 +6,13 @@ public class NotesDal : IDbDal<Note>
 {
     #region Data members
 
-    private readonly StudyApiDbContext context;
-
-    //private readonly IDbDal<Source> sourceDal;
+    private readonly DocunotesDbContext context;
 
     #endregion
 
     #region Constructors
 
-    public NotesDal(StudyApiDbContext context) // , IDbDal<Source> sourceDal
+    public NotesDal(DocunotesDbContext context) // , IDbDal<Source> sourceDal
     {
         this.context = context;
         //this.sourceDal = sourceDal;
@@ -22,21 +20,23 @@ public class NotesDal : IDbDal<Note>
 
     #endregion
 
-    public Note Get(params object?[]? keyValues) // TODO: Only if current user has access
+    #region Methods
+
+    public Note Get(params object?[]? keyValues)
     {
-        if (keyValues is not { Length: 2 } ||
-            keyValues[0] == null || typeof(int) != keyValues[0]?.GetType() ||
-            keyValues[1] == null || typeof(string) != keyValues[1]?.GetType())
+        if (keyValues is not { Length: 1 } ||
+            keyValues[0] == null || typeof(int) != keyValues[0]?.GetType())
         {
             throw new InvalidCastException();
         }
 
         var sourceId = (int)(keyValues[0] ?? throw new ArgumentNullException());
-        var username = (string)(keyValues[1] ?? throw new ArgumentNullException());
-        if (sourceId < 1 || string.IsNullOrWhiteSpace(username))
+        if (sourceId < 1)
         {
             throw new ArgumentOutOfRangeException();
         }
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         var note = this.context.Notes
             .Find(sourceId, username) ?? throw new InvalidOperationException();
@@ -46,9 +46,12 @@ public class NotesDal : IDbDal<Note>
         return note;
     }
 
-    public IEnumerable<Note> GetAll() // TODO: Only current user's notes
+    public IEnumerable<Note> GetAll()
     {
-        var notes = this.context.Notes;
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        var notes = this.context.Notes
+            .Where(note => note.Username.Equals(username));
 
         //Parallel.ForEach(notes, note => note.Source = this.sourceDal.Get(note.SourceId));
 
@@ -57,16 +60,45 @@ public class NotesDal : IDbDal<Note>
 
     public bool Add(Note entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        entity.Username = username;
+
+        this.context.Notes.Add(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Update(Note entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != username)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.Notes.Update(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Delete(Note entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != username)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.Notes.Remove(entity);
+        return this.context.SaveChanges() > 0;
     }
+
+    #endregion
 }

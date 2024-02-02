@@ -6,60 +6,95 @@ public class SharedDal : IDbDal<Shared>
 {
     #region Data members
 
-    private readonly StudyApiDbContext context;
+    private readonly DocunotesDbContext context;
 
     #endregion
 
     #region Constructors
 
-    public SharedDal(StudyApiDbContext context)
+    public SharedDal(DocunotesDbContext context)
     {
         this.context = context;
     }
 
     #endregion
 
-    public Shared Get(params object?[]? keyValues) // TODO: Only if current user has access
+    #region Methods
+
+    public Shared Get(params object?[]? keyValues)
     {
-        if (keyValues is not { Length: 3 } ||
+        if (keyValues is not { Length: 2 } ||
             keyValues[0] == null || typeof(int) != keyValues[0]?.GetType() ||
-            keyValues[1] == null || typeof(string) != keyValues[1]?.GetType() ||
-            keyValues[2] == null || typeof(string) != keyValues[2]?.GetType())
+            keyValues[1] == null || typeof(string) != keyValues[1]?.GetType())
         {
             throw new InvalidCastException();
         }
 
         var sourceId = (int)(keyValues[0] ?? throw new ArgumentNullException());
         var username = (string)(keyValues[1] ?? throw new ArgumentNullException());
-        var sharedUsername = (string)(keyValues[2] ?? throw new ArgumentNullException());
         if (sourceId < 1 ||
-            string.IsNullOrWhiteSpace(username) ||
-            string.IsNullOrWhiteSpace(sharedUsername))
+            string.IsNullOrWhiteSpace(username))
         {
             throw new ArgumentOutOfRangeException();
         }
 
-        return this.context.SharedNotes
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        var shared = this.context.SharedNotes
             .Find(sourceId, username, sharedUsername) ?? throw new InvalidOperationException();
+
+        return shared;
     }
 
-    public IEnumerable<Shared> GetAll() // TODO: Only current user's shared notes
+    public IEnumerable<Shared> GetAll()
     {
-        return this.context.SharedNotes;
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        return this.context.SharedNotes
+            .Where(x => x.SharedUsername.Equals(sharedUsername));
     }
 
     public bool Add(Shared entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        entity.SharedUsername = sharedUsername;
+
+        this.context.SharedNotes.Add(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Update(Shared entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.SharedUsername != sharedUsername)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.SharedNotes.Update(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Delete(Shared entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.SharedUsername != sharedUsername)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.SharedNotes.Remove(entity);
+        return this.context.SaveChanges() > 0;
     }
+
+    #endregion
 }

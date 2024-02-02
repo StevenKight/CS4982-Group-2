@@ -12,17 +12,14 @@ public class NotesController : ControllerBase
 {
     #region Data members
 
-    private readonly ILogger<NotesController> logger;
-
     private readonly IDbDal<Note> context;
 
     #endregion
 
     #region Constructors
 
-    public NotesController(ILogger<NotesController> logger, IDbDal<Note> context)
+    public NotesController(IDbDal<Note> context)
     {
-        this.logger = logger;
         this.context = context;
     }
 
@@ -32,9 +29,75 @@ public class NotesController : ControllerBase
 
     // GET: <NotesController>
     [HttpGet]
-    public IEnumerable<Note> Get()
+    public IActionResult GetAll()
     {
-        return this.context.GetAll();
+        try
+        {
+            return Ok(this.context.GetAll());
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // GET <NotesController>/5
+    [HttpGet("{sourceId}")]
+    public IActionResult GetById(int sourceId)
+    {
+        try
+        {
+            return Ok(this.context.Get(sourceId));
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // POST <NotesController>
+    [HttpPost]
+    public IActionResult Create([FromBody] Note note)
+    {
+        try
+        {
+            this.context.Add(note);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // PUT <NotesController>/5
+    [HttpPut]
+    public IActionResult Update([FromBody] Note note)
+    {
+        try
+        {
+            this.context.Update(note);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // DELETE <NotesController>/5
+    [HttpDelete]
+    public IActionResult Delete([FromBody] Note note)
+    {
+        try
+        {
+            this.context.Delete(note);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
     }
 
     #endregion

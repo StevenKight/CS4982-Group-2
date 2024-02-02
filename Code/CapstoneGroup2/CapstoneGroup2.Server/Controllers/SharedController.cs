@@ -12,17 +12,14 @@ public class SharedController : ControllerBase
 {
     #region Data members
 
-    private readonly ILogger<SharedController> logger;
-
     private readonly IDbDal<Shared> context;
 
     #endregion
 
     #region Constructors
 
-    public SharedController(ILogger<SharedController> logger, IDbDal<Shared> context)
+    public SharedController(IDbDal<Shared> context)
     {
-        this.logger = logger;
         this.context = context;
     }
 
@@ -30,11 +27,77 @@ public class SharedController : ControllerBase
 
     #region Methods
 
-    // GET: <NotesController>
+    // GET: <SharedController>
     [HttpGet]
-    public IEnumerable<Shared> Get()
+    public IActionResult GetAll()
     {
-        return this.context.GetAll();
+        try
+        {
+            return Ok(this.context.GetAll());
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // GET <SharedController>/5
+    [HttpGet("{sourceId}-{username}")] // TODO: User actual key
+    public IActionResult GetById(int sourceId, string username)
+    {
+        try
+        {
+            return Ok(this.context.Get(sourceId, username));
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // POST <SharedController>
+    [HttpPost]
+    public IActionResult Create([FromBody] Shared shared)
+    {
+        try
+        {
+            this.context.Add(shared);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // PUT <SharedController>/5
+    [HttpPut]
+    public IActionResult Update([FromBody] Shared shared)
+    {
+        try
+        {
+            this.context.Update(shared);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // DELETE <SharedController>/5
+    [HttpDelete]
+    public IActionResult Delete([FromBody] Shared shared)
+    {
+        try
+        {
+            this.context.Delete(shared);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized("Invalid token");
+        }
     }
 
     #endregion

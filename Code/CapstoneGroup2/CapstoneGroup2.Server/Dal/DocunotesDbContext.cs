@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Dal;
 
-public class StudyApiDbContext : DbContext
+public class DocunotesDbContext : DbContext
 {
     #region Properties
-    
+
+    public User? CurrentUser { get; set; }
+
     public DbSet<Note> Notes { get; set; }
 
     public DbSet<Shared> SharedNotes { get; set; }
@@ -19,7 +21,7 @@ public class StudyApiDbContext : DbContext
 
     #region Constructors
 
-    public StudyApiDbContext(DbContextOptions<StudyApiDbContext> options) : base(options)
+    public DocunotesDbContext(DbContextOptions<DocunotesDbContext> options) : base(options)
     {
     }
 

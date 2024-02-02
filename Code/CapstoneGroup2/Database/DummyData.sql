@@ -16,10 +16,16 @@ INSERT INTO [dbo].[User] ([username], [password])
 
 -- TODO: PDFs, images, etc. and link vs file
 SET IDENTITY_INSERT [dbo].[Source] ON
-INSERT INTO [dbo].[Source] ([source_id], [type], [name], [is_link], [link]) 
-	VALUES (1, N'vid', N'Sample Video 5s.mp4', 1, N'https://samplelib.com/lib/preview/mp4/sample-5s.mp4'),
-		(2, N'vid', N'Sample Video 30s.mp4', 1, N'https://samplelib.com/lib/preview/mp4/sample-30s.mp4'),
-		(3, N'vid', N'Sample Youtube Video', 1, N'https://youtu.be/Z_-am00EXIc?si=TtSBSOySyDDOkqsj')
+INSERT INTO [dbo].[Source] ([source_id], [username], [type], [name], [is_link], [link]) 
+	VALUES (1, 'StevenG', N'vid', N'Sample Video 5s.mp4', 1, N'https://samplelib.com/lib/preview/mp4/sample-5s.mp4'),
+		(2, 'StevenG', N'vid', N'Sample Video 30s.mp4', 1, N'https://samplelib.com/lib/preview/mp4/sample-30s.mp4'),
+		(3, 'StevenG', N'vid', N'Sample Youtube Video', 1, N'https://youtu.be/Z_-am00EXIc?si=TtSBSOySyDDOkqsj'),
+		(4, 'StevenC', N'vid', N'Sample Video 5s.mp4', 1, N'https://samplelib.com/lib/preview/mp4/sample-5s.mp4'),
+		(5, 'StevenC', N'vid', N'Sample Video 30s.mp4', 1, N'https://samplelib.com/lib/preview/mp4/sample-30s.mp4'),
+		(6, 'StevenC', N'vid', N'Sample Youtube Video', 1, N'https://youtu.be/Z_-am00EXIc?si=TtSBSOySyDDOkqsj'),
+		(7, 'Aaron', N'vid', N'Sample Video 5s.mp4', 1, N'https://samplelib.com/lib/preview/mp4/sample-5s.mp4'),
+		(8, 'Aaron', N'vid', N'Sample Video 30s.mp4', 1, N'https://samplelib.com/lib/preview/mp4/sample-30s.mp4'),
+		(9, 'Aaron', N'vid', N'Sample Youtube Video', 1, N'https://youtu.be/Z_-am00EXIc?si=TtSBSOySyDDOkqsj')
 SET IDENTITY_INSERT [dbo].[Source] OFF
 
 -- TODO: Tags delimeter and parsing
