@@ -19,6 +19,8 @@ public class Source
 
     public int SourceId { get; set; }
 
+    public string Username { get; set; }
+
     public string Type { get; set; }
 
     public SourceType NoteType => (SourceType)Enum.Parse(typeof(SourceType), this.Type, true);
@@ -41,6 +43,7 @@ public class SourceConfiguration : IEntityTypeConfiguration<Source>
         builder.ToTable("Source");
         builder.HasKey(s => s.SourceId);
         builder.Property(s => s.SourceId).HasColumnName("source_id");
+        builder.Property(s => s.Username).HasColumnName("username");
         builder.Property(s => s.Type).HasColumnName("type");
         builder.Property(s => s.Name).HasColumnName("name");
         builder.Property(s => s.IsLink).HasColumnName("is_link");
