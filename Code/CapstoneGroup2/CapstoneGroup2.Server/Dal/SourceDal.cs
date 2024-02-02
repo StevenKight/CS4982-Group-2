@@ -35,28 +35,59 @@ public class SourceDal : IDbDal<Source>
             throw new ArgumentOutOfRangeException();
         }
 
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
         return this.context.Sources
-            .Find(sourceId) ?? throw new InvalidOperationException();
+            .Find(sourceId, username) ?? throw new InvalidOperationException();
     }
 
     public IEnumerable<Source> GetAll() // TODO: Only current user's sources
     {
-        return this.context.Sources;
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        return this.context.Sources.Where(x => x.Username.Equals(username));
     }
 
     public bool Add(Source entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        entity.Username = username;
+
+        this.context.Sources.Add(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Update(Source entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != username)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.Sources.Update(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Delete(Source entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != username)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.Sources.Remove(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     #endregion

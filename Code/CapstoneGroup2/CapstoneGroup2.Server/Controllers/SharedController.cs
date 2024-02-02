@@ -30,11 +30,82 @@ public class SharedController : ControllerBase
 
     #region Methods
 
-    // GET: <NotesController>
+    // GET: <SharedController>
     [HttpGet]
-    public IEnumerable<Shared> Get()
+    public IActionResult GetAll()
     {
-        return this.context.GetAll();
+        try
+        {
+            return Ok(this.context.GetAll());
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            this.logger.LogError(e, "Invalid token");
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // GET <SharedController>/5
+    [HttpGet("{id}")] // TODO: User actual key
+    public IActionResult GetById(int id)
+    {
+        try
+        {
+            return Ok(this.context.Get(id));
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            this.logger.LogError(e, "Invalid token");
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // POST <SharedController>
+    [HttpPost]
+    public IActionResult Create([FromBody] Shared shared)
+    {
+        try
+        {
+            this.context.Add(shared);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            this.logger.LogError(e, "Invalid token");
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // PUT <SharedController>/5
+    [HttpPut]
+    public IActionResult Update([FromBody] Shared shared)
+    {
+        try
+        {
+            this.context.Update(shared);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            this.logger.LogError(e, "Invalid token");
+            return Unauthorized("Invalid token");
+        }
+    }
+
+    // DELETE <SharedController>/5
+    [HttpDelete]
+    public IActionResult Delete([FromBody] Shared shared)
+    {
+        try
+        {
+            this.context.Delete(shared);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            this.logger.LogError(e, "Invalid token");
+            return Unauthorized("Invalid token");
+        }
     }
 
     #endregion

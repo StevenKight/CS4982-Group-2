@@ -1,5 +1,4 @@
-﻿using API.Controllers;
-using API.Model;
+﻿using API.Model;
 
 namespace API.Dal;
 
@@ -19,6 +18,8 @@ public class UserDal : IDbDal<User>
     }
 
     #endregion
+
+    #region Methods
 
     public User Get(params object?[]? keyValues)
     {
@@ -45,16 +46,21 @@ public class UserDal : IDbDal<User>
 
     public bool Add(User entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        this.context.Users.Add(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Update(User entity)
     {
-        throw new NotImplementedException();
+        throw new InvalidOperationException();
     }
 
     public bool Delete(User entity)
     {
-        throw new NotImplementedException();
+        throw new InvalidOperationException();
     }
+
+    #endregion
 }

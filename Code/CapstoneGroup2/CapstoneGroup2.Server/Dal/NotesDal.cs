@@ -36,7 +36,7 @@ public class NotesDal : IDbDal<Note>
             throw new ArgumentOutOfRangeException();
         }
 
-        var username = this.context.CurrentUser?.Username ?? throw new InvalidOperationException();
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         var note = this.context.Notes
             .Find(sourceId, username) ?? throw new InvalidOperationException();
@@ -48,10 +48,10 @@ public class NotesDal : IDbDal<Note>
 
     public IEnumerable<Note> GetAll()
     {
-        var username = this.context.CurrentUser?.Username ?? throw new InvalidOperationException();
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         var notes = this.context.Notes
-            .Where(note => note.Username == username);
+            .Where(note => note.Username.Equals(username));
 
         //Parallel.ForEach(notes, note => note.Source = this.sourceDal.Get(note.SourceId));
 
@@ -60,20 +60,45 @@ public class NotesDal : IDbDal<Note>
 
     public bool Add(Note entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        entity.Username = username;
+
+        this.context.Notes.Add(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Update(Note entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != username)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.Notes.Update(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Delete(Note entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != username)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.Notes.Remove(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     #endregion
-
-    //private readonly IDbDal<Source> sourceDal;
 }

@@ -39,7 +39,7 @@ public class SharedDal : IDbDal<Shared>
             throw new ArgumentOutOfRangeException();
         }
 
-        var sharedUsername = this.context.CurrentUser?.Username ?? throw new InvalidOperationException();
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         return this.context.SharedNotes
             .Find(sourceId, username, sharedUsername) ?? throw new InvalidOperationException();
@@ -47,7 +47,7 @@ public class SharedDal : IDbDal<Shared>
 
     public IEnumerable<Shared> GetAll()
     {
-        var sharedUsername = this.context.CurrentUser?.Username ?? throw new InvalidOperationException();
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         return this.context.SharedNotes
             .Where(x => x.Username.Equals(sharedUsername));
@@ -55,17 +55,44 @@ public class SharedDal : IDbDal<Shared>
 
     public bool Add(Shared entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        entity.Username = sharedUsername;
+
+        this.context.SharedNotes.Add(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Update(Shared entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != sharedUsername)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.SharedNotes.Update(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     public bool Delete(Shared entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != sharedUsername)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.SharedNotes.Remove(entity);
+        return this.context.SaveChanges() > 0;
     }
 
     #endregion

@@ -33,13 +33,7 @@ public class UserController : ControllerBase
 
     #region Methods
 
-    // GET: <NotesController>
-    [HttpGet]
-    public IEnumerable<User> Get()
-    {
-        return this.context.GetAll();
-    }
-
+    // GET: <UserController>
     [HttpGet]
     [Route("/login/{username}")]
     public IActionResult Login(string username)
@@ -70,6 +64,23 @@ public class UserController : ControllerBase
         user.Token = new JwtSecurityTokenHandler().WriteToken(token);
 
         return Ok(user);
+    }
+
+    // POST <NotesController>
+    [HttpPost]
+    [Route("/sign-up")]
+    public IActionResult AddUser([FromBody] User user)
+    {
+        try
+        {
+            this.context.Add(user);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            this.logger.LogError(e, "Invalid token");
+            return Unauthorized("Invalid token");
+        }
     }
 
     #endregion

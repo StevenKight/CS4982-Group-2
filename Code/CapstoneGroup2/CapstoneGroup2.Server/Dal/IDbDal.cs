@@ -2,6 +2,8 @@
 
 public interface IDbDal<T>
 {
+    #region Methods
+
     public T Get(params object?[]? keyValues);
 
     public IEnumerable<T> GetAll();
@@ -11,4 +13,6 @@ public interface IDbDal<T>
     public bool Update(T entity);
 
     public bool Delete(T entity);
+
+    #endregion
 }
