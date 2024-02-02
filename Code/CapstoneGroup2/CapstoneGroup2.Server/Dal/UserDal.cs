@@ -6,13 +6,13 @@ public class UserDal : IDbDal<User>
 {
     #region Data members
 
-    private readonly StudyApiDbContext context;
+    private readonly DocunotesDbContext context;
 
     #endregion
 
     #region Constructors
 
-    public UserDal(StudyApiDbContext context)
+    public UserDal(DocunotesDbContext context)
     {
         this.context = context;
     }

@@ -6,13 +6,13 @@ public class NotesDal : IDbDal<Note>
 {
     #region Data members
 
-    private readonly StudyApiDbContext context;
+    private readonly DocunotesDbContext context;
 
     #endregion
 
     #region Constructors
 
-    public NotesDal(StudyApiDbContext context) // , IDbDal<Source> sourceDal
+    public NotesDal(DocunotesDbContext context) // , IDbDal<Source> sourceDal
     {
         this.context = context;
         //this.sourceDal = sourceDal;

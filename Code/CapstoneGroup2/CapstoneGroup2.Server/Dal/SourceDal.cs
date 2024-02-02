@@ -6,13 +6,13 @@ public class SourceDal : IDbDal<Source>
 {
     #region Data members
 
-    private readonly StudyApiDbContext context;
+    private readonly DocunotesDbContext context;
 
     #endregion
 
     #region Constructors
 
-    public SourceDal(StudyApiDbContext context)
+    public SourceDal(DocunotesDbContext context)
     {
         this.context = context;
     }
@@ -21,7 +21,7 @@ public class SourceDal : IDbDal<Source>
 
     #region Methods
 
-    public Source Get(params object?[]? keyValues) // TODO: Only if current user has access
+    public Source Get(params object?[]? keyValues)
     {
         if (keyValues is not { Length: 1 } ||
             keyValues[0] == null || typeof(int) != keyValues[0]?.GetType())
@@ -37,11 +37,12 @@ public class SourceDal : IDbDal<Source>
 
         var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
-        return this.context.Sources
-            .Find(sourceId, username) ?? throw new InvalidOperationException();
+        var source = this.context.Sources.Find(sourceId) ?? throw new InvalidOperationException();
+
+        return username.Equals(source.Username) ? source : throw new UnauthorizedAccessException();
     }
 
-    public IEnumerable<Source> GetAll() // TODO: Only current user's sources
+    public IEnumerable<Source> GetAll()
     {
         var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 

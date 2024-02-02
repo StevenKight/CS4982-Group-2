@@ -14,7 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add db context with SQL Server
-builder.Services.AddDbContext<StudyApiDbContext>(options =>
+builder.Services.AddDbContext<DocunotesDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
@@ -55,7 +55,7 @@ app.Use(async (context, next) =>
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
         var username = jsonToken?.Claims.First(claim => claim.Type == "unique_name").Value;
-        var dbContext = context.RequestServices.GetRequiredService<StudyApiDbContext>();
+        var dbContext = context.RequestServices.GetRequiredService<DocunotesDbContext>();
         dbContext.CurrentUser = dbContext.Users.Find(username);
     }
 

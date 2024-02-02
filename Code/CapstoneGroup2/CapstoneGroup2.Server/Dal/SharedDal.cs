@@ -6,13 +6,13 @@ public class SharedDal : IDbDal<Shared>
 {
     #region Data members
 
-    private readonly StudyApiDbContext context;
+    private readonly DocunotesDbContext context;
 
     #endregion
 
     #region Constructors
 
-    public SharedDal(StudyApiDbContext context)
+    public SharedDal(DocunotesDbContext context)
     {
         this.context = context;
     }
@@ -23,10 +23,9 @@ public class SharedDal : IDbDal<Shared>
 
     public Shared Get(params object?[]? keyValues)
     {
-        if (keyValues is not { Length: 3 } ||
+        if (keyValues is not { Length: 2 } ||
             keyValues[0] == null || typeof(int) != keyValues[0]?.GetType() ||
-            keyValues[1] == null || typeof(string) != keyValues[1]?.GetType() ||
-            keyValues[2] == null || typeof(string) != keyValues[2]?.GetType())
+            keyValues[1] == null || typeof(string) != keyValues[1]?.GetType())
         {
             throw new InvalidCastException();
         }
@@ -50,7 +49,7 @@ public class SharedDal : IDbDal<Shared>
         var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         return this.context.SharedNotes
-            .Where(x => x.Username.Equals(sharedUsername));
+            .Where(x => x.SharedUsername.Equals(sharedUsername));
     }
 
     public bool Add(Shared entity)
@@ -59,7 +58,7 @@ public class SharedDal : IDbDal<Shared>
 
         var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
-        entity.Username = sharedUsername;
+        entity.SharedUsername = sharedUsername;
 
         this.context.SharedNotes.Add(entity);
         return this.context.SaveChanges() > 0;
@@ -71,7 +70,7 @@ public class SharedDal : IDbDal<Shared>
 
         var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
-        if (entity.Username != sharedUsername)
+        if (entity.SharedUsername != sharedUsername)
         {
             throw new UnauthorizedAccessException();
         }
@@ -86,7 +85,7 @@ public class SharedDal : IDbDal<Shared>
 
         var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
-        if (entity.Username != sharedUsername)
+        if (entity.SharedUsername != sharedUsername)
         {
             throw new UnauthorizedAccessException();
         }
