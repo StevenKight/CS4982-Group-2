@@ -1,11 +1,13 @@
-﻿using API.Dal;
+﻿using API.Controllers;
+using API.Dal;
 using API.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Tests.Dal;
+namespace API_Tests.Controllers;
 
 [TestFixture]
-public class SharedDalTests
+public class SharedControllerTests
 {
     #region Data members
 
@@ -24,6 +26,8 @@ public class SharedDalTests
     private DbContextOptions<DocunotesDbContext> _options;
     private DocunotesDbContext _context;
 
+    private SharedDal _sharedDal;
+
     #endregion
 
     #region Methods
@@ -38,8 +42,13 @@ public class SharedDalTests
         this._context = new DocunotesDbContext(this._options);
         this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
 
+        this._context.Database.EnsureDeleted();
+        this._context.Database.EnsureCreated();
+
         this._context.SharedNotes.AddRange(this._sharedNotes);
         this._context.SaveChanges();
+
+        this._sharedDal = new SharedDal(this._context);
     }
 
     [SetUp]
@@ -53,52 +62,35 @@ public class SharedDalTests
     public void ConstructorTest()
     {
         // Arrange
-        var sharedDal = new SharedDal(this._context);
+        var sharedController = new SharedController(this._sharedDal);
 
         // Assert
-        Assert.IsNotNull(sharedDal);
+        Assert.IsNotNull(sharedController);
     }
 
     [Test]
     [Order(2)]
-    public void GetSharedByIdTest()
+    public void GetAllTest()
     {
         // Arrange
-        var sharedDal = new SharedDal(this._context);
+        var sharedController = new SharedController(this._sharedDal);
 
         // Act
-        var result = sharedDal.Get(1, "testUser2");
-
-        var expected = this._sharedNotes[0];
-
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(expected.SourceId, result.SourceId);
-        Assert.AreEqual(expected.Username, result.Username);
-        Assert.AreEqual(expected.SharedUsername, result.SharedUsername);
-        Assert.AreEqual(expected.Comment, result.Comment);
-    }
-
-    [Test]
-    [Order(3)]
-    public void GetAllSharedTest()
-    {
-        // Arrange
-        var sharedDal = new SharedDal(this._context);
-
-        // Act
-        var result = sharedDal.GetAll();
+        var result = sharedController.GetAll() as OkObjectResult;
+        var resultList = result.Value as IEnumerable<Shared>;
 
         var expected = this._sharedNotes.Count();
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(expected, result.Count());
+        Assert.IsInstanceOf<OkObjectResult>(result);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(expected, resultList.Count());
 
         for (var i = 0; i < expected; i++)
         {
             var sharedNote = this._sharedNotes[i];
-            var actual = result.ElementAt(i);
+            var actual = resultList.ElementAt(i);
             Assert.AreEqual(sharedNote.SourceId, actual.SourceId);
             Assert.AreEqual(sharedNote.Username, actual.Username);
             Assert.AreEqual(sharedNote.SharedUsername, actual.SharedUsername);
@@ -107,11 +99,34 @@ public class SharedDalTests
     }
 
     [Test]
-    [Order(4)]
-    public void AddSharedTest()
+    [Order(3)]
+    public void GetByIdTest()
     {
         // Arrange
-        var sharedDal = new SharedDal(this._context);
+        var sharedController = new SharedController(this._sharedDal);
+
+        // Act
+        var result = sharedController.GetById(1, "testUser2") as OkObjectResult;
+        var resultObject = result.Value as Shared;
+
+        var expected = this._sharedNotes[0];
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkObjectResult>(result);
+        Assert.IsNotNull(resultObject);
+        Assert.AreEqual(expected.SourceId, resultObject.SourceId);
+        Assert.AreEqual(expected.Username, resultObject.Username);
+        Assert.AreEqual(expected.SharedUsername, resultObject.SharedUsername);
+        Assert.AreEqual(expected.Comment, resultObject.Comment);
+    }
+
+    [Test]
+    [Order(4)]
+    public void CreateTest()
+    {
+        // Arrange
+        var sharedController = new SharedController(this._sharedDal);
         var shared = new Shared
         {
             SourceId = 3,
@@ -121,23 +136,24 @@ public class SharedDalTests
         };
 
         // Act
-        var result = sharedDal.Add(shared);
+        var result = sharedController.Create(shared);
 
         this._sharedNotes.Add(shared);
         var expected = this._sharedNotes.Count();
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(expected, this._context.SharedNotes.Count());
         Assert.Contains(shared, this._context.SharedNotes.ToList());
     }
 
     [Test]
     [Order(5)]
-    public void UpdateSharedTest()
+    public void UpdateTest()
     {
         // Arrange
-        var sharedDal = new SharedDal(this._context);
+        var sharedController = new SharedController(this._sharedDal);
         var shared = new Shared
         {
             SourceId = 2,
@@ -147,14 +163,15 @@ public class SharedDalTests
         };
 
         // Act
-        var result = sharedDal.Update(shared);
+        var result = sharedController.Update(shared);
 
         this._sharedNotes.Add(shared);
         this._sharedNotes.Remove(this._sharedNotes[1]);
 
         // Assert
         var actual = this._context.SharedNotes.Find(2, "testUser2", "testUser");
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(shared.SourceId, actual.SourceId);
         Assert.AreEqual(shared.Username, actual.Username);
         Assert.AreEqual(shared.SharedUsername, actual.SharedUsername);
@@ -163,19 +180,20 @@ public class SharedDalTests
 
     [Test]
     [Order(6)]
-    public void DeleteSharedTest()
+    public void DeleteTest()
     {
         // Arrange
-        var sharedDal = new SharedDal(this._context);
+        var sharedController = new SharedController(this._sharedDal);
 
         // Act
-        var result = sharedDal.Delete(this._sharedNotes[0]);
+        var result = sharedController.Delete(this._sharedNotes[0]);
 
         this._sharedNotes.Remove(this._sharedNotes[0]);
         var expected = this._sharedNotes.Count();
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(expected, this._context.SharedNotes.Count());
 
         var sharedNotes = this._context.SharedNotes.ToList();

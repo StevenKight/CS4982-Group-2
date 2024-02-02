@@ -12,17 +12,14 @@ public class NotesController : ControllerBase
 {
     #region Data members
 
-    private readonly ILogger<NotesController> logger;
-
     private readonly IDbDal<Note> context;
 
     #endregion
 
     #region Constructors
 
-    public NotesController(ILogger<NotesController> logger, IDbDal<Note> context)
+    public NotesController(IDbDal<Note> context)
     {
-        this.logger = logger;
         this.context = context;
     }
 
@@ -40,22 +37,20 @@ public class NotesController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
 
     // GET <NotesController>/5
-    [HttpGet("{id}")] // TODO: User actual key
-    public IActionResult GetById(int id)
+    [HttpGet("{sourceId}")]
+    public IActionResult GetById(int sourceId)
     {
         try
         {
-            return Ok(this.context.Get(id));
+            return Ok(this.context.Get(sourceId));
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -71,7 +66,6 @@ public class NotesController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -87,7 +81,6 @@ public class NotesController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -103,7 +96,6 @@ public class NotesController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }

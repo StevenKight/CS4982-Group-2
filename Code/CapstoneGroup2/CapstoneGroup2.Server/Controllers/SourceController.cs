@@ -12,17 +12,14 @@ public class SourceController : ControllerBase
 {
     #region Data members
 
-    private readonly ILogger<SourceController> logger;
-
     private readonly IDbDal<Source> context;
 
     #endregion
 
     #region Constructors
 
-    public SourceController(ILogger<SourceController> logger, IDbDal<Source> context)
+    public SourceController(IDbDal<Source> context)
     {
-        this.logger = logger;
         this.context = context;
     }
 
@@ -40,22 +37,20 @@ public class SourceController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
 
     // GET <SourceController>/5
-    [HttpGet("{id}")] // TODO: User actual key
-    public IActionResult GetById(int id)
+    [HttpGet("{sourceId}")] // TODO: User actual key
+    public IActionResult GetById(int sourceId)
     {
         try
         {
-            return Ok(this.context.Get(id));
+            return Ok(this.context.Get(sourceId));
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -71,7 +66,6 @@ public class SourceController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -87,7 +81,6 @@ public class SourceController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -103,7 +96,6 @@ public class SourceController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }

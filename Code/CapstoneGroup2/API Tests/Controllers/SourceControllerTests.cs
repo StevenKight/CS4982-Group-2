@@ -1,11 +1,13 @@
-﻿using API.Dal;
+﻿using API.Controllers;
+using API.Dal;
 using API.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Tests.Dal;
+namespace API_Tests.Controllers;
 
 [TestFixture]
-public class SourceDalTests
+public class SourceControllerTests
 {
     #region Data members
 
@@ -24,6 +26,8 @@ public class SourceDalTests
     private DbContextOptions<DocunotesDbContext> _options;
     private DocunotesDbContext _context;
 
+    private SourceDal _sourceDal;
+
     #endregion
 
     #region Methods
@@ -38,8 +42,13 @@ public class SourceDalTests
         this._context = new DocunotesDbContext(this._options);
         this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
 
+        this._context.Database.EnsureDeleted();
+        this._context.Database.EnsureCreated();
+
         this._context.Sources.AddRange(this._sources);
         this._context.SaveChanges();
+
+        this._sourceDal = new SourceDal(this._context);
     }
 
     [SetUp]
@@ -53,48 +62,35 @@ public class SourceDalTests
     public void ConstructorTest()
     {
         // Arrange
-        var sourceDal = new SourceDal(this._context);
+        var sourceController = new SourceController(this._sourceDal);
 
         // Assert
-        Assert.IsNotNull(sourceDal);
+        Assert.IsNotNull(sourceController);
     }
 
     [Test]
     [Order(2)]
-    public void GetSourceByIdTest()
+    public void GetAllTest()
     {
         // Arrange
-        var sourceDal = new SourceDal(this._context);
+        var sourceController = new SourceController(this._sourceDal);
 
         // Act
-        var result = sourceDal.Get(1);
-
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.SourceId);
-        Assert.AreEqual("testSource", result.Name);
-    }
-
-    [Test]
-    [Order(3)]
-    public void GetAllSourceTest()
-    {
-        // Arrange
-        var sourceDal = new SourceDal(this._context);
-
-        // Act
-        var result = sourceDal.GetAll();
+        var result = sourceController.GetAll() as OkObjectResult;
+        var resultList = result.Value as IEnumerable<Source>;
 
         var expected = this._sources.Count();
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(expected, result.Count());
+        Assert.IsInstanceOf<OkObjectResult>(result);
+        Assert.IsNotNull(resultList);
+        Assert.AreEqual(expected, resultList.Count());
 
         for (var i = 0; i < expected; i++)
         {
             var source = this._sources[i];
-            var actual = result.ElementAt(i);
+            var actual = resultList.ElementAt(i);
             Assert.AreEqual(source.SourceId, actual.SourceId);
             Assert.AreEqual(source.Username, actual.Username);
             Assert.AreEqual(source.Type, actual.Type);
@@ -106,34 +102,59 @@ public class SourceDalTests
     }
 
     [Test]
-    [Order(4)]
-    public void AddSourceTest()
+    [Order(3)]
+    public void GetByIdTest()
     {
         // Arrange
-        var sourceDal = new SourceDal(this._context);
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetById(1) as OkObjectResult;
+        var resultObject = result.Value as Source;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkObjectResult>(result);
+        Assert.IsNotNull(resultObject);
+        Assert.AreEqual(1, resultObject.SourceId);
+        Assert.AreEqual("testSource", resultObject.Name);
+    }
+
+    [Test]
+    [Order(4)]
+    public void CreateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
         var source = new Source
         {
-            SourceId = 3, Name = "testSource3", IsLink = true, Link = "testUrl3", Type = "pdf", Username = "testUser"
+            SourceId = 3,
+            Name = "testSource3",
+            IsLink = true,
+            Link = "testUrl3",
+            Type = "pdf",
+            Username = "testUser"
         };
 
         // Act
-        var result = sourceDal.Add(source);
+        var result = sourceController.Create(source);
 
         this._sources.Add(source);
         var expected = this._sources.Count();
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(expected, this._context.Sources.Count());
         Assert.Contains(source, this._context.Sources.ToList());
     }
 
     [Test]
     [Order(5)]
-    public void UpdateSourceTest()
+    public void UpdateTest()
     {
         // Arrange
-        var sourceDal = new SourceDal(this._context);
+        var sourceController = new SourceController(this._sourceDal);
         var source = new Source
         {
             SourceId = 2,
@@ -145,14 +166,15 @@ public class SourceDalTests
         };
 
         // Act
-        var result = sourceDal.Update(source);
+        var result = sourceController.Update(source);
 
         this._sources.Add(source);
         this._sources.Remove(this._sources[1]);
 
         // Assert
         var actual = this._context.Sources.Find(2);
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(source.Name, actual.Name);
         Assert.AreEqual(source.Link, actual.Link);
         Assert.AreEqual(source.Type, actual.Type);
@@ -161,19 +183,20 @@ public class SourceDalTests
 
     [Test]
     [Order(6)]
-    public void DeleteSourceTest()
+    public void DeleteTest()
     {
         // Arrange
-        var sourceDal = new SourceDal(this._context);
+        var sourceController = new SourceController(this._sourceDal);
 
         // Act
-        var result = sourceDal.Delete(this._sources[0]);
+        var result = sourceController.Delete(this._sources[0]);
 
         this._sources.Remove(this._sources[0]);
         var expected = this._sources.Count();
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(expected, this._context.Sources.Count());
 
         var sources = this._context.Sources.ToList();

@@ -40,8 +40,10 @@ public class SharedDal : IDbDal<Shared>
 
         var sharedUsername = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
-        return this.context.SharedNotes
+        var shared = this.context.SharedNotes
             .Find(sourceId, username, sharedUsername) ?? throw new InvalidOperationException();
+
+        return shared;
     }
 
     public IEnumerable<Shared> GetAll()

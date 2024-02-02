@@ -12,17 +12,14 @@ public class SharedController : ControllerBase
 {
     #region Data members
 
-    private readonly ILogger<SharedController> logger;
-
     private readonly IDbDal<Shared> context;
 
     #endregion
 
     #region Constructors
 
-    public SharedController(ILogger<SharedController> logger, IDbDal<Shared> context)
+    public SharedController(IDbDal<Shared> context)
     {
-        this.logger = logger;
         this.context = context;
     }
 
@@ -40,22 +37,20 @@ public class SharedController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
 
     // GET <SharedController>/5
-    [HttpGet("{id}")] // TODO: User actual key
-    public IActionResult GetById(int id)
+    [HttpGet("{sourceId}-{username}")] // TODO: User actual key
+    public IActionResult GetById(int sourceId, string username)
     {
         try
         {
-            return Ok(this.context.Get(id));
+            return Ok(this.context.Get(sourceId, username));
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -71,7 +66,6 @@ public class SharedController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -87,7 +81,6 @@ public class SharedController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }
@@ -103,7 +96,6 @@ public class SharedController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            this.logger.LogError(e, "Invalid token");
             return Unauthorized("Invalid token");
         }
     }

@@ -31,6 +31,9 @@ public class UserDalTests
             .Options;
         this._context = new DocunotesDbContext(this._options);
 
+        this._context.Database.EnsureDeleted();
+        this._context.Database.EnsureCreated();
+
         this._context.Users.AddRange(this._users);
         this._context.SaveChanges();
     }

@@ -1,11 +1,13 @@
-﻿using API.Dal;
+﻿using API.Controllers;
+using API.Dal;
 using API.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Tests.Dal;
+namespace API_Tests.Controllers;
 
 [TestFixture]
-public class NotesDalTests
+public class NotesControllerTests
 {
     #region Data members
 
@@ -24,6 +26,8 @@ public class NotesDalTests
     private DbContextOptions<DocunotesDbContext> _options;
     private DocunotesDbContext _context;
 
+    private NotesDal _notesDal;
+
     #endregion
 
     #region Methods
@@ -38,8 +42,13 @@ public class NotesDalTests
         this._context = new DocunotesDbContext(this._options);
         this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
 
+        this._context.Database.EnsureDeleted();
+        this._context.Database.EnsureCreated();
+
         this._context.Notes.AddRange(this._notes);
         this._context.SaveChanges();
+
+        this._notesDal = new NotesDal(this._context);
     }
 
     [SetUp]
@@ -53,50 +62,35 @@ public class NotesDalTests
     public void ConstructorTest()
     {
         // Arrange
-        var noteDal = new NotesDal(this._context);
+        var notesController = new NotesController(this._notesDal);
 
         // Assert
-        Assert.IsNotNull(noteDal);
+        Assert.IsNotNull(notesController);
     }
 
     [Test]
     [Order(2)]
-    public void GetNoteByIdTest()
+    public void GetAllTest()
     {
         // Arrange
-        var noteDal = new NotesDal(this._context);
+        var notesController = new NotesController(this._notesDal);
 
         // Act
-        var result = noteDal.Get(1);
-
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.SourceId);
-        Assert.AreEqual("testUser", result.Username);
-        Assert.AreEqual("testNote", result.NoteText);
-        Assert.AreEqual("testTag1,testTag2", result.TagsString);
-    }
-
-    [Test]
-    [Order(3)]
-    public void GetAllNoteTest()
-    {
-        // Arrange
-        var noteDal = new NotesDal(this._context);
-
-        // Act
-        var result = noteDal.GetAll();
+        var result = notesController.GetAll() as OkObjectResult;
+        var resultList = result.Value as IEnumerable<Note>;
 
         var expected = this._notes.Count();
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(expected, result.Count());
+        Assert.IsInstanceOf<OkObjectResult>(result);
+        Assert.IsNotNull(resultList);
+        Assert.AreEqual(expected, resultList.Count());
 
         for (var i = 0; i < expected; i++)
         {
             var note = this._notes[i];
-            var actual = result.ElementAt(i);
+            var actual = resultList.ElementAt(i);
             Assert.AreEqual(note.SourceId, actual.SourceId);
             Assert.AreEqual(note.Username, actual.Username);
             Assert.AreEqual(note.NoteText, actual.NoteText);
@@ -105,11 +99,32 @@ public class NotesDalTests
     }
 
     [Test]
-    [Order(4)]
-    public void AddNoteTest()
+    [Order(3)]
+    public void GetByIdTest()
     {
         // Arrange
-        var noteDal = new NotesDal(this._context);
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetById(1) as OkObjectResult;
+        var resultObject = result.Value as Note;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkObjectResult>(result);
+        Assert.IsNotNull(resultObject);
+        Assert.AreEqual(1, resultObject.SourceId);
+        Assert.AreEqual("testUser", resultObject.Username);
+        Assert.AreEqual("testNote", resultObject.NoteText);
+        Assert.AreEqual("testTag1,testTag2", resultObject.TagsString);
+    }
+
+    [Test]
+    [Order(4)]
+    public void CreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
         var note = new Note
         {
             SourceId = 3,
@@ -119,23 +134,24 @@ public class NotesDalTests
         };
 
         // Act
-        var result = noteDal.Add(note);
+        var result = notesController.Create(note);
 
         this._notes.Add(note);
         var expected = this._notes.Count();
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(expected, this._context.Notes.Count());
         Assert.Contains(note, this._context.Notes.ToList());
     }
 
     [Test]
     [Order(5)]
-    public void UpdateNoteTest()
+    public void UpdateTest()
     {
         // Arrange
-        var noteDal = new NotesDal(this._context);
+        var notesController = new NotesController(this._notesDal);
         var note = new Note
         {
             SourceId = 2,
@@ -145,14 +161,15 @@ public class NotesDalTests
         };
 
         // Act
-        var result = noteDal.Update(note);
+        var result = notesController.Update(note);
 
         this._notes.Add(note);
         this._notes.Remove(this._notes[1]);
 
         // Assert
         var actual = this._context.Notes.Find(2, "testUser");
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(note.SourceId, actual.SourceId);
         Assert.AreEqual(note.Username, actual.Username);
         Assert.AreEqual(note.NoteText, actual.NoteText);
@@ -161,19 +178,20 @@ public class NotesDalTests
 
     [Test]
     [Order(6)]
-    public void DeleteNoteTest()
+    public void DeleteTest()
     {
         // Arrange
-        var noteDal = new NotesDal(this._context);
+        var notesController = new NotesController(this._notesDal);
 
         // Act
-        var result = noteDal.Delete(this._notes[0]);
+        var result = notesController.Delete(this._notes[0]);
 
         this._notes.Remove(this._notes[0]);
         var expected = this._notes.Count();
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(expected, this._context.Notes.Count());
 
         var notes = this._context.Notes.ToList();

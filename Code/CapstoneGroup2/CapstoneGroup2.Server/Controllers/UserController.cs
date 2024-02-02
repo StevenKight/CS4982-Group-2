@@ -15,17 +15,14 @@ public class UserController : ControllerBase
 {
     #region Data members
 
-    private readonly ILogger<UserController> logger;
-
     private readonly IDbDal<User> context;
 
     #endregion
 
     #region Constructors
 
-    public UserController(ILogger<UserController> logger, IDbDal<User> context)
+    public UserController(IDbDal<User> context)
     {
-        this.logger = logger;
         this.context = context;
     }
 
@@ -36,19 +33,29 @@ public class UserController : ControllerBase
     // GET: <UserController>
     [HttpGet]
     [Route("/login/{username}")]
-    public IActionResult Login(string username)
+    public IActionResult Login(string username, [FromBody] string password)
     {
         if (string.IsNullOrWhiteSpace(username))
         {
             return BadRequest();
         }
 
-        var user = this.context.Get(username);
-
-        if (user == null)
+        User user;
+        try
+        {
+            user = this.context.Get(username);
+        }
+        catch (InvalidOperationException e)
         {
             return NotFound();
         }
+
+        if (user.Password != password)
+        {
+            return Unauthorized();
+        }
+
+        user.Password = null;
 
         // Create token with "unique_name": "<USERNAME>"
         var token = new JwtSecurityToken(
@@ -76,10 +83,9 @@ public class UserController : ControllerBase
             this.context.Add(user);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            this.logger.LogError(e, "Invalid token");
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
