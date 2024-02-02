@@ -1,6 +1,0 @@
-@ASPREACTTEST.Server_HostAddress = http://localhost:5283
-
-GET {{ASPREACTTEST.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
