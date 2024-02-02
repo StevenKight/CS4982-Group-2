@@ -6,32 +6,38 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="using:Desktop_Client.Model"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Width="1000"
-    Height="900">
+    Width="1222"
+    Height="888">
 
 
-    <Grid>
-        <ProgressRing x:Name="progressControl" Height="50" Width="50" IsActive="True" Visibility="Visible"/>
-        <StackPanel Orientation="Horizontal">
-            <Grid Width="656">
-                <Grid x:Name="documentDisplay" Visibility="Collapsed">
-                    <ScrollViewer Width="600" Height="750" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto" 
-                                  ZoomMode="Enabled" MinZoomFactor="1">
-                        <Image x:Name="objectRender" AutomationProperties.Name="PDF document content" Stretch="None" Width="600" Height="750"/>
-                    </ScrollViewer>
-                </Grid>
-            </Grid>
-            <ListBox x:Name="notesListBox" ItemsSource="{x:Bind Notes}" Width="340">
-                <!--<ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="local:Note">
+    <Grid Background="Beige">
+        <ProgressRing x:Name="progressControl" Height="50" Width="50" IsActive="True" Visibility="Visible" HorizontalAlignment="Left" Margin="403,458,0,0" VerticalAlignment="Top"/>
+        <Button Name="NextPageButton" Click="NextPage_Click" Content="->" Margin="833,9,0,0" VerticalAlignment="Top" Height="32" RenderTransformOrigin="0.5,0.5">
+        </Button>
+        <Button Name="PreviousPageButton" Click="PreviousPage_Click"  Content="&lt;-" Margin="793,9,0,0" VerticalAlignment="Top" Height="32"/>
+        <ScrollViewer Background="Bisque" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto" 
+                              ZoomMode="Enabled" MinZoomFactor="1" Margin="10,58,435,31">
+
+            <Image x:Name="objectRender" AutomationProperties.Name="PDF document content" Stretch="None"/>
+        </ScrollViewer>
+        <ListBox x:Name="notesListBox" Margin="790,56,135,31" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" d:LayoutRounding="Auto">
+            <ListBox.RenderTransform>
+                <CompositeTransform ScaleX="-1" SkewY="-0.579" TranslateY="0.49"/>
+            </ListBox.RenderTransform>
+
+            <!--<ListBox.ItemTemplate>
+                    -->
+            <!--<DataTemplate x:DataType="local:Note">
                         <StackPanel> 
                             <TextBlock Text="{x:Bind Username}" FontSize="16" />
                             <TextBlock Text="{x:Bind NoteText}" FontSize="14" />
                             <TextBlock Text="{x:Bind TagsString}" FontSize="12" />
                         </StackPanel>
-                    </DataTemplate>
+                    </DataTemplate>-->
+            <!--
                 </ListBox.ItemTemplate>-->
-            </ListBox>
-        </StackPanel>
+
+        </ListBox>
+        <Button Content="Load" Click="loadDocument" Margin="12,9,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Page>

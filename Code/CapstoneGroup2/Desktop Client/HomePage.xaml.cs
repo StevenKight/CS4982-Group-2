@@ -1,8 +1,10 @@
 ﻿using Desktop_Client.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -23,14 +25,50 @@ namespace Desktop_Client
     /// </summary>
     public sealed partial class HomePage : Page
     {
-        private List<Note> notes;
+        private ObservableCollection<Source> sources;
+        private ViewModel.ViewModel _userViewModel;
+
         public HomePage()
         {
             this.InitializeComponent();
-            this.notes = new List<Note>();
-            foreach (var note in notes)
+            this.sources = new ObservableCollection<Source>();
+            var source1 = new Source();
+            source1.IsLink = false;
+            source1.Link = "";
+            source1.Name = "Test Source";
+            source1.SourceId = 1;
+            source1.Type = "Pdf";
+            var source2 = new Source();
+            source2.IsLink = false;
+            source2.Link = "";
+            source2.Name = "Test Source";
+            source2.SourceId = 1;
+            source2.Type = "Pdf";
+            sources.Add(source1);
+            sources.Add(source2);
+            this.RecentNotesListView.ItemsSource = this.sources;
+        }
+
+        private void RecentNotesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Handle selection changes if needed
+            object selectedItem = e.AddedItems.FirstOrDefault();
+
+            if (selectedItem != null)
             {
-                this.GridView
+                Source source = (Source)selectedItem;
+                _userViewModel.CurrentSource = source;
+                Frame.Navigate(typeof(MainPage), this._userViewModel);
+            }
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is ViewModel.ViewModel userViewModel)
+            {
+                _userViewModel = userViewModel;
+
             }
         }
     }

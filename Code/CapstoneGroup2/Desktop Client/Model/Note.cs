@@ -15,6 +15,6 @@ namespace Desktop_Client.Model
 
         public List<string> Tags => TagsString.Split(",").ToList();
 
-        //public Source Source { get; set; }
+        public Source Source { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 using Desktop_Client.Dal;
 using Desktop_Client.Model;
 
@@ -25,10 +26,13 @@ namespace Desktop_Client
         #region Data members
 
         private PdfDocument pdfDocument;
+        private ViewModel.ViewModel _userViewModel;
 
         private List<UserNote> userNotes;
 
         private List<Note> Notes;
+
+        private int currentPageNumber;
 
         #endregion
 
@@ -43,6 +47,7 @@ namespace Desktop_Client
             note.SourceId = 3;
             note.NoteText = "Wubba";
             this.Notes.Add(note);
+            this.currentPageNumber = 0;
             //this.loadNotes();
         }
 
@@ -88,101 +93,136 @@ namespace Desktop_Client
         //    }
         //}
 
-        //private async void loadDocument(object sender, RoutedEventArgs args)
-        //{
-        //    this.documentsListView.SelectedItem = null;
+        private async void loadDocument(object sender, RoutedEventArgs args)
+        {
 
-        //    this.progressControl.Visibility = Visibility.Visible;
+            this.progressControl.Visibility = Visibility.Visible;
 
-        //    var picker = new FileOpenPicker();
-        //    picker.FileTypeFilter.Add(".pdf");
-        //    var file = await picker.PickSingleFileAsync();
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".pdf");
+            var file = await picker.PickSingleFileAsync();
 
-        //    this.gatherDocument(file);
+            this.gatherDocument(file);
 
-        //    this.progressControl.Visibility = Visibility.Collapsed;
-        //}
+            this.progressControl.Visibility = Visibility.Collapsed;
+        }
 
-        //private async void gatherDocument(IStorageFile file)
-        //{
-        //    this.webPlayer.Navigate(new Uri("about:blank"));
-        //    this.mediaPlayer.Source = null;
+        private async void gatherDocument(IStorageFile file)
+        {
+            if (file != null)
+            {
+                this.pdfDocument = null;
+                this.objectRender.Source = null;
 
-        //    this.videoDisplay.Visibility = Visibility.Collapsed;
-        //    this.videoOptions.Visibility = Visibility.Collapsed;
+                try
+                {
+                    this.pdfDocument = await PdfDocument.LoadFromFileAsync(file);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
 
-        //    if (file != null)
-        //    {
-        //        this.pdfDocument = null;
-        //        this.objectRender.Source = null;
+                if (this.pdfDocument != null)
+                {
+                    if (this.pdfDocument.IsPasswordProtected)
+                    {
+                        Console.WriteLine("Pdf is Password Protected");
+                    }
+                }
 
-        //        try
-        //        {
-        //            this.pdfDocument = await PdfDocument.LoadFromFileAsync(file);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine(ex.ToString());
-        //        }
+                //this.pageSelector.SelectedIndex = 0;
+                //this.documentOptions.Visibility = Visibility.Visible;
+                //this.documentDisplay.Visibility = Visibility.Visible;
 
-        //        if (this.pdfDocument != null)
-        //        {
-        //            if (this.pdfDocument.IsPasswordProtected)
-        //            {
-        //                Console.WriteLine("Pdf is Password Protected");
-        //            }
+                //this.viewPage(null, null);
+            }
+        }
 
-        //            this.pageSelector.Items?.Clear();
-        //            var pageCount = this.pdfDocument.PageCount;
-        //            for (uint i = 0; i < pageCount; i++)
-        //            {
-        //                this.pageSelector.Items?.Add(i + 1);
-        //            }
-        //        }
+            private async void viewPage(object sender, SelectionChangedEventArgs e)
+            {
+                //rootPage.NotifyUser("", NotifyType.StatusMessage);
 
-        //        this.pageSelector.SelectedIndex = 0;
-        //        this.documentOptions.Visibility = Visibility.Visible;
-        //        this.documentDisplay.Visibility = Visibility.Visible;
 
-        //        this.viewPage(null, null);
-        //    }
-        //}
+                this.objectRender.Source = null;
+                this.progressControl.Visibility = Visibility.Visible;
 
-        //private async void viewPage(object sender, SelectionChangedEventArgs e)
-        //{
-        //    //rootPage.NotifyUser("", NotifyType.StatusMessage);
+               
+                var pageIndex = this.currentPageNumber - 1;
 
-        //    if (this.pageSelector.SelectedItem == null)
-        //    {
-        //        Console.WriteLine("Please select a page.");
-        //        return;
-        //    }
+                using (var page = this.pdfDocument.GetPage((uint)pageIndex))
+                {
+                    var stream = new InMemoryRandomAccessStream();
 
-        //    this.objectRender.Source = null;
-        //    this.progressControl.Visibility = Visibility.Visible;
+                    var options1 = new PdfPageRenderOptions
+                    {
+                        DestinationHeight = (uint)this.objectRender.Height
+                    };
 
-        //    // Convert from 1-based page number to 0-based page index.
-        //    var pageNumber = Convert.ToUInt32(this.pageSelector.SelectedItem);
-        //    var pageIndex = pageNumber - 1;
+                    await page.RenderToStreamAsync(stream, options1);
 
-        //    using (var page = this.pdfDocument.GetPage(pageIndex))
-        //    {
-        //        var stream = new InMemoryRandomAccessStream();
+                    var src = new BitmapImage();
+                    this.objectRender.Source = src;
+                    await src.SetSourceAsync(stream);
+                }
 
-        //        var options1 = new PdfPageRenderOptions
-        //        {
-        //            DestinationHeight = (uint)this.objectRender.Height
-        //        };
+                this.progressControl.Visibility = Visibility.Collapsed;
+            }
 
-        //        await page.RenderToStreamAsync(stream, options1);
+            private async void UpdatePage()
+            {
+            this.objectRender.Source = null;
+            this.progressControl.Visibility = Visibility.Visible;
 
-        //        var src = new BitmapImage();
-        //        this.objectRender.Source = src;
-        //        await src.SetSourceAsync(stream);
-        //    }
 
-        //    this.progressControl.Visibility = Visibility.Collapsed;
-        //}
+            var pageIndex = this.currentPageNumber;
+
+            using (var page = this.pdfDocument.GetPage((uint)pageIndex))
+            {
+                var stream = new InMemoryRandomAccessStream();
+
+                var options1 = new PdfPageRenderOptions
+                {
+                    DestinationHeight = (uint)this.objectRender.Height
+                };
+
+                await page.RenderToStreamAsync(stream, options1);
+
+                var src = new BitmapImage();
+                this.objectRender.Source = src;
+                await src.SetSourceAsync(stream);
+            }
+
+            this.progressControl.Visibility = Visibility.Collapsed;
+        }
+
+        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+            {
+                if (currentPageNumber > 0)
+                {
+                    this.currentPageNumber--;
+                    this.UpdatePage();
+                }
+            }
+
+            private void NextPage_Click(object sender, RoutedEventArgs e)
+            {
+                if (pdfDocument != null && this.currentPageNumber < pdfDocument.PageCount - 1)
+                {
+                    this.currentPageNumber++;
+                    this.UpdatePage();
+                }
+            }
+            protected override void OnNavigatedTo(NavigationEventArgs e)
+            {
+                base.OnNavigatedTo(e);
+
+                if (e.Parameter is ViewModel.ViewModel userViewModel)
+                {
+                    this._userViewModel = userViewModel;
+
+                }
+            }
 
         //private void loadVideo(object sender, RoutedEventArgs args)
         //{

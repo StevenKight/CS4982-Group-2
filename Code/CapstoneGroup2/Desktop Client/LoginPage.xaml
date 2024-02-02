@@ -8,13 +8,15 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <TextBox  HorizontalAlignment="Center" Margin="0,540,0,0" TextWrapping="Wrap" PlaceholderText="Username" VerticalAlignment="Top" Height="68" Width="434" FontSize="40"/>
-        <TextBox Name="PasswordTextBox"  HorizontalAlignment="Center" Margin="0,664,0,0" TextWrapping="Wrap" PlaceholderText="Password" VerticalAlignment="Top" Height="68" Width="434" FontSize="40"/>
-        <Button Name="LoginButton" Content="Login" Margin="0,793,0,0" VerticalAlignment="Top" Height="75" Width="246" HorizontalAlignment="Center" FontSize="40"/>
+    <Grid Background="Beige">
+        <TextBox Background="AliceBlue" Name="UsernameTextBox"  HorizontalAlignment="Center" Margin="0,452,0,0" TextWrapping="Wrap" PlaceholderText="Username" VerticalAlignment="Top" Height="64" Width="317" FontSize="30"/>
+        <TextBox Background="AliceBlue" Name="PasswordTextBox"  HorizontalAlignment="Center" Margin="0,558,0,0" TextWrapping="Wrap" PlaceholderText="Password" VerticalAlignment="Top" Height="64" Width="317" FontSize="30"/>
+        <Button Background="AliceBlue" Name="LoginButton" Content="Login" Margin="0,697,0,0" VerticalAlignment="Top" Height="53" Width="174" HorizontalAlignment="Center" FontSize="25" Click="LoginButton_Click"/>
         <TextBlock Name="ErrorTextBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="30" Visibility="Collapsed"/>
-        <TextBlock Name="BrandingTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Welcome to DocuNotes" VerticalAlignment="Top" FontSize="75" Margin="723,256,0,0" MaxWidth="400" Height="228" Width="440"/>
-        <Button x:Name="CreateButton" Content="Create" Margin="0,931,0,0" VerticalAlignment="Top" Height="75" Width="246" HorizontalAlignment="Center" FontSize="40"/>
+        <TextBlock Name="BrandingTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Welcome to DocuNotes" VerticalAlignment="Top" FontSize="40" Margin="836,260,0,0" MaxWidth="400" Height="228" Width="440"/>
+        <Button Background="MintCream"  x:Name="CreateButton" Content="Create" Margin="0,817,0,0" VerticalAlignment="Top" Height="53" Width="174" HorizontalAlignment="Center" FontSize="25"/>
+        <TextBlock x:Name="BrandingTextBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Or" VerticalAlignment="Top" FontSize="20
+                   " Margin="949,775,0,0" MaxWidth="400" Height="50" Width="40"/>
 
     </Grid>
 </Page>

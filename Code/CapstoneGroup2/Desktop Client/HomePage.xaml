@@ -9,12 +9,12 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <Button Content="Home" VerticalAlignment="Top" Width="380" Height="85" FontSize="30"/>
-        <Button Content="My Notes" Margin="380,0,0,0" VerticalAlignment="Top"  Width="380" Height="85" FontSize="30"/>
-        <Button Content="Shared Notes" Margin="760,0,0,0" VerticalAlignment="Top" Width="380" Height="85" FontSize="30"/>
+    <Grid Background="Beige">
+        <Button Background="Bisque" Content="Home" VerticalAlignment="Top" Width="380" Height="85" FontSize="30"/>
+        <Button Background="Bisque" Content="My Notes" Margin="380,0,0,0" VerticalAlignment="Top"  Width="380" Height="85" FontSize="30"/>
+        <Button Background="Bisque" Content="Shared Notes" Margin="760,0,0,0" VerticalAlignment="Top" Width="380" Height="85" FontSize="30"/>
         <TextBlock HorizontalAlignment="Left" Margin="36,90,0,0" TextWrapping="Wrap" Text="Recent Notes:" VerticalAlignment="Top" FontSize="35"/>
-        <ListView ></ListView>
+        <ListView Name="RecentNotesListView" SelectionChanged="RecentNotesListView_SelectionChanged"  Margin="36,142,40,592"/>
 
 
 

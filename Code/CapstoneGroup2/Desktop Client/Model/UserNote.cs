@@ -1,4 +1,6 @@
-﻿namespace Desktop_Client.Model
+﻿using System;
+
+namespace Desktop_Client.Model
 {
     public enum NoteType
     {
@@ -16,9 +18,12 @@
 
         public int Id { get; set; }
 
-        public string ObjectLink { get; set; }
 
-        public NoteType NoteType { get; set; }
+        public string Note { get; set; }
+
+        public string Type { get; set; }
+
+        public NoteType NoteType => (NoteType)Enum.Parse(typeof(NoteType), this.Type, true);
 
         #endregion
     }

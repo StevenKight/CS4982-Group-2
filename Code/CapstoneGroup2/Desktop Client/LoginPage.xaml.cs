@@ -22,9 +22,46 @@ namespace Desktop_Client
     /// </summary>
     public sealed partial class LoginPage : Page
     {
+        private ViewModel.ViewModel _viewModel;
+        private string _username;
+        private string _password;
+        public string Username
+        {
+            get { return _username; }
+            set
+            {
+                if (_username != value)
+                {
+                    _username = value;
+                    this.UsernameTextBox.Text = value;
+                }
+            }
+        }
+        public string Password
+        {
+            get { return _password; }
+            set
+            {
+                if (_password != value)
+                {
+                    _password = value;
+                    this.PasswordTextBox.Text = value;
+                }
+            }
+        }
         public LoginPage()
         {
+            this._viewModel = new ViewModel.ViewModel();
             this.InitializeComponent();
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this._viewModel.Login(this.Username, this.Password))
+            {
+                Frame.Navigate(typeof(HomePage), this._viewModel);
+            }
+           
         }
     }
 }
