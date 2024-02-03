@@ -1,35 +1,35 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import PostAuthorize from './pages/PostAuthorize';
-
-import './App.css';
+import Dashboard from './pages/Dashboard';
+import NavigationBar from './components/NavigationBar';
 
 function App() {
+    const [auth, setAuth] = useState<boolean>(false);
 
-    const [auth, setAuth] = useState<boolean>(false); // TODO: check auth
-    
-    function checkAuth() {
-        return auth; // TODO: check auth
-    }
-
-    function mockLogin(): void {
+    const handleLogin = () => {
         setAuth(true);
-    }
+    };
 
-    function mockLogout(): void {
+    const handleLogout = () => {
         setAuth(false);
-    }
+    };
+
+    const handleRegister = () => {
+        setAuth(true);
+    };
 
     return (
         <div>
             <BrowserRouter>
+                {auth && <NavigationBar onLogout={handleLogout} />} {/* Render NavigationBar only when authenticated */}
                 <Routes>
-                    { 
-                        checkAuth() ? 
-                            <Route path="*" index element={<PostAuthorize onLogout={mockLogout} />} /> :
-                            <Route path="*" element={<button onClick={mockLogin}>Login</button>} /> /* TODO: Make login page */
-                    }
+                    <Route path="/" element={<Login onLogin={handleLogin} />} />
+                    <Route path="/register" element={<Register onRegister={handleRegister} />} />
+                    <Route path="/postauthorize" element={auth ? <PostAuthorize onLogout={handleLogout} /> : null} />
+                    <Route path="/dashboard" element={auth ? <Dashboard /> : null} />
                 </Routes>
             </BrowserRouter>
         </div>
