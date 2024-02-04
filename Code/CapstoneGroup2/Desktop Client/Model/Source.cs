@@ -25,5 +25,10 @@ namespace Desktop_Client.Model
         public bool IsLink { get; set; }
 
         public string Link { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
