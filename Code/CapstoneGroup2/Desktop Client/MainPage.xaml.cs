@@ -82,18 +82,14 @@ namespace Desktop_Client
             {
                 var note = this.Notes[i];
 
-                // Create a new TextBox
                 var textBox = new TextBox();
                 textBox.Name = $"noteTextBox{i}";
                 textBox.Text = note.NoteText;
 
-                // Use the Tag property to store a reference to the corresponding note
                 textBox.Tag = note;
 
-                // Wire up the TextChanged event to a common event handler
                 textBox.KeyDown += NoteTextBox_KeyDown;
 
-                // Add the TextBox to the notesListBox
                 this.notesListBox.Items?.Add(textBox);
             }
             
@@ -105,15 +101,11 @@ namespace Desktop_Client
         {
             if (e.Key == VirtualKey.Enter)
             {
-                // Extract the TextBox and the corresponding note
                 TextBox textBox = (TextBox)sender;
                 Note correspondingNote = (Note)textBox.Tag;
 
-                // Access the updated text using textBox.Text
                 string updatedText = textBox.Text;
 
-                // Now you can work with the correspondingNote and the updated text as needed
-                // For example, update the Note object with the new text
                 correspondingNote.NoteText = updatedText;
                 if (correspondingNote.NoteText.Equals(""))
                 {
