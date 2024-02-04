@@ -7,12 +7,15 @@ using Windows.Media.Core;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Desktop_Client.Dal;
 using Desktop_Client.Model;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Input;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -34,6 +37,16 @@ namespace Desktop_Client
 
         private int currentPageNumber;
 
+        private Note currentNote
+        {
+            get { return currentNote;}
+            set
+            {
+                //handle empty note
+                //update note to new text
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -47,99 +60,154 @@ namespace Desktop_Client
             note.SourceId = 3;
             note.NoteText = "Wubba";
             this.Notes.Add(note);
+            this.LoadNotes();
             this.currentPageNumber = 0;
-            //this.loadNotes();
         }
 
         #endregion
 
         #region Methods
 
-        //private async void loadNotes()
-        //{
-        //    this.progressControl.Visibility = Visibility.Visible;
-
-        //    this.userNotes = await NotesDal.GetUsersNotesAsync();
-        //    this.documentsListView.ItemsSource = this.userNotes;
-
-        //    this.progressControl.Visibility = Visibility.Collapsed;
-        //}
-
-        //private void documentsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    var selectedNote = (UserNote)this.documentsListView.SelectedItem;
-
-        //    if (selectedNote == null)
-        //    {
-        //        return;
-        //    }
-
-        //    this.documentOptions.Visibility = Visibility.Collapsed;
-        //    this.videoOptions.Visibility = Visibility.Collapsed;
-
-        //    this.progressControl.Visibility = Visibility.Visible;
-
-        //    switch (selectedNote.NoteType)
-        //    {
-        //        case NoteType.Pdf:
-        //            Console.WriteLine("Pdf");
-        //            break;
-        //        case NoteType.Vid:
-        //            this.videoUrl.Text = selectedNote.ObjectLink;
-        //            this.renderVideo(sender, e);
-        //            break;
-        //        default:
-        //            throw new ArgumentOutOfRangeException();
-        //    }
-        //}
-
-        private async void loadDocument(object sender, RoutedEventArgs args)
+        private async void LoadNotes()
         {
-
             this.progressControl.Visibility = Visibility.Visible;
+            this.notesListBox.Items.Clear();
+            //this.userNotes = await NotesDal.GetUsersNotesAsync();
+            //this.notesListBox.ItemsSource = this.userNotes;
+            var emptyNote = new Note();
+            emptyNote.Username = "";
+            emptyNote.NoteText = "";
+            this.Notes.Add(emptyNote);
+            for (int i = 0; i < this.Notes.Count; i++)
+            {
+                var note = this.Notes[i];
 
-            var picker = new FileOpenPicker();
-            picker.FileTypeFilter.Add(".pdf");
-            var file = await picker.PickSingleFileAsync();
+                // Create a new TextBox
+                var textBox = new TextBox();
+                textBox.Name = $"noteTextBox{i}";
+                textBox.Text = note.NoteText;
 
-            this.gatherDocument(file);
+                // Use the Tag property to store a reference to the corresponding note
+                textBox.Tag = note;
+
+                // Wire up the TextChanged event to a common event handler
+                textBox.KeyDown += NoteTextBox_KeyDown;
+
+                // Add the TextBox to the notesListBox
+                this.notesListBox.Items?.Add(textBox);
+            }
+            
 
             this.progressControl.Visibility = Visibility.Collapsed;
-        }
+            }
 
-        private async void gatherDocument(IStorageFile file)
+        private void NoteTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (file != null)
+            if (e.Key == VirtualKey.Enter)
             {
-                this.pdfDocument = null;
-                this.objectRender.Source = null;
+                // Extract the TextBox and the corresponding note
+                TextBox textBox = (TextBox)sender;
+                Note correspondingNote = (Note)textBox.Tag;
 
-                try
+                // Access the updated text using textBox.Text
+                string updatedText = textBox.Text;
+
+                // Now you can work with the correspondingNote and the updated text as needed
+                // For example, update the Note object with the new text
+                correspondingNote.NoteText = updatedText;
+                if (correspondingNote.NoteText.Equals(""))
                 {
-                    this.pdfDocument = await PdfDocument.LoadFromFileAsync(file);
+                    //this.DeleteNote(correspondingNote);
                 }
-                catch (Exception ex)
+                else if (correspondingNote.Username == null)
                 {
-                    Console.WriteLine(ex.ToString());
-                }
 
-                if (this.pdfDocument != null)
+                    correspondingNote.Username = this._userViewModel.CurrentUser.Username;
+                    var emptyNote = new Note();
+                    emptyNote.NoteText = "";
+                    this.Notes.Add(emptyNote);
+                    this._userViewModel.CreateNewNote(correspondingNote.NoteText);
+                }
+                else
                 {
-                    if (this.pdfDocument.IsPasswordProtected)
-                    {
-                        Console.WriteLine("Pdf is Password Protected");
-                    }
+                    //this._userViewModel.updateNote(correspondingNote);
                 }
 
-                //this.pageSelector.SelectedIndex = 0;
-                //this.documentOptions.Visibility = Visibility.Visible;
-                //this.documentDisplay.Visibility = Visibility.Visible;
-
-                //this.viewPage(null, null);
+                this.LoadNotes();
             }
         }
 
-            private async void viewPage(object sender, SelectionChangedEventArgs e)
+        private async void DeleteNote(Note note)
+        {
+            await this._userViewModel.DeleteNote(note);
+        }
+
+        private void notesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+            {
+                var selectedNote = (UserNote)this.notesListBox.SelectedItem;
+
+                if (selectedNote == null)
+                {
+                    return;
+                }
+
+                this.progressControl.Visibility = Visibility.Visible;
+
+                switch (selectedNote.NoteType)
+                {
+                    case NoteType.Pdf:
+                        Console.WriteLine("Pdf");
+                        break;
+                    case NoteType.Vid:
+                        //this.videoUrl.Text = selectedNote.ObjectLink;
+                        //this.renderVideo(sender, e);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            private async void LoadDocument(object sender, RoutedEventArgs args)
+            {
+
+                this.progressControl.Visibility = Visibility.Visible;
+
+                var picker = new FileOpenPicker();
+                picker.FileTypeFilter.Add(".pdf");
+                var file = await picker.PickSingleFileAsync();
+
+                this.GatherDocument(file);
+
+                this.progressControl.Visibility = Visibility.Collapsed;
+            }
+
+            private async void GatherDocument(IStorageFile file)
+            {
+                if (file != null)
+                {
+                    this.pdfDocument = null;
+                    this.objectRender.Source = null;
+
+                    try
+                    {
+                        this.pdfDocument = await PdfDocument.LoadFromFileAsync(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+
+                    if (this.pdfDocument != null)
+                    {
+                        if (this.pdfDocument.IsPasswordProtected)
+                        {
+                            Console.WriteLine("Pdf is Password Protected");
+                        }
+                    }
+                }
+            }
+
+            private async void ViewPage(object sender, SelectionChangedEventArgs e)
             {
                 //rootPage.NotifyUser("", NotifyType.StatusMessage);
 
@@ -171,32 +239,32 @@ namespace Desktop_Client
 
             private async void UpdatePage()
             {
-            this.objectRender.Source = null;
-            this.progressControl.Visibility = Visibility.Visible;
+                this.objectRender.Source = null;
+                this.progressControl.Visibility = Visibility.Visible;
 
 
-            var pageIndex = this.currentPageNumber;
+                var pageIndex = this.currentPageNumber;
 
-            using (var page = this.pdfDocument.GetPage((uint)pageIndex))
-            {
-                var stream = new InMemoryRandomAccessStream();
-
-                var options1 = new PdfPageRenderOptions
+                using (var page = this.pdfDocument.GetPage((uint)pageIndex))
                 {
-                    DestinationHeight = (uint)this.objectRender.Height
-                };
+                    var stream = new InMemoryRandomAccessStream();
 
-                await page.RenderToStreamAsync(stream, options1);
+                    var options1 = new PdfPageRenderOptions
+                    {
+                        DestinationHeight = (uint)this.objectRender.Height
+                    };
 
-                var src = new BitmapImage();
-                this.objectRender.Source = src;
-                await src.SetSourceAsync(stream);
+                    await page.RenderToStreamAsync(stream, options1);
+
+                    var src = new BitmapImage();
+                    this.objectRender.Source = src;
+                    await src.SetSourceAsync(stream);
+                }
+
+                this.progressControl.Visibility = Visibility.Collapsed;
             }
 
-            this.progressControl.Visibility = Visibility.Collapsed;
-        }
-
-        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+            private void PreviousPage_Click(object sender, RoutedEventArgs e)
             {
                 if (currentPageNumber > 0)
                 {
@@ -213,7 +281,9 @@ namespace Desktop_Client
                     this.UpdatePage();
                 }
             }
-            protected override void OnNavigatedTo(NavigationEventArgs e)
+
+            
+        protected override void OnNavigatedTo(NavigationEventArgs e)
             {
                 base.OnNavigatedTo(e);
 

@@ -55,13 +55,18 @@ namespace Desktop_Client
             this.InitializeComponent();
         }
 
+        private async void Login()
+        {
+            //if (await this._viewModel.Login(this.Username, this.Password))
+            //{
+            //    Frame.Navigate(typeof(HomePage), this._viewModel);
+            //}
+            Frame.Navigate(typeof(HomePage), this._viewModel);
+        }
+
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this._viewModel.Login(this.Username, this.Password))
-            {
-                Frame.Navigate(typeof(HomePage), this._viewModel);
-            }
-           
+            this.Login();
         }
     }
 }
