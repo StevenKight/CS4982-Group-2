@@ -11,11 +11,22 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        const isValidUser = true;
-        if (isValidUser) {
+    const handleLogin = async () => {
+
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        });
+        const data = await response.json();
+
+        if (data.token) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('username', username);
             onLogin();
-            navigate('/postauthorize');
+            navigate('/');
         } else {
             alert('Invalid username or password');
         }

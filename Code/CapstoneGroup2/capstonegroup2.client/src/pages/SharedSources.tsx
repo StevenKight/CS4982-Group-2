@@ -2,21 +2,28 @@ import React from 'react';
 import SharedSourcesList from '../components/SharedSourcesList';
 import { Source } from '../interfaces/Source';
 
-interface SharedSourcesProps {
-    sharedSources: Source[];
-}
+const SharedSources: React.FC = ({}) => {
 
-const SharedSources: React.FC<SharedSourcesProps> = ({ sharedSources }) => {
+    const [sources, setSources] = React.useState<Source[]>([]);
+
+    React.useEffect(() => {
+        fetch('/shared/' + localStorage.getItem('username'))
+            .then((res) => res.json())
+            .then((data) => {
+                setSources(data);
+            });
+    }, []);
+
     return (
         <div className='page-content'>
             <div style={{ display: 'flex' }}>
                 <h1>Docunotes - Shared Sources</h1>
             </div>
-            {sharedSources.length > 0 ? (
-                <SharedSourcesList sharedSources={sharedSources} />
-            ) : (
-                <p>No shared sources available.</p>
-            )}
+            {
+                sources.length > 0 ? 
+                    <SharedSourcesList sharedSources={sources} /> : 
+                    <p>No shared sources available.</p>
+            }
         </div>
     );
 };

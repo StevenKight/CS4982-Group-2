@@ -28,9 +28,16 @@ public class SourceController : ControllerBase
     #region Methods
 
     // GET: <SourceController>
-    [HttpGet]
-    public IActionResult GetAll()
+    [HttpGet("{username}")]
+    public IActionResult GetAll(string username)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             return Ok(this.context.GetAll());
@@ -42,9 +49,16 @@ public class SourceController : ControllerBase
     }
 
     // GET <SourceController>/5
-    [HttpGet("{sourceId}")]
-    public IActionResult GetById(int sourceId)
+    [HttpGet("{sourceId}-{username}")]
+    public IActionResult GetById(int sourceId, string username)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             return Ok(this.context.Get(sourceId));
@@ -56,9 +70,16 @@ public class SourceController : ControllerBase
     }
 
     // POST <SourceController>
-    [HttpPost]
-    public IActionResult Create([FromBody] Source shared)
+    [HttpPost("{username}")]
+    public IActionResult Create(string username, [FromBody] Source shared)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             this.context.Add(shared);
@@ -71,9 +92,16 @@ public class SourceController : ControllerBase
     }
 
     // PUT <SourceController>/5
-    [HttpPut]
-    public IActionResult Update([FromBody] Source shared)
+    [HttpPut("{username}")]
+    public IActionResult Update(string username, [FromBody] Source shared)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             this.context.Update(shared);
@@ -86,9 +114,16 @@ public class SourceController : ControllerBase
     }
 
     // DELETE <SourceController>/5
-    [HttpDelete]
-    public IActionResult Delete([FromBody] Source shared)
+    [HttpDelete("{username}")]
+    public IActionResult Delete(string username, [FromBody] Source shared)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             this.context.Delete(shared);

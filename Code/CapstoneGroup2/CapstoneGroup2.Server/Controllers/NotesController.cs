@@ -28,9 +28,16 @@ public class NotesController : ControllerBase
     #region Methods
 
     // GET: <NotesController>
-    [HttpGet]
-    public IActionResult GetAll()
+    [HttpGet("{username}")]
+    public IActionResult GetAll(string username)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             return Ok(this.context.GetAll());
@@ -42,9 +49,16 @@ public class NotesController : ControllerBase
     }
 
     // GET <NotesController>/5
-    [HttpGet("{sourceId}")]
-    public IActionResult GetById(int sourceId)
+    [HttpGet("{sourceId}-{username}")]
+    public IActionResult GetById(int sourceId, string username)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             return Ok(this.context.Get(sourceId));
@@ -56,9 +70,16 @@ public class NotesController : ControllerBase
     }
 
     // POST <NotesController>
-    [HttpPost]
-    public IActionResult Create([FromBody] Note note)
+    [HttpPost("{username}")]
+    public IActionResult Create(string username, [FromBody] Note note)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             this.context.Add(note);
@@ -71,9 +92,16 @@ public class NotesController : ControllerBase
     }
 
     // PUT <NotesController>/5
-    [HttpPut]
-    public IActionResult Update([FromBody] Note note)
+    [HttpPut("{username}")]
+    public IActionResult Update(string username, [FromBody] Note note)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             this.context.Update(note);
@@ -86,11 +114,19 @@ public class NotesController : ControllerBase
     }
 
     // DELETE <NotesController>/5
-    [HttpDelete]
-    public IActionResult Delete([FromBody] Note note)
+    [HttpDelete("{sourceId}-{username}")]
+    public IActionResult Delete(int sourceId, string username)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
+            var note = this.context.Get(sourceId);
             this.context.Delete(note);
             return Ok();
         }

@@ -28,9 +28,16 @@ public class SharedController : ControllerBase
     #region Methods
 
     // GET: <SharedController>
-    [HttpGet]
-    public IActionResult GetAll()
+    [HttpGet("{username}")]
+    public IActionResult GetAll(string username)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             return Ok(this.context.GetAll());
@@ -45,6 +52,13 @@ public class SharedController : ControllerBase
     [HttpGet("{sourceId}-{username}")]
     public IActionResult GetById(int sourceId, string username)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             return Ok(this.context.Get(sourceId, username));
@@ -56,9 +70,16 @@ public class SharedController : ControllerBase
     }
 
     // POST <SharedController>
-    [HttpPost]
-    public IActionResult Create([FromBody] Shared shared)
+    [HttpPost("{username}")]
+    public IActionResult Create(string username, [FromBody] Shared shared)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             this.context.Add(shared);
@@ -71,9 +92,16 @@ public class SharedController : ControllerBase
     }
 
     // PUT <SharedController>/5
-    [HttpPut]
-    public IActionResult Update([FromBody] Shared shared)
+    [HttpPut("{username}")]
+    public IActionResult Update(string username, [FromBody] Shared shared)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             this.context.Update(shared);
@@ -86,9 +114,16 @@ public class SharedController : ControllerBase
     }
 
     // DELETE <SharedController>/5
-    [HttpDelete]
-    public IActionResult Delete([FromBody] Shared shared)
+    [HttpDelete("{username}")]
+    public IActionResult Delete(string username, [FromBody] Shared shared)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.context.SetUser(username);
+
         try
         {
             this.context.Delete(shared);

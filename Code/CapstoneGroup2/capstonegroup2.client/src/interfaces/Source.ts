@@ -13,3 +13,7 @@ export type Source = {
     status: 'own' | 'shared';
     recentlyViewedDateTime: string;
 };
+
+export const getSourceTypeName = (type: SourceType): string => {
+    return type === SourceType.Pdf ? 'Pdf' : 'Vid';
+};

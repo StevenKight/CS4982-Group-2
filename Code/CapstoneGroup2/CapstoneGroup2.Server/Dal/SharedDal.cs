@@ -96,5 +96,11 @@ public class SharedDal : IDbDal<Shared>
         return this.context.SaveChanges() > 0;
     }
 
+    public void SetUser(string username)
+    {
+        var user = new User { Username = username };
+        this.context.CurrentUser = user;
+    }
+
     #endregion
 }

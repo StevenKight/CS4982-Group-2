@@ -13,12 +13,12 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ onLogout }) => {
 
     return (
         <nav className="navbar">
-            <Link className="navbar-brand" to="/postauthorize">
+            <Link className="navbar-brand" to="/">
                 Docunotes
             </Link>
             <ul className="nav-links">
                 <li className="nav-item">
-                    <Link to="/postauthorize" className="nav-link">
+                    <Link to="/" className="nav-link">
                         Home
                     </Link>
                 </li>

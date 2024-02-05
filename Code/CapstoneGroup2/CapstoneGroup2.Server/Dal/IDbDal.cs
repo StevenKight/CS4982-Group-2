@@ -14,5 +14,7 @@ public interface IDbDal<T>
 
     public bool Delete(T entity);
 
+    public void SetUser(string username);
+
     #endregion
 }

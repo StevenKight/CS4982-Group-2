@@ -12,16 +12,21 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
 
-    const handleRegister = () => {
-        const isUsernameTaken = false;
+    const handleRegister = async () => {
+        const newUser: User = {
+            username,
+            password,
+        };
 
-        if (isUsernameTaken) {
-            alert('Username is already taken. Please choose a different one.');
-        } else {
-            const newUser: User = {
-                username,
-                password,
-            };
+        const response = await fetch('/sign-up', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newUser),
+        });
+
+        if (response.status === 200) {
 
             onRegister(newUser);
             navigate('/');

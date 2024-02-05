@@ -91,5 +91,11 @@ public class SourceDal : IDbDal<Source>
         return this.context.SaveChanges() > 0;
     }
 
+    public void SetUser(string username)
+    {
+        var user = new User { Username = username };
+        this.context.CurrentUser = user;
+    }
+
     #endregion
 }

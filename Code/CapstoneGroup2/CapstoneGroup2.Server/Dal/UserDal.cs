@@ -62,5 +62,10 @@ public class UserDal : IDbDal<User>
         throw new InvalidOperationException();
     }
 
+    public void SetUser(string username)
+    {
+        throw new InvalidOperationException();
+    }
+
     #endregion
 }

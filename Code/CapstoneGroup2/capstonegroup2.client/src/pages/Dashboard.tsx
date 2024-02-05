@@ -1,89 +1,44 @@
-import { useEffect, useState } from "react";
+import React from 'react';
+import OwnSourcesList from '../components/OwnedSourcesList';
+import SharedSourcesList from '../components/SharedSourcesList';
+import { Source } from '../interfaces/Source';
 
-import ReactPlayer from "react-player";
+import '../styles/PostAuthorize.css';
 
-enum NoteType {
-    Pdf = 1,
-    Vid = 2
-}
+function PostAuthorize() {
+    const [ownSources, setOwnSources] = React.useState<Source[]>([]);
+    const [sharedSources, setSharedSources] = React.useState<Source[]>([]);
 
-interface Note {
-    id: number;
-    objectLink: string;
-    Note: string;
-    noteType: NoteType;
-}
-
-function Dashboard() {
-    const [notes, setNotes] = useState<Note[]>();
-    const [selectedNote, setSelectedNote] = useState<Note>();
-
-    useEffect(() => {
-        populateNoteData();
+    React.useEffect(() => {
+        fetch('/source/' + localStorage.getItem('username'))
+            .then((res) => res.json())
+            .then((data) => {
+                setOwnSources(data);
+            });
+        fetch('/shared/' + localStorage.getItem('username'))
+            .then((res) => res.json())
+            .then((data) => {
+                setSharedSources(data);
+            });
     }, []);
 
-    const contents = notes === undefined
-        ? <p><em>Loading...</em></p>
-        : <table className="table table-striped" aria-labelledby="tabelLabel">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Note Type</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    notes.map(note =>
-                        <tr key={note.id} onClick={() => setSelectedNote(note)}>
-                            <td>{note.id}</td>
-                            <td>{NoteType[note.noteType]}</td>
-                        </tr>
-                    )
-                }
-            </tbody>
-        </table>;
-
     return (
-        <div style={{display: "flex"}}>
-            <div style={{textAlign: "left", marginRight: "4em"}}>
-                <h1 id="tabelLabel">Notes Prototype</h1>
-                <p>This component demonstrates fetching data from the server <br/> and database.</p>
-                <div className='table-container'>
-                    {contents}
-                </div>
+        <div className='page-content'>
+            <div style={{ display: 'flex' }}>
+                <h1>Docunotes</h1>
             </div>
-            <div>
-                {
-                    selectedNote !== undefined
-                        ? <NoteDisplay {...selectedNote} />
-                        : <p><em>Select a note to view</em></p>
-                }
-            </div>
-        </div>
-    );
-
-    async function populateNoteData() {
-        const response = await fetch('notes');
-        const data = await response.json();
-        setNotes(data);
-    }
-}
-
-function NoteDisplay(note: Note) {
-
-    const PdfNoteDisplay = (note: Note) => <embed src={note.objectLink} />;
-
-    const VideoNoteDisplay = (note: Note) => <ReactPlayer url={note.objectLink} controls/>;
-
-    return (
-        <div>
             {
-                note.noteType === NoteType.Pdf
-                    ? <PdfNoteDisplay {...note} />
-                    : <VideoNoteDisplay {...note} />
+                ownSources.length > 0 ? 
+                    <OwnSourcesList ownSources={ownSources} /> : 
+                    <p>No sources available.</p>
+            }
+            {
+                sharedSources.length > 0 ? 
+                    <SharedSourcesList sharedSources={sharedSources} /> : 
+                    <p>No shared sources available.</p>
             }
         </div>
     );
 }
 
-export default Dashboard;
+export default PostAuthorize;
