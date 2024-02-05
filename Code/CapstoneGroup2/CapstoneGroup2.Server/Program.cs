@@ -5,6 +5,21 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Coors
+const string devPolicyName = "dev";
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy(devPolicyName,
+        policy =>
+        {
+            policy.WithOrigins
+                    ("https://localhost:5173")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 // Add services to the container.
 
 // Add controllers and endpoints for OpenAPI/Swagger
@@ -47,19 +62,19 @@ app.MapControllers();
 app.MapFallbackToFile("/index.html");
 
 // Get the token from the request header and set the current user
-app.Use(async (context, next) =>
-{
-    var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-    if (!string.IsNullOrWhiteSpace(token))
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-        var username = jsonToken?.Claims.First(claim => claim.Type == "unique_name").Value;
-        var dbContext = context.RequestServices.GetRequiredService<DocunotesDbContext>();
-        dbContext.CurrentUser = dbContext.Users.Find(username);
-    }
+//RunExtensions.Run(app, async context =>
+//{
+//    var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+//    if (!string.IsNullOrWhiteSpace(token))
+//    {
+//        var handler = new JwtSecurityTokenHandler();
+//        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+//        var username = jsonToken?.Claims.First(claim => claim.Type == "unique_name").Value;
+//        var dbContext = context.RequestServices.GetRequiredService<DocunotesDbContext>();
+//        dbContext.CurrentUser = dbContext.Users.Find(username);
+//    }
+//});
 
-    await next();
-});
+app.UseCors(devPolicyName);
 
 app.Run();

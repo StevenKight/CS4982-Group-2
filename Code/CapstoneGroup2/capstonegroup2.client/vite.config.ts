@@ -49,6 +49,10 @@ export default defineConfig({
             '^/notes': {
                 target: 'https://localhost:7041/',
                 secure: false
+            },
+            '^/login': {
+                target: 'https://localhost:7041/',
+                secure: false
             }
         },
         port: 5173,

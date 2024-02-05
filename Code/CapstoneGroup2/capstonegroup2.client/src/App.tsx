@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import PostAuthorize from './pages/PostAuthorize';
+import Login from './pages/Login';
 
 import './App.css';
 
@@ -28,7 +29,7 @@ function App() {
                     { 
                         checkAuth() ? 
                             <Route path="*" index element={<PostAuthorize onLogout={mockLogout} />} /> :
-                            <Route path="*" element={<button onClick={mockLogin}>Login</button>} /> /* TODO: Make login page */
+                            <Route path="*" element={<Login onLogin={mockLogin}/ >} /> /* TODO: Make login page */
                     }
                 </Routes>
             </BrowserRouter>

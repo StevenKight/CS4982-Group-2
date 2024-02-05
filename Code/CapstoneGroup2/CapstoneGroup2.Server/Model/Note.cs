@@ -15,8 +15,6 @@ public class Note
     public string TagsString { get; set; }
 
     public List<string> Tags => TagsString.Split(",").ToList();
-
-    public Source Source { get; set; }
 }
 
 public class NoteConfiguration : IEntityTypeConfiguration<Note>

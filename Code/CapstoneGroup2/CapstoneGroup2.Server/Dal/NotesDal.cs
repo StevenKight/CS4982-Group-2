@@ -12,10 +12,9 @@ public class NotesDal : IDbDal<Note>
 
     #region Constructors
 
-    public NotesDal(DocunotesDbContext context) // , IDbDal<Source> sourceDal
+    public NotesDal(DocunotesDbContext context)
     {
         this.context = context;
-        //this.sourceDal = sourceDal;
     }
 
     #endregion
@@ -41,8 +40,6 @@ public class NotesDal : IDbDal<Note>
         var note = this.context.Notes
             .Find(sourceId, username) ?? throw new InvalidOperationException();
 
-        //note.Source = this.sourceDal.Get(note.SourceId);
-
         return note;
     }
 
@@ -52,8 +49,6 @@ public class NotesDal : IDbDal<Note>
 
         var notes = this.context.Notes
             .Where(note => note.Username.Equals(username));
-
-        //Parallel.ForEach(notes, note => note.Source = this.sourceDal.Get(note.SourceId));
 
         return notes;
     }

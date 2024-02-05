@@ -31,26 +31,28 @@ public class UserController : ControllerBase
     #region Methods
 
     // GET: <UserController>
-    [HttpGet]
-    [Route("/login/{username}")]
-    public IActionResult Login(string username, [FromBody] string password)
+    [HttpPost]
+    [Route("/login")]
+    public IActionResult Login([FromBody] User user)
     {
-        if (string.IsNullOrWhiteSpace(username))
+        if (user == null || 
+            string.IsNullOrWhiteSpace(user.Username) ||
+            string.IsNullOrWhiteSpace(user.Password))
         {
             return BadRequest();
         }
 
-        User user;
+        User dbUser;
         try
         {
-            user = this.context.Get(username);
+            dbUser = this.context.Get(user.Username);
         }
         catch (InvalidOperationException e)
         {
             return NotFound();
         }
 
-        if (user.Password != password)
+        if (dbUser.Password != user.Password)
         {
             return Unauthorized();
         }
