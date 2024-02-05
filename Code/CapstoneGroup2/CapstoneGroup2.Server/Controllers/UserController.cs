@@ -1,13 +1,13 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using API.Dal;
-using API.Model;
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace API.Controllers;
+namespace CapstoneGroup2.Server.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -35,7 +35,7 @@ public class UserController : ControllerBase
     [Route("/login")]
     public IActionResult Login([FromBody] User user)
     {
-        if (user == null || 
+        if (user == null ||
             string.IsNullOrWhiteSpace(user.Username) ||
             string.IsNullOrWhiteSpace(user.Password))
         {

@@ -1,22 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace API.Model;
+namespace CapstoneGroup2.Server.Model;
 
 public class Shared
 {
+    #region Properties
+
     public int SourceId { get; set; }
 
     public string Username { get; set; }
-    
+
     public string SharedUsername { get; set; }
 
     public string Comment { get; set; }
+
+    #endregion
 }
 
 public class SharedConfiguration : IEntityTypeConfiguration<Shared>
 {
+    #region Methods
+
     public void Configure(EntityTypeBuilder<Shared> builder)
     {
         builder.ToTable("Shared");
@@ -26,4 +31,6 @@ public class SharedConfiguration : IEntityTypeConfiguration<Shared>
         builder.Property(s => s.SharedUsername).HasColumnName("shared_username");
         builder.Property(s => s.Comment).HasColumnName("comment");
     }
+
+    #endregion
 }

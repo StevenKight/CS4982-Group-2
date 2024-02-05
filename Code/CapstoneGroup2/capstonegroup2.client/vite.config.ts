@@ -46,12 +46,24 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/notes': {
-                target: 'https://localhost:7041/',
+            '^/login': {
+                target: 'https://localhost:7048/',
                 secure: false
             },
-            '^/login': {
-                target: 'https://localhost:7041/',
+            '^/sign-up': {
+                target: 'https://localhost:7048/',
+                secure: false
+            },
+            '^/notes': {
+                target: 'https://localhost:7048/',
+                secure: false
+            },
+            '^/shared': {
+                target: 'https://localhost:7048/',
+                secure: false
+            },
+            '^/source': {
+                target: 'https://localhost:7048/',
                 secure: false
             }
         },

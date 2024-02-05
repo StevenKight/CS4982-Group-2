@@ -1,6 +1,6 @@
-﻿using API.Model;
+﻿using CapstoneGroup2.Server.Model;
 
-namespace API.Dal;
+namespace CapstoneGroup2.Server.Dal;
 
 public class SourceDal : IDbDal<Source>
 {

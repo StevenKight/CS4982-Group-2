@@ -1,0 +1,31 @@
+﻿<Page
+    x:Class="CapstoneGroup2.Desktop.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Background="Beige">
+        <TextBox Background="AliceBlue" Name="UsernameTextBox" HorizontalAlignment="Center" Margin="0,452,0,0"
+                 TextWrapping="Wrap" PlaceholderText="Username" VerticalAlignment="Top" Height="64" Width="317"
+                 FontSize="30" />
+        <TextBox Background="AliceBlue" Name="PasswordTextBox" HorizontalAlignment="Center" Margin="0,558,0,0"
+                 TextWrapping="Wrap" PlaceholderText="Password" VerticalAlignment="Top" Height="64" Width="317"
+                 FontSize="30" />
+        <Button Background="AliceBlue" Name="LoginButton" Content="Login" Margin="0,697,0,0" VerticalAlignment="Top"
+                Height="53" Width="174" HorizontalAlignment="Center" FontSize="25" Click="LoginButton_Click" />
+        <TextBlock Name="ErrorTextBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text=""
+                   VerticalAlignment="Center" FontSize="30" Visibility="Collapsed" />
+        <TextBlock Name="BrandingTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Welcome to DocuNotes"
+                   VerticalAlignment="Top" FontSize="40" Margin="836,260,0,0" MaxWidth="400" Height="228" Width="440" />
+        <Button Background="MintCream" x:Name="CreateButton" Content="Create" Margin="0,817,0,0"
+                VerticalAlignment="Top" Height="53" Width="174" HorizontalAlignment="Center" FontSize="25" />
+        <TextBlock x:Name="BrandingTextBlock_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Or"
+                   VerticalAlignment="Top" FontSize="20
+                   " Margin="949,775,0,0" MaxWidth="400"
+                   Height="50" Width="40" />
+
+    </Grid>
+</Page>

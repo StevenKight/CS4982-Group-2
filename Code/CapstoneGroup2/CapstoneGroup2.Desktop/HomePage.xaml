@@ -1,0 +1,27 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Class="CapstoneGroup2.Desktop.HomePage"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Background="Beige">
+        <Button Background="Bisque" Content="Home" VerticalAlignment="Top" Width="380" Height="85" FontSize="30" />
+        <Button Background="Bisque" Content="My Notes" Margin="380,0,0,0" VerticalAlignment="Top" Width="380"
+                Height="85" FontSize="30" />
+        <Button Background="Bisque" Content="Shared Notes" Margin="760,0,0,0" VerticalAlignment="Top" Width="380"
+                Height="85" FontSize="30" />
+        <TextBlock HorizontalAlignment="Left" Margin="38,269,0,0" TextWrapping="Wrap" Text="Recent Notes:"
+                   VerticalAlignment="Top" FontSize="35" />
+        <ListView Name="RecentNotesListView" SelectionChanged="RecentNotesListView_SelectionChanged"
+                  Margin="38,321,38,413" />
+        <TextBlock HorizontalAlignment="Left" Margin="38,90,0,0" TextWrapping="Wrap" Text="Upload a New Source:"
+                   VerticalAlignment="Top" FontSize="35" Height="50" Width="356" />
+        <Button Name="UploadButton" Click="PickAndSendPdfButton_Click" Content="Upload" Margin="65,174,0,0"
+                VerticalAlignment="Top" Height="58" Width="160" FontSize="32" />
+
+
+    </Grid>
+</Page>

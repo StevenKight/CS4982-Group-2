@@ -1,7 +1,7 @@
-﻿using API.Model;
+﻿using CapstoneGroup2.Server.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Dal;
+namespace CapstoneGroup2.Server.Dal;
 
 public class DocunotesDbContext : DbContext
 {

@@ -1,4 +1,4 @@
-﻿namespace API.Dal;
+﻿namespace CapstoneGroup2.Server.Dal;
 
 public interface IDbDal<T>
 {

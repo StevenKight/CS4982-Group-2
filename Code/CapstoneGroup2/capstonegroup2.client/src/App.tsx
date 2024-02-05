@@ -1,36 +1,44 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import PostAuthorize from './pages/PostAuthorize';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import PostAuthorize from './pages/PostAuthorize';
+import Dashboard from './pages/Dashboard';
+import NavigationBar from './components/NavigationBar';
+import MySources from './pages/MySources.tsx';
+import SharedSources from './pages/SharedSources.tsx';
 
-import './App.css';
+
+import { mockOwnSources, mockSharedSources } from './MockSources.ts';
+const ownSources = mockOwnSources;
+const sharedSources = mockSharedSources;
 
 function App() {
+    const [auth, setAuth] = useState<boolean>(false);
 
-    const [auth, setAuth] = useState<boolean>(false); // TODO: check auth
-    
-    function checkAuth() {
-        return auth; // TODO: check auth
-    }
-
-    function mockLogin(): void {
+    const handleLogin = () => {
         setAuth(true);
-    }
+    };
 
-    function mockLogout(): void {
+    const handleLogout = () => {
         setAuth(false);
-    }
+    };
+
+    const handleRegister = () => {
+        setAuth(false);
+    };
 
     return (
         <div>
             <BrowserRouter>
+                {auth && <NavigationBar onLogout={handleLogout} />} {}
                 <Routes>
-                    { 
-                        checkAuth() ? 
-                            <Route path="*" index element={<PostAuthorize onLogout={mockLogout} />} /> :
-                            <Route path="*" element={<Login onLogin={mockLogin}/ >} /> /* TODO: Make login page */
-                    }
+                    <Route path="/" element={<Login onLogin={handleLogin} />} />
+                    <Route path="/register" element={<Register onRegister={handleRegister} />} />
+                    <Route path="/postauthorize" element={auth ? <PostAuthorize /> : null} />
+                    <Route path="/dashboard" element={auth ? <Dashboard /> : null} />
+                    <Route path='/mysources' element={<MySources ownSources={ownSources} />} />
+                    <Route path='/sharedsources' element={<SharedSources sharedSources={sharedSources} />} />
                 </Routes>
             </BrowserRouter>
         </div>

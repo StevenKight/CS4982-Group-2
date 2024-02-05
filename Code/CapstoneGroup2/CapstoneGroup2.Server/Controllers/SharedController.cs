@@ -1,10 +1,10 @@
-﻿using API.Dal;
-using API.Model;
+﻿using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace API.Controllers;
+namespace CapstoneGroup2.Server.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -42,7 +42,7 @@ public class SharedController : ControllerBase
     }
 
     // GET <SharedController>/5
-    [HttpGet("{sourceId}-{username}")] // TODO: User actual key
+    [HttpGet("{sourceId}-{username}")]
     public IActionResult GetById(int sourceId, string username)
     {
         try

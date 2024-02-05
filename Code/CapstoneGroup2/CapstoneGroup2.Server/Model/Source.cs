@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace API.Model;
+namespace CapstoneGroup2.Server.Model;
 
 public enum SourceType
 {

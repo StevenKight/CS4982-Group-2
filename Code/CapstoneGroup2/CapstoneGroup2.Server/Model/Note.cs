@@ -1,24 +1,29 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace API.Model;
+namespace CapstoneGroup2.Server.Model;
 
 public class Note
 {
+    #region Properties
+
     public int SourceId { get; set; }
 
     public string Username { get; set; }
-    
+
     public string NoteText { get; set; }
 
     public string TagsString { get; set; }
 
-    public List<string> Tags => TagsString.Split(",").ToList();
+    public List<string> Tags => this.TagsString.Split(",").ToList();
+
+    #endregion
 }
 
 public class NoteConfiguration : IEntityTypeConfiguration<Note>
 {
+    #region Methods
+
     public void Configure(EntityTypeBuilder<Note> builder)
     {
         builder.ToTable("Note");
@@ -28,4 +33,6 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.Property(n => n.NoteText).HasColumnName("note");
         builder.Property(n => n.TagsString).HasColumnName("tags");
     }
+
+    #endregion
 }

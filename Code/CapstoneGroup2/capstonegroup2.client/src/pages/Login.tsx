@@ -1,28 +1,64 @@
-import { useState } from "react";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import '../styles/Login.css';
+interface LoginProps {
+    onLogin: () => void;
+}
 
-import Requests from "../utils/Requests";
-
-function Login({ ...props }) {
-    const [username, setUsername] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const navigate = useNavigate();
 
     const handleLogin = () => {
-        Requests.login(username, password)
-            .then((data) => {
-                if (data.token) {
-                    props.onLogin();
-                }
-            });
-    }
+        const isValidUser = true;
+        if (isValidUser) {
+            onLogin();
+            navigate('/postauthorize');
+        } else {
+            alert('Invalid username or password');
+        }
+    };
+
+    const handleRegisterClick = () => {
+        navigate('/register');
+    };
 
     return (
-        <div>
-            <h1>Login</h1>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <button onClick={handleLogin}>Login</button>
+        <div className="login-container">
+            <h2>Login</h2>
+            <form>
+                <label>Username:</label>
+                <input
+                    className="username-input"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+
+                <label>Password:</label>
+                <input
+                    className="password-input"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button className="login-button" type="button" onClick={handleLogin}>
+                    Login
+                </button>
+
+                <Button
+                    className="register-button"
+                    type="button"
+                    onClick={handleRegisterClick}
+                >
+                    Register
+                </Button>
+            </form>
         </div>
     );
-}
+};
 
 export default Login;
