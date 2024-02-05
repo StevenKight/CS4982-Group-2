@@ -1,0 +1,13 @@
+@CapstoneGroup2.Server_HostAddress = https://localhost:7048
+
+
+POST {{CapstoneGroup2.Server_HostAddress}}/login
+Content-Type: application/json
+
+{
+  //User
+  "username": "StevenG",
+  "password": "Kight"
+}
+
+###
