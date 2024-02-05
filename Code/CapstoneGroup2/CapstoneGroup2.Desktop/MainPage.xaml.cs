@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Windows.Data.Pdf;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -24,11 +25,9 @@ namespace CapstoneGroup2.Desktop
         #region Data members
 
         private PdfDocument pdfDocument;
-        private ViewModel.ViewModel _userViewModel;
+        private ViewModel.ViewModel _viewModel;
 
-        private List<UserNote> userNotes;
-
-        private readonly List<Note> Notes;
+        private List<Note> Notes;
 
         private int currentPageNumber;
 
@@ -52,45 +51,42 @@ namespace CapstoneGroup2.Desktop
 
         public MainPage()
         {
+            this._viewModel = new ViewModel.ViewModel();
+
             this.InitializeComponent();
-            this.Notes = new List<Note>();
-            var note = new Note();
-            note.Username = "Chimbus";
-            note.SourceId = 3;
-            note.NoteText = "Wubba";
-            this.Notes.Add(note);
-            this.LoadNotes();
-            this.currentPageNumber = 0;
         }
 
         #endregion
 
         #region Methods
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is ViewModel.ViewModel userViewModel)
+            {
+                this._viewModel = userViewModel;
+
+                this.LoadNotes();
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Navigate back to home page and pass the view model
+            Frame.Navigate(typeof(HomePage), this._viewModel);
+        }
+
         private async void LoadNotes()
         {
             this.progressControl.Visibility = Visibility.Visible;
-            this.notesListBox.Items.Clear();
-            //this.userNotes = await NotesDal.GetUsersNotesAsync();
-            //this.notesListBox.ItemsSource = this.userNotes;
-            var emptyNote = new Note();
-            emptyNote.Username = "";
-            emptyNote.NoteText = "";
-            this.Notes.Add(emptyNote);
-            for (var i = 0; i < this.Notes.Count; i++)
-            {
-                var note = this.Notes[i];
 
-                var textBox = new TextBox();
-                textBox.Name = $"noteTextBox{i}";
-                textBox.Text = note.NoteText;
+            var note = await this._viewModel.GetUserSourceNotes();
 
-                textBox.Tag = note;
+            this.Notes = note.ToList();
 
-                textBox.KeyDown += this.NoteTextBox_KeyDown;
-
-                this.notesListBox.Items?.Add(textBox);
-            }
+            this.notesListBox.ItemsSource = this.Notes;
 
             this.progressControl.Visibility = Visibility.Collapsed;
         }
@@ -111,21 +107,21 @@ namespace CapstoneGroup2.Desktop
                 }
                 else if (correspondingNote.Username == null)
                 {
-                    correspondingNote.Username = this._userViewModel.CurrentUser.Username;
+                    correspondingNote.Username = this._viewModel.CurrentUser.Username;
                     var emptyNote = new Note();
                     emptyNote.NoteText = "";
                     this.Notes.Add(emptyNote);
-                    this._userViewModel.CreateNewNote(correspondingNote.NoteText);
+                    this._viewModel.CreateNewNote(correspondingNote.NoteText);
                 }
 
-                //this._userViewModel.updateNote(correspondingNote);
+                //this._viewModel.updateNote(correspondingNote);
                 this.LoadNotes();
             }
         }
 
         private async void DeleteNote(Note note)
         {
-            await this._userViewModel.DeleteNote(note);
+            await this._viewModel.DeleteNote(note);
         }
 
         private void notesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -261,16 +257,6 @@ namespace CapstoneGroup2.Desktop
             {
                 this.currentPageNumber++;
                 this.UpdatePage();
-            }
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-
-            if (e.Parameter is ViewModel.ViewModel userViewModel)
-            {
-                this._userViewModel = userViewModel;
             }
         }
 

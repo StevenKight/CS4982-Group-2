@@ -27,9 +27,15 @@ public class Source
 
     public string Name { get; set; }
 
+    public string Description { get; set; }
+
     public bool IsLink { get; set; }
 
     public string Link { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
 
     #endregion
 }
@@ -44,10 +50,13 @@ public class SourceConfiguration : IEntityTypeConfiguration<Source>
         builder.HasKey(s => s.SourceId);
         builder.Property(s => s.SourceId).HasColumnName("source_id");
         builder.Property(s => s.Username).HasColumnName("username");
-        builder.Property(s => s.Type).HasColumnName("type");
         builder.Property(s => s.Name).HasColumnName("name");
+        builder.Property(s => s.Description).HasColumnName("description");
+        builder.Property(s => s.Type).HasColumnName("type");
         builder.Property(s => s.IsLink).HasColumnName("is_link");
         builder.Property(s => s.Link).HasColumnName("link");
+        builder.Property(s => s.CreatedAt).HasColumnName("created_at");
+        builder.Property(s => s.UpdatedAt).HasColumnName("updated_at");
     }
 
     #endregion

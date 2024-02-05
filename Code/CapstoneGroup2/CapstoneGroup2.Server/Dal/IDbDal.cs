@@ -15,6 +15,7 @@ public interface IDbDal<T>
     public bool Delete(T entity);
 
     public void SetUser(string username);
+    void SetSourceId(int sourceId);
 
     #endregion
 }

@@ -1,17 +1,13 @@
 @CapstoneGroup2.Server_HostAddress = https://localhost:7048
-@userToken = testToken
 
-GET {{CapstoneGroup2.Server_HostAddress}}/notes
-Authorization: Bearer {{userToken}}
 
-###
+POST {{CapstoneGroup2.Server_HostAddress}}/login
+Content-Type: application/json
 
-GET {{CapstoneGroup2.Server_HostAddress}}/shared
-Authorization: Bearer {{userToken}}
-
-###
-
-GET {{CapstoneGroup2.Server_HostAddress}}/source
-Authorization: Bearer {{userToken}}
+{
+  //User
+  "username": "StevenG",
+  "password": "Kight"
+}
 
 ###

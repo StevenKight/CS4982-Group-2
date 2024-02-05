@@ -17,7 +17,7 @@ namespace CapstoneGroup2.Desktop.Dal
         /// <summary>
         ///     The base URL
         /// </summary>
-        private static readonly string baseUrl = "https://localhost:7041/";
+        private static readonly string baseUrl = "https://localhost:7048";
 
         /// <summary>
         ///     The client
@@ -67,8 +67,8 @@ namespace CapstoneGroup2.Desktop.Dal
             var hashedPassword = HashPassword(password);
             this.client.BaseAddress = new Uri(baseUrl);
 
-            var user = new User();
-            var response = await this.client.GetAsync($"Login/{username}");
+            var user = new User { Username = username, Password = password };
+            var response = await this.client.PostAsJsonAsync("/login", user);
             if (response.IsSuccessStatusCode)
             {
                 user = await response.Content.ReadFromJsonAsync<User>();

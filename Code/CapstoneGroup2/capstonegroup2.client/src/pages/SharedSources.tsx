@@ -7,11 +7,7 @@ const SharedSources: React.FC = ({}) => {
     const [sources, setSources] = React.useState<Source[]>([]);
 
     React.useEffect(() => {
-        fetch('/shared/' + localStorage.getItem('username'))
-            .then((res) => res.json())
-            .then((data) => {
-                setSources(data);
-            });
+        setSources([]);
     }, []);
 
     return (

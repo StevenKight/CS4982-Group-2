@@ -7,6 +7,8 @@ public class Note
 {
     #region Properties
 
+    public int NoteId { get; set; }
+
     public int SourceId { get; set; }
 
     public string Username { get; set; }
@@ -16,6 +18,8 @@ public class Note
     public string TagsString { get; set; }
 
     public List<string> Tags => this.TagsString.Split(",").ToList();
+
+    public DateTime NoteDate { get; set; }
 
     #endregion
 }
@@ -27,11 +31,13 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
     public void Configure(EntityTypeBuilder<Note> builder)
     {
         builder.ToTable("Note");
-        builder.HasKey(n => new { n.SourceId, n.Username });
+        builder.HasKey(n => n.NoteId);
+        builder.Property(n => n.NoteId).HasColumnName("note_id");
         builder.Property(n => n.SourceId).HasColumnName("source_id");
         builder.Property(n => n.Username).HasColumnName("username");
-        builder.Property(n => n.NoteText).HasColumnName("note");
+        builder.Property(n => n.NoteText).HasColumnName("note_text");
         builder.Property(n => n.TagsString).HasColumnName("tags");
+        builder.Property(n => n.NoteDate).HasColumnName("note_date");
     }
 
     #endregion

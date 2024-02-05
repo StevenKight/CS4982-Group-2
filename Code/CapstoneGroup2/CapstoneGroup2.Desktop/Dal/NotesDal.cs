@@ -13,7 +13,7 @@ namespace CapstoneGroup2.Desktop.Dal
     {
         #region Data members
 
-        private static readonly string baseUrl = "https://localhost:7041/";
+        private static readonly string baseUrl = "https://localhost:7048";
 
         private readonly HttpClient client;
 
@@ -24,35 +24,33 @@ namespace CapstoneGroup2.Desktop.Dal
         public NotesDal()
         {
             this.client = new HttpClient();
+            this.client.BaseAddress = new Uri(baseUrl);
         }
 
         public NotesDal(HttpClient client)
         {
             this.client = client;
+            this.client.BaseAddress = new Uri(baseUrl);
         }
 
         #endregion
 
         #region Methods
 
-        public async Task<List<UserNote>> GetUsersNotesAsync()
+        public async Task<IEnumerable<Note>> GetUserSourceNotes(User user, Source source)
         {
-            this.client.BaseAddress = new Uri(baseUrl);
-
-            var notes = new List<UserNote>();
-            var response = await this.client.GetAsync("Notes");
+            var response = await this.client.GetAsync($"/Notes/{source.SourceId}-{user.Username}");
             if (response.IsSuccessStatusCode)
             {
-                notes = await response.Content.ReadFromJsonAsync<List<UserNote>>();
+                var notes = await response.Content.ReadFromJsonAsync<IEnumerable<Note>>();
+                return notes;
             }
 
-            return notes;
+            return null;
         }
 
         public async Task<bool> createNewNote(Note note, string authToken)
         {
-            this.client.BaseAddress = new Uri(baseUrl);
-
             var jsonData = JsonConvert.SerializeObject(note);
 
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -61,18 +59,11 @@ namespace CapstoneGroup2.Desktop.Dal
 
             var response = await this.client.PostAsync("Notes", content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            return false;
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> UpdateNote(Note note, string authToken)
         {
-            this.client.BaseAddress = new Uri(baseUrl);
-
             var jsonData = JsonConvert.SerializeObject(note);
 
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -81,18 +72,11 @@ namespace CapstoneGroup2.Desktop.Dal
 
             var response = await this.client.PutAsync("Notes", content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            return false;
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> DeleteNote(Note note, string authToken)
         {
-            this.client.BaseAddress = new Uri(baseUrl);
-
             var jsonData = JsonConvert.SerializeObject(note);
 
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -101,12 +85,7 @@ namespace CapstoneGroup2.Desktop.Dal
 
             var response = await this.client.DeleteAsync("Notes");
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            return false;
+            return response.IsSuccessStatusCode;
         }
 
         #endregion

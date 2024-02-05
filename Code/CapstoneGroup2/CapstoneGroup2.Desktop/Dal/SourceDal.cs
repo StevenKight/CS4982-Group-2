@@ -12,7 +12,7 @@ namespace CapstoneGroup2.Desktop.Dal
     {
         #region Data members
 
-        private static readonly string baseUrl = "https://localhost:7041/";
+        private static readonly string baseUrl = "https://localhost:7048";
         private readonly HttpClient client;
 
         #endregion
@@ -21,12 +21,16 @@ namespace CapstoneGroup2.Desktop.Dal
 
         public SourceDal()
         {
-            this.client = new HttpClient();
+            this.client = new HttpClient
+            {
+                BaseAddress = new Uri(baseUrl)
+            };
         }
 
         public SourceDal(HttpClient client)
         {
             this.client = client;
+            this.client.BaseAddress = new Uri(baseUrl);
         }
 
         #endregion
@@ -36,20 +40,8 @@ namespace CapstoneGroup2.Desktop.Dal
         public async Task<List<Source>> getSourcesForUser(User user)
         {
             var sources = new List<Source>();
-            var response = await this.client.GetAsync(new Uri($"Source/{user.Username}"));
-            if (response.IsSuccessStatusCode)
-            {
-                sources = await response.Content.ReadFromJsonAsync<List<Source>>();
-                return sources;
-            }
 
-            return null;
-        }
-
-        public async Task<List<Source>> getSources()
-        {
-            var sources = new List<Source>();
-            var response = await this.client.GetAsync(new Uri("Source"));
+            var response = await this.client.GetAsync($"/Source/{user.Username}");
             if (response.IsSuccessStatusCode)
             {
                 sources = await response.Content.ReadFromJsonAsync<List<Source>>();

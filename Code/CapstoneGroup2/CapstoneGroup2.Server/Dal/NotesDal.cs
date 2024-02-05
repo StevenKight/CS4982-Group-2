@@ -7,6 +7,7 @@ public class NotesDal : IDbDal<Note>
     #region Data members
 
     private readonly DocunotesDbContext context;
+    private int sourceId;
 
     #endregion
 
@@ -29,16 +30,14 @@ public class NotesDal : IDbDal<Note>
             throw new InvalidCastException();
         }
 
-        var sourceId = (int)(keyValues[0] ?? throw new ArgumentNullException());
-        if (sourceId < 1)
+        var noteId = (int)(keyValues[0] ?? throw new ArgumentNullException());
+        if (noteId < 1)
         {
             throw new ArgumentOutOfRangeException();
         }
 
-        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
-
         var note = this.context.Notes
-            .Find(sourceId, username) ?? throw new InvalidOperationException();
+            .Find(noteId) ?? throw new InvalidOperationException();
 
         return note;
     }
@@ -48,7 +47,7 @@ public class NotesDal : IDbDal<Note>
         var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         var notes = this.context.Notes
-            .Where(note => note.Username.Equals(username));
+            .Where(note => note.Username.Equals(username) && note.SourceId == this.sourceId);
 
         return notes;
     }
@@ -99,6 +98,11 @@ public class NotesDal : IDbDal<Note>
     {
         var user = new User { Username = username };
         this.context.CurrentUser = user;
+    }
+
+    public void SetSourceId(int sourceId)
+    {
+        this.sourceId = sourceId;
     }
 
     #endregion

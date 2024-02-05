@@ -12,9 +12,11 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "CapstoneGroup2.Client", "ca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapstoneGroup2.Desktop", "CapstoneGroup2.Desktop\CapstoneGroup2.Desktop.csproj", "{292BB89C-1356-43F5-BF84-19BC2D2057D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapstoneGroup2.Desktop.UnitTests", "CapstoneGroup2.Desktop.UnitTests\CapstoneGroup2.Desktop.UnitTests.csproj", "{12B1E386-2FF1-40E8-9A38-8CFEBD09BABB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapstoneGroup2.Desktop.UnitTests", "CapstoneGroup2.Desktop.UnitTests\CapstoneGroup2.Desktop.UnitTests.csproj", "{12B1E386-2FF1-40E8-9A38-8CFEBD09BABB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapstoneGroup2.Server.UnitTests", "CapstoneGroup2.Server.UnitTests\CapstoneGroup2.Server.UnitTests.csproj", "{BB9A951A-B6DE-4C44-B06C-974BA3ABCDAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapstoneGroup2.Server.UnitTests", "CapstoneGroup2.Server.UnitTests\CapstoneGroup2.Server.UnitTests.csproj", "{BB9A951A-B6DE-4C44-B06C-974BA3ABCDAF}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CapstoneGroup2.Database", "CapstoneGroup2.Database\CapstoneGroup2.Database.sqlproj", "{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +152,34 @@ Global
 		{BB9A951A-B6DE-4C44-B06C-974BA3ABCDAF}.Release|x64.Build.0 = Release|Any CPU
 		{BB9A951A-B6DE-4C44-B06C-974BA3ABCDAF}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB9A951A-B6DE-4C44-B06C-974BA3ABCDAF}.Release|x86.Build.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|Any CPU.Deploy.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM.Build.0 = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM.Deploy.0 = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM64.Deploy.0 = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|x64.Build.0 = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|x86.Build.0 = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|ARM.ActiveCfg = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|ARM.Build.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|ARM.Deploy.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|ARM64.Build.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|ARM64.Deploy.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|x64.ActiveCfg = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|x64.Build.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|x64.Deploy.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|x86.ActiveCfg = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|x86.Build.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

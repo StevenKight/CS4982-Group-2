@@ -97,5 +97,10 @@ public class SourceDal : IDbDal<Source>
         this.context.CurrentUser = user;
     }
 
+    public void SetSourceId(int sourceId)
+    {
+        throw new InvalidOperationException();
+    }
+
     #endregion
 }

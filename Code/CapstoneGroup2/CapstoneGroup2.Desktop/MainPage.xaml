@@ -10,20 +10,30 @@
     Height="888">
 
 
-    <Grid Background="Beige">
+    <Grid>
         <ProgressRing x:Name="progressControl" Height="50" Width="50" IsActive="True" Visibility="Visible"
                       HorizontalAlignment="Left" Margin="403,458,0,0" VerticalAlignment="Top" />
         <Button Name="NextPageButton" Click="NextPage_Click" Content="->" Margin="833,9,0,0" VerticalAlignment="Top"
                 Height="32" RenderTransformOrigin="0.5,0.5" />
         <Button Name="PreviousPageButton" Click="PreviousPage_Click" Content="&lt;-" Margin="793,9,0,0"
                 VerticalAlignment="Top" Height="32" />
-        <ScrollViewer Background="Bisque" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto"
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto"
                       ZoomMode="Enabled" MinZoomFactor="1" Margin="10,58,435,31">
 
             <Image x:Name="objectRender" AutomationProperties.Name="PDF document content" Stretch="None" />
         </ScrollViewer>
         <ListBox x:Name="notesListBox" Margin="790,56,135,31" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False"
-                 d:LayoutRounding="Auto" />
-        <Button Content="Load" Click="LoadDocument" Margin="12,9,0,0" VerticalAlignment="Top" />
+                 d:LayoutRounding="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding NoteText}" />
+                        <Button Content="X" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button Content="Load" Click="LoadDocument" Margin="77,10,0,0" VerticalAlignment="Top" />
+        <Button Content="Back" Margin="10,10,0,0" VerticalAlignment="Top" Click="BackButton_Click" />
     </Grid>
 </Page>

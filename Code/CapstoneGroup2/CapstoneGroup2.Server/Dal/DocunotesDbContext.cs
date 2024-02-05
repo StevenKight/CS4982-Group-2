@@ -11,8 +11,6 @@ public class DocunotesDbContext : DbContext
 
     public DbSet<Note> Notes { get; set; }
 
-    public DbSet<Shared> SharedNotes { get; set; }
-
     public DbSet<Source> Sources { get; set; }
 
     public DbSet<User> Users { get; set; }
@@ -33,7 +31,6 @@ public class DocunotesDbContext : DbContext
     {
         modelBuilder
             .ApplyConfiguration(new NoteConfiguration())
-            .ApplyConfiguration(new SharedConfiguration())
             .ApplyConfiguration(new SourceConfiguration())
             .ApplyConfiguration(new UserConfiguration());
     }

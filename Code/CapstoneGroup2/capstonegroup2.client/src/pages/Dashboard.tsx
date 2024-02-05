@@ -15,11 +15,7 @@ function PostAuthorize() {
             .then((data) => {
                 setOwnSources(data);
             });
-        fetch('/shared/' + localStorage.getItem('username'))
-            .then((res) => res.json())
-            .then((data) => {
-                setSharedSources(data);
-            });
+        setSharedSources([]);
     }, []);
 
     return (

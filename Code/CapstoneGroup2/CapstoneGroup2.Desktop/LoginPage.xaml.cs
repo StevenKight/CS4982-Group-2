@@ -13,8 +13,6 @@ namespace CapstoneGroup2.Desktop
         #region Data members
 
         private readonly ViewModel.ViewModel _viewModel;
-        private string _username;
-        private string _password;
 
         #endregion
 
@@ -22,28 +20,14 @@ namespace CapstoneGroup2.Desktop
 
         public string Username
         {
-            get => this._username;
-            set
-            {
-                if (this._username != value)
-                {
-                    this._username = value;
-                    this.UsernameTextBox.Text = value;
-                }
-            }
+            get => this.UsernameTextBox.Text;
+            set => this.UsernameTextBox.Text = value;
         }
 
         public string Password
         {
-            get => this._password;
-            set
-            {
-                if (this._password != value)
-                {
-                    this._password = value;
-                    this.PasswordTextBox.Text = value;
-                }
-            }
+            get => this.PasswordTextBox.Text;
+            set => this.PasswordTextBox.Text = value;
         }
 
         #endregion
@@ -62,11 +46,16 @@ namespace CapstoneGroup2.Desktop
 
         private async void Login()
         {
-            //if (await this._viewModel.Login(this.Username, this.Password))
-            //{
-            //    Frame.Navigate(typeof(HomePage), this._viewModel);
-            //}
-            Frame.Navigate(typeof(HomePage), this._viewModel);
+            await this._viewModel.Login(this.Username, this.Password);
+
+            if (this._viewModel.CurrentUser != null)
+            {
+                Frame.Navigate(typeof(HomePage), this._viewModel);
+            }
+            else
+            {
+                this.ErrorTextBlock.Text = "Invalid username or password";
+            }
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)

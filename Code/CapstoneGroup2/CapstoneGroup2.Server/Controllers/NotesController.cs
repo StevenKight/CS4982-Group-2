@@ -28,8 +28,8 @@ public class NotesController : ControllerBase
     #region Methods
 
     // GET: <NotesController>
-    [HttpGet("{username}")]
-    public IActionResult GetAll(string username)
+    [HttpGet("{sourceId}-{username}")]
+    public IActionResult GetAll(int sourceId, string username)
     {
         if (string.IsNullOrWhiteSpace(username))
         {
@@ -37,10 +37,12 @@ public class NotesController : ControllerBase
         }
 
         this.context.SetUser(username);
+        this.context.SetSourceId(sourceId);
 
         try
         {
-            return Ok(this.context.GetAll());
+            var sourceNotes = this.context.GetAll();
+            return Ok(sourceNotes);
         }
         catch (UnauthorizedAccessException e)
         {
@@ -49,25 +51,25 @@ public class NotesController : ControllerBase
     }
 
     // GET <NotesController>/5
-    [HttpGet("{sourceId}-{username}")]
-    public IActionResult GetById(int sourceId, string username)
-    {
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            return Unauthorized("Invalid username");
-        }
+    //[HttpGet("{noteId}-{username}")]
+    //public IActionResult GetById(int noteId, string username)
+    //{
+    //    if (string.IsNullOrWhiteSpace(username))
+    //    {
+    //        return Unauthorized("Invalid username");
+    //    }
 
-        this.context.SetUser(username);
+    //    this.context.SetUser(username);
 
-        try
-        {
-            return Ok(this.context.Get(sourceId));
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized("Invalid token");
-        }
-    }
+    //    try
+    //    {
+    //        return Ok(this.context.Get(noteId));
+    //    }
+    //    catch (UnauthorizedAccessException e)
+    //    {
+    //        return Unauthorized("Invalid token");
+    //    }
+    //}
 
     // POST <NotesController>
     [HttpPost("{username}")]

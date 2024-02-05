@@ -202,12 +202,12 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
-        ///     Gets the sources.
+        ///     Gets the user source notes.
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Source>> getSources()
+        public async Task<IEnumerable<Note>> GetUserSourceNotes()
         {
-            return await this.sourceDal.getSources();
+            return await this.notesDal.GetUserSourceNotes(this.CurrentUser, this.CurrentSource);
         }
 
         #endregion

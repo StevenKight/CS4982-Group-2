@@ -67,5 +67,10 @@ public class UserDal : IDbDal<User>
         throw new InvalidOperationException();
     }
 
+    public void SetSourceId(int sourceId)
+    {
+        throw new InvalidOperationException();
+    }
+
     #endregion
 }

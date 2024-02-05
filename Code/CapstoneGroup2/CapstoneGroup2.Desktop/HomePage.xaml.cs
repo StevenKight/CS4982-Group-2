@@ -21,8 +21,8 @@ namespace CapstoneGroup2.Desktop
     {
         #region Data members
 
-        private readonly ObservableCollection<Source> sources;
-        private ViewModel.ViewModel _userViewModel;
+        private ObservableCollection<Source> sources;
+        private ViewModel.ViewModel _viewModel;
 
         #endregion
 
@@ -31,27 +31,37 @@ namespace CapstoneGroup2.Desktop
         public HomePage()
         {
             this.InitializeComponent();
-            this.sources = new ObservableCollection<Source>();
-            var source1 = new Source();
-            source1.IsLink = false;
-            source1.Link = "";
-            source1.Name = "Test Source";
-            source1.SourceId = 1;
-            source1.Type = "Pdf";
-            var source2 = new Source();
-            source2.IsLink = false;
-            source2.Link = "";
-            source2.Name = "Test Source";
-            source2.SourceId = 1;
-            source2.Type = "Pdf";
-            this.sources.Add(source1);
-            this.sources.Add(source2);
-            this.RecentNotesListView.ItemsSource = this.sources;
         }
 
         #endregion
 
         #region Methods
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is ViewModel.ViewModel userViewModel)
+            {
+                this._viewModel = userViewModel;
+
+                this.LoadData();
+            }
+        }
+
+        private async void LoadData()
+        {
+            this.sources = new ObservableCollection<Source>();
+
+            var sources = await this._viewModel.getSourcesForUser();
+
+            foreach (var source in sources)
+            {
+                this.sources.Add(source);
+            }
+
+            this.RecentNotesListView.ItemsSource = this.sources;
+        }
 
         private void RecentNotesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -61,8 +71,8 @@ namespace CapstoneGroup2.Desktop
             if (selectedItem != null)
             {
                 var source = (Source)selectedItem;
-                this._userViewModel.CurrentSource = source;
-                Frame.Navigate(typeof(MainPage), this._userViewModel);
+                this._viewModel.CurrentSource = source;
+                Frame.Navigate(typeof(MainPage), this._viewModel);
             }
         }
 
@@ -96,16 +106,6 @@ namespace CapstoneGroup2.Desktop
                     dataReader.ReadBytes(fileBytes);
                     return fileBytes;
                 }
-            }
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-
-            if (e.Parameter is ViewModel.ViewModel userViewModel)
-            {
-                this._userViewModel = userViewModel;
             }
         }
 
