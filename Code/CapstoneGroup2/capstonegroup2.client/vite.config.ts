@@ -58,10 +58,6 @@ export default defineConfig({
                 target: 'https://localhost:7048/',
                 secure: false
             },
-            '^/shared': {
-                target: 'https://localhost:7048/',
-                secure: false
-            },
             '^/source': {
                 target: 'https://localhost:7048/',
                 secure: false
