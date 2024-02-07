@@ -1,31 +1,90 @@
-import React from 'react';
-import OwnSourcesList from '../components/OwnedSourcesList';
-import { Source } from '../interfaces/Source';
+import { useEffect, useState } from "react";
 
-const MySources: React.FC = ({}) => {
+import { Source } from "../interfaces/Source";
 
-    const [sources, setSources] = React.useState<Source[]>([]);
+import SourcesGrid from "../components/SourcesGrid";
 
-    React.useEffect(() => {
-        fetch('/source/' + localStorage.getItem('username'))
-            .then((res) => res.json())
-            .then((data) => {
-                setSources(data);
-            });
+import './styles/MySources.css';
+import AddSourceDialog from "../components/AddSourceDialog";
+
+export default function MySources() {
+    const [sources, setSources] = useState<Source[]>([]);
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        getSources();
     }, []);
 
-    return (
-        <div className='page-content'>
-            <div style={{ display: 'flex' }}>
-                <h1>Docunotes - My Sources</h1>
-            </div>
-            {
-                sources.length > 0 ? 
-                    <OwnSourcesList ownSources={sources} /> : 
-                    <p>No sources available.</p>
-            }
-        </div>
-    );
-};
+    const getSources = () => {
+        setLoading(true);
+        const username = localStorage.getItem('username');
 
-export default MySources;
+        if (username) {
+            fetch(`/source/${username}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    setSources(data);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    setError('Error fetching sources');
+                });
+        }
+    }
+
+    const addSource = () => {
+        const dialog = document.getElementById('add-source-dialog') as HTMLDialogElement;
+        if (dialog) {
+            dialog.showModal();
+        }
+    }
+
+    if (error) {
+        return (
+            <div>
+                <h1>My Sources</h1>
+                <p>{error}</p>
+            </div>
+        );
+    }
+
+    if (sources.length === 0 && loading) {
+        return (
+            <div>
+                <h1>My Sources</h1>
+                <p>Loading...</p>
+            </div>
+        );
+    }
+
+    if (sources.length === 0 && !loading) {
+        return (
+            <div>
+                <h1>My Sources</h1>
+                <p>No sources found</p>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <AddSourceDialog id="add-source-dialog" onAdd={getSources}/>
+            <div>
+                <div id="my-sources-heading">
+                    <h1>My Sources</h1>
+                    {
+                        !loading ? 
+                            <button aria-label="Add Source"
+                                onClick={addSource}>
+                                +
+                            </button> 
+                            : null
+                    }
+                </div>
+                <SourcesGrid sources={sources}/>
+            </div>
+        </>
+    );
+}

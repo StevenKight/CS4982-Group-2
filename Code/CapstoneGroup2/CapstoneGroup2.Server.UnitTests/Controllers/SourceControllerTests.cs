@@ -40,7 +40,6 @@ public class SourceControllerTests
             .EnableSensitiveDataLogging()
             .Options;
         this._context = new DocunotesDbContext(this._options);
-        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
 
         this._context.Database.EnsureDeleted();
         this._context.Database.EnsureCreated();
@@ -76,7 +75,7 @@ public class SourceControllerTests
         var sourceController = new SourceController(this._sourceDal);
 
         // Act
-        var result = sourceController.GetAll() as OkObjectResult;
+        var result = sourceController.GetAll("testUser") as OkObjectResult;
         var resultList = result.Value as IEnumerable<Source>;
 
         var expected = this._sources.Count();
@@ -109,7 +108,7 @@ public class SourceControllerTests
         var sourceController = new SourceController(this._sourceDal);
 
         // Act
-        var result = sourceController.GetById(1) as OkObjectResult;
+        var result = sourceController.GetById(1, "testUser") as OkObjectResult;
         var resultObject = result.Value as Source;
 
         // Assert
@@ -137,7 +136,7 @@ public class SourceControllerTests
         };
 
         // Act
-        var result = sourceController.Create(source);
+        var result = sourceController.Create("testUser", source);
 
         this._sources.Add(source);
         var expected = this._sources.Count();
@@ -166,7 +165,7 @@ public class SourceControllerTests
         };
 
         // Act
-        var result = sourceController.Update(source);
+        var result = sourceController.Update("testUser", source);
 
         this._sources.Add(source);
         this._sources.Remove(this._sources[1]);
@@ -189,7 +188,7 @@ public class SourceControllerTests
         var sourceController = new SourceController(this._sourceDal);
 
         // Act
-        var result = sourceController.Delete(this._sources[0]);
+        var result = sourceController.Delete("testUser", this._sources[0]);
 
         this._sources.Remove(this._sources[0]);
         var expected = this._sources.Count();

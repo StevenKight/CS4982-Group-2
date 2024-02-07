@@ -57,6 +57,8 @@ public class SourceDal : IDbDal<Source>
 
         entity.Username = username;
 
+        entity.CreatedAt = DateTime.Now;
+
         this.context.Sources.Add(entity);
         return this.context.SaveChanges() > 0;
     }
@@ -80,14 +82,19 @@ public class SourceDal : IDbDal<Source>
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
-
-        if (entity.Username != username)
+        // TODO: Cascade delete instead of manual delete
+        var notes = this.context.Notes.Where(x => x.SourceId == entity.SourceId);
+        foreach (var note in notes)
         {
-            throw new UnauthorizedAccessException();
+            this.context.Notes.Remove(note);
         }
 
-        this.context.Sources.Remove(entity);
+        var source = this.context.Sources.Find(entity.SourceId);
+        if (source != null)
+        {
+            this.context.Sources.Remove(source);
+        }
+
         return this.context.SaveChanges() > 0;
     }
 
