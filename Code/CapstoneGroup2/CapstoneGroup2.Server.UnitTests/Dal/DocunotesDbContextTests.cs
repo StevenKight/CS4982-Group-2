@@ -46,12 +46,6 @@ public class DocunotesDbContextTests
     }
 
     [Test]
-    public void TestSharedNotes()
-    {
-        Assert.IsNotNull(this._context.SharedNotes);
-    }
-
-    [Test]
     public void TestSources()
     {
         Assert.IsNotNull(this._context.Sources);

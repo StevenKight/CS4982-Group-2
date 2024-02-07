@@ -76,7 +76,7 @@ public class NotesControllerTests
         var notesController = new NotesController(this._notesDal);
 
         // Act
-        var result = notesController.GetAll() as OkObjectResult;
+        var result = notesController.GetAll(1, "testUser") as OkObjectResult;
         var resultList = result.Value as IEnumerable<Note>;
 
         var expected = this._notes.Count();
@@ -100,27 +100,6 @@ public class NotesControllerTests
 
     [Test]
     [Order(3)]
-    public void GetByIdTest()
-    {
-        // Arrange
-        var notesController = new NotesController(this._notesDal);
-
-        // Act
-        var result = notesController.GetById(1) as OkObjectResult;
-        var resultObject = result.Value as Note;
-
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.IsInstanceOf<OkObjectResult>(result);
-        Assert.IsNotNull(resultObject);
-        Assert.AreEqual(1, resultObject.SourceId);
-        Assert.AreEqual("testUser", resultObject.Username);
-        Assert.AreEqual("testNote", resultObject.NoteText);
-        Assert.AreEqual("testTag1,testTag2", resultObject.TagsString);
-    }
-
-    [Test]
-    [Order(4)]
     public void CreateTest()
     {
         // Arrange
@@ -134,7 +113,7 @@ public class NotesControllerTests
         };
 
         // Act
-        var result = notesController.Create(note);
+        var result = notesController.Create("testUser", note);
 
         this._notes.Add(note);
         var expected = this._notes.Count();
@@ -147,7 +126,7 @@ public class NotesControllerTests
     }
 
     [Test]
-    [Order(5)]
+    [Order(4)]
     public void UpdateTest()
     {
         // Arrange
@@ -161,7 +140,7 @@ public class NotesControllerTests
         };
 
         // Act
-        var result = notesController.Update(note);
+        var result = notesController.Update("testUser", note);
 
         this._notes.Add(note);
         this._notes.Remove(this._notes[1]);
@@ -177,14 +156,14 @@ public class NotesControllerTests
     }
 
     [Test]
-    [Order(6)]
+    [Order(5)]
     public void DeleteTest()
     {
         // Arrange
         var notesController = new NotesController(this._notesDal);
 
         // Act
-        var result = notesController.Delete(this._notes[0]);
+        var result = notesController.Delete(this._notes[0].NoteId);
 
         this._notes.Remove(this._notes[0]);
         var expected = this._notes.Count();

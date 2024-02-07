@@ -50,27 +50,6 @@ public class NotesController : ControllerBase
         }
     }
 
-    // GET <NotesController>/5
-    //[HttpGet("{noteId}-{username}")]
-    //public IActionResult GetById(int noteId, string username)
-    //{
-    //    if (string.IsNullOrWhiteSpace(username))
-    //    {
-    //        return Unauthorized("Invalid username");
-    //    }
-
-    //    this.context.SetUser(username);
-
-    //    try
-    //    {
-    //        return Ok(this.context.Get(noteId));
-    //    }
-    //    catch (UnauthorizedAccessException e)
-    //    {
-    //        return Unauthorized("Invalid token");
-    //    }
-    //}
-
     // POST <NotesController>
     [HttpPost("{username}")]
     public IActionResult Create(string username, [FromBody] Note note)
@@ -116,19 +95,12 @@ public class NotesController : ControllerBase
     }
 
     // DELETE <NotesController>/5
-    [HttpDelete("{sourceId}-{username}")]
-    public IActionResult Delete(int sourceId, string username)
+    [HttpDelete("{noteId}")]
+    public IActionResult Delete(int noteId)
     {
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            return Unauthorized("Invalid username");
-        }
-
-        this.context.SetUser(username);
-
         try
         {
-            var note = this.context.Get(sourceId);
+            var note = new Note { NoteId = noteId };
             this.context.Delete(note);
             return Ok();
         }
