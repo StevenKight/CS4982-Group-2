@@ -1,0 +1,12 @@
+.dashboard-notes-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1em;
+    overflow: scroll hidden;
+}
+
+.dashboard-notes-row * {
+    margin-right: 1em;
+    max-width: 15em;
+}
