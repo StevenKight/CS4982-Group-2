@@ -1,0 +1,43 @@
+.add-source-dialog {
+    border: none;
+    box-shadow: 0 0 5px rgb(0 0 0 / 0.2);
+}
+
+.add-source-dialog-form {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+}
+
+.add-source-dialog-heading {
+    margin-bottom: 1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-source-dialog-heading h2 {
+    margin: 0;
+    font-size: x-large;
+}
+
+.add-source-dialog input {
+    margin-bottom: 1em;
+}
+
+.add-source-dialog-finish-row,
+.add-source-dialog-linkable-row {
+    margin-top: 1em;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.add-source-dialog-finish-row input, 
+.add-source-dialog-heading button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5em;
+    width: 5em;
+}
