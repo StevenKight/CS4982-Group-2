@@ -29,7 +29,7 @@ public class UserDal : IDbDal<User>
             throw new InvalidCastException();
         }
 
-        var username = (string)(keyValues[0] ?? throw new ArgumentNullException());
+        var username = (string)keyValues[0]!;
         if (string.IsNullOrWhiteSpace(username))
         {
             throw new ArgumentOutOfRangeException();

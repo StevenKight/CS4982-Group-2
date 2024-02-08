@@ -29,7 +29,7 @@ public class SourceDal : IDbDal<Source>
             throw new InvalidCastException();
         }
 
-        var sourceId = (int)(keyValues[0] ?? throw new ArgumentNullException());
+        var sourceId = (int)keyValues[0]!;
         if (sourceId < 1)
         {
             throw new ArgumentOutOfRangeException();
@@ -81,6 +81,11 @@ public class SourceDal : IDbDal<Source>
     public bool Delete(Source entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
+
+        if (entity.SourceId < 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
 
         // TODO: Cascade delete instead of manual delete
         var notes = this.context.Notes.Where(x => x.SourceId == entity.SourceId);

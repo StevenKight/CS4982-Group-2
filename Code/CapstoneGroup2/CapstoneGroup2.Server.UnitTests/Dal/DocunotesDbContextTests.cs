@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneGroup2.Server.UnitTests.Dal;
 
+/* dotcover disable */
 [TestFixture]
 public class DocunotesDbContextTests
 {

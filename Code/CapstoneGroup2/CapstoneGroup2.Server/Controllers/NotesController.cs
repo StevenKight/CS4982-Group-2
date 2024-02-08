@@ -44,9 +44,9 @@ public class NotesController : ControllerBase
             var sourceNotes = this.context.GetAll();
             return Ok(sourceNotes);
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
@@ -66,9 +66,9 @@ public class NotesController : ControllerBase
             this.context.Add(note);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
@@ -88,9 +88,9 @@ public class NotesController : ControllerBase
             this.context.Update(note);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
@@ -104,9 +104,9 @@ public class NotesController : ControllerBase
             this.context.Delete(note);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
