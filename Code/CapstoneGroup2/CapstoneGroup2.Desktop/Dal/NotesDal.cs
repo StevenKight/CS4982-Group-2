@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using CapstoneGroup2.Desktop.Model;
-using Newtonsoft.Json;
 
 namespace CapstoneGroup2.Desktop.Dal
 {
@@ -13,7 +11,7 @@ namespace CapstoneGroup2.Desktop.Dal
     {
         #region Data members
 
-        private static readonly string baseUrl = "https://localhost:7048";
+        private static readonly string BaseUrl = "https://localhost:7048";
 
         private readonly HttpClient client;
 
@@ -24,13 +22,13 @@ namespace CapstoneGroup2.Desktop.Dal
         public NotesDal()
         {
             this.client = new HttpClient();
-            this.client.BaseAddress = new Uri(baseUrl);
+            this.client.BaseAddress = new Uri(BaseUrl);
         }
 
         public NotesDal(HttpClient client)
         {
             this.client = client;
-            this.client.BaseAddress = new Uri(baseUrl);
+            this.client.BaseAddress = new Uri(BaseUrl);
         }
 
         #endregion
@@ -47,45 +45,6 @@ namespace CapstoneGroup2.Desktop.Dal
             }
 
             return null;
-        }
-
-        public async Task<bool> createNewNote(Note note, string authToken)
-        {
-            var jsonData = JsonConvert.SerializeObject(note);
-
-            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-            this.client.DefaultRequestHeaders.Add("Authorization", $"Bearer {authToken}");
-
-            var response = await this.client.PostAsync("Notes", content);
-
-            return response.IsSuccessStatusCode;
-        }
-
-        public async Task<bool> UpdateNote(Note note, string authToken)
-        {
-            var jsonData = JsonConvert.SerializeObject(note);
-
-            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-            this.client.DefaultRequestHeaders.Add("Authorization", $"Bearer {authToken}");
-
-            var response = await this.client.PutAsync("Notes", content);
-
-            return response.IsSuccessStatusCode;
-        }
-
-        public async Task<bool> DeleteNote(Note note, string authToken)
-        {
-            var jsonData = JsonConvert.SerializeObject(note);
-
-            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-            this.client.DefaultRequestHeaders.Add("Authorization", $"Bearer {authToken}");
-
-            var response = await this.client.DeleteAsync("Notes");
-
-            return response.IsSuccessStatusCode;
         }
 
         #endregion

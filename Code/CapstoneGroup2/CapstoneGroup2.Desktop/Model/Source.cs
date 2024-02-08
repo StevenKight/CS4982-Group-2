@@ -18,24 +18,23 @@ namespace CapstoneGroup2.Desktop.Model
 
         public int SourceId { get; set; }
 
+        public string Username { get; set; }
+
         public string Type { get; set; }
 
-        public SourceType NoteType => (SourceType)Enum.Parse(typeof(NoteType), this.Type, true);
+        public SourceType NoteType => (SourceType)Enum.Parse(typeof(SourceType), this.Type, true);
 
         public string Name { get; set; }
+
+        public string Description { get; set; }
 
         public bool IsLink { get; set; }
 
         public string Link { get; set; }
 
-        #endregion
+        public DateTime CreatedAt { get; set; }
 
-        #region Methods
-
-        public override string ToString()
-        {
-            return this.Name;
-        }
+        public DateTime? UpdatedAt { get; set; }
 
         #endregion
     }

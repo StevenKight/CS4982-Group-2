@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CapstoneGroup2.Desktop.Model
@@ -6,6 +7,8 @@ namespace CapstoneGroup2.Desktop.Model
     public class Note
     {
         #region Properties
+
+        public int NoteId { get; set; }
 
         public int SourceId { get; set; }
 
@@ -17,7 +20,7 @@ namespace CapstoneGroup2.Desktop.Model
 
         public List<string> Tags => this.TagsString.Split(",").ToList();
 
-        public Source Source { get; set; }
+        public DateTime NoteDate { get; set; }
 
         #endregion
     }
