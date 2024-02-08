@@ -4,16 +4,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneGroup2.Server.UnitTests.Dal;
 
+/* dotcover disable */
 [TestFixture]
 public class UserDalTests
 {
     #region Data members
 
-    private readonly List<User> _users = new()
-    {
+    private readonly List<User> _users =
+    [
         new User { Username = "testUser", Password = "testPassword", Token = "testToken" },
         new User { Username = "testUser2", Password = "testPassword2", Token = "testToken2" }
-    };
+    ];
 
     private DbContextOptions<DocunotesDbContext> _options;
     private DocunotesDbContext _context;
@@ -60,6 +61,72 @@ public class UserDalTests
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual("testUser", result.Username);
+    }
+
+    [Test]
+    public void InvalidNumberOfKeysGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<InvalidCastException>(() => userDal.Get(1, "test"));
+    }
+
+    [Test]
+    public void InvalidNullKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<InvalidCastException>(() => userDal.Get(null));
+    }
+
+    [Test]
+    public void InvalidNonStringKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<InvalidCastException>(() => userDal.Get(0));
+    }
+
+    [Test]
+    public void InvalidEmptyKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => userDal.Get(""));
+    }
+
+    [Test]
+    public void InvalidWhitespaceKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => userDal.Get("   "));
+    }
+
+    [Test]
+    public void InvalidNonExistentKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<InvalidOperationException>(() => userDal.Get("testingInvalidUsername"));
     }
 
     [Test]
@@ -116,6 +183,26 @@ public class UserDalTests
 
         // Assert
         Assert.Throws<InvalidOperationException>(() => userDal.Delete(new User()));
+    }
+
+    [Test]
+    public void SetUserTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Assert
+        Assert.Throws<InvalidOperationException>(() => userDal.SetUser("testUser"));
+    }
+
+    [Test]
+    public void SetSourceIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Assert
+        Assert.Throws<InvalidOperationException>(() => userDal.SetSourceId(1));
     }
 
     #endregion

@@ -38,14 +38,7 @@ public class SourceController : ControllerBase
 
         this.context.SetUser(username);
 
-        try
-        {
-            return Ok(this.context.GetAll());
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized("Invalid token");
-        }
+        return Ok(this.context.GetAll());
     }
 
     // GET <SourceController>/5-username
@@ -63,9 +56,9 @@ public class SourceController : ControllerBase
         {
             return Ok(this.context.Get(sourceId));
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
@@ -84,9 +77,9 @@ public class SourceController : ControllerBase
         {
             return Ok(this.context.Add(newSource));
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
@@ -106,9 +99,9 @@ public class SourceController : ControllerBase
             this.context.Update(shared);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
@@ -121,7 +114,7 @@ public class SourceController : ControllerBase
             var shared = new Source { SourceId = sourceId };
             return Ok(this.context.Delete(shared));
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
             return BadRequest("Invalid delete: " + e.Message);
         }

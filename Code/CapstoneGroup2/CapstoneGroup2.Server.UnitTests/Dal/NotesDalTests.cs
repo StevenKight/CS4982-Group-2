@@ -4,22 +4,34 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneGroup2.Server.UnitTests.Dal;
 
+/* dotcover disable */
 [TestFixture]
 public class NotesDalTests
 {
     #region Data members
 
-    private readonly List<Note> _notes = new()
-    {
+    private readonly List<Note> _notes =
+    [
         new Note
         {
-            SourceId = 1, Username = "testUser", NoteText = "testNote", TagsString = "testTag1,testTag2"
+            NoteId = 1,
+            SourceId = 1,
+            Username = "testUser",
+            NoteText = "testNote",
+            TagsString = "testTag1,testTag2",
+            NoteDate = new DateTime(2021, 1, 1)
         },
+
         new Note
         {
-            SourceId = 2, Username = "testUser", NoteText = "testNote2", TagsString = "testTag3,testTag4"
+            NoteId = 2,
+            SourceId = 1,
+            Username = "testUser",
+            NoteText = "testNote2",
+            TagsString = "testTag3,testTag4",
+            NoteDate = new DateTime(2021, 1, 1)
         }
-    };
+    ];
 
     private DbContextOptions<DocunotesDbContext> _options;
     private DocunotesDbContext _context;
@@ -36,7 +48,6 @@ public class NotesDalTests
             .EnableSensitiveDataLogging()
             .Options;
         this._context = new DocunotesDbContext(this._options);
-        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
 
         this._context.Notes.AddRange(this._notes);
         this._context.SaveChanges();
@@ -65,6 +76,7 @@ public class NotesDalTests
     {
         // Arrange
         var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
 
         // Act
         var result = noteDal.Get(1);
@@ -79,10 +91,72 @@ public class NotesDalTests
 
     [Test]
     [Order(3)]
+    public void InvalidNumberOfKeysGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<InvalidCastException>(() => noteDal.Get(1, "test"));
+    }
+
+    [Test]
+    [Order(4)]
+    public void InvalidNullKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<InvalidCastException>(() => noteDal.Get(null));
+    }
+
+    [Test]
+    [Order(5)]
+    public void InvalidNonIntKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<InvalidCastException>(() => noteDal.Get("test"));
+    }
+
+    [Test]
+    [Order(6)]
+    public void InvalidZeroKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => noteDal.Get(0));
+    }
+
+    [Test]
+    [Order(7)]
+    public void InvalidNonExistentKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act, Assert
+        Assert.Throws<InvalidOperationException>(() => noteDal.Get(10));
+    }
+
+    [Test]
+    [Order(8)]
     public void GetAllNoteTest()
     {
         // Arrange
         var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+        noteDal.SetSourceId(1);
 
         // Act
         var result = noteDal.GetAll();
@@ -105,17 +179,33 @@ public class NotesDalTests
     }
 
     [Test]
-    [Order(4)]
+    [Order(8)]
+    public void InvalidSourceIdGetAllNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
+        noteDal.SetSourceId(0);
+
+        // Act, Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => noteDal.GetAll());
+    }
+
+    [Test]
+    [Order(9)]
     public void AddNoteTest()
     {
         // Arrange
         var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
         var note = new Note
         {
+            NoteId = 3,
             SourceId = 3,
             Username = "testUser",
-            NoteText = "newTestNote",
-            TagsString = "testTag1,testTag6"
+            NoteText = "testNote3",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
         };
 
         // Act
@@ -131,17 +221,20 @@ public class NotesDalTests
     }
 
     [Test]
-    [Order(5)]
+    [Order(10)]
     public void UpdateNoteTest()
     {
         // Arrange
         var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
         var note = new Note
         {
-            SourceId = 2,
+            NoteId = 2,
+            SourceId = 3,
             Username = "testUser",
-            NoteText = "testNoteUpdated",
-            TagsString = "testTag1,testTag2,newTag"
+            NoteText = "testNote4",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
         };
 
         // Act
@@ -151,7 +244,7 @@ public class NotesDalTests
         this._notes.Remove(this._notes[1]);
 
         // Assert
-        var actual = this._context.Notes.Find(2, "testUser");
+        var actual = this._context.Notes.Find(2);
         Assert.IsTrue(result);
         Assert.AreEqual(note.SourceId, actual.SourceId);
         Assert.AreEqual(note.Username, actual.Username);
@@ -160,11 +253,53 @@ public class NotesDalTests
     }
 
     [Test]
-    [Order(6)]
+    [Order(11)]
+    public void InvalidUserInvalidUpdateNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser2", Password = "testPassword" };
+        var note = new Note
+        {
+            NoteId = 2,
+            SourceId = 3,
+            Username = "testUser",
+            NoteText = "testNote4",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act, Assert
+        Assert.Throws<UnauthorizedAccessException>(() => noteDal.Update(note));
+    }
+
+    [Test]
+    [Order(12)]
+    public void NoUserInvalidUpdateNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        var note = new Note
+        {
+            NoteId = 2,
+            SourceId = 3,
+            Username = "testUser",
+            NoteText = "testNote4",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act, Assert
+        Assert.Throws<UnauthorizedAccessException>(() => noteDal.Update(note));
+    }
+
+    [Test]
+    [Order(13)]
     public void DeleteNoteTest()
     {
         // Arrange
         var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = "testUser", Password = "testPassword" };
 
         // Act
         var result = noteDal.Delete(this._notes[0]);
