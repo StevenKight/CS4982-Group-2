@@ -1,5 +1,8 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.Foundation;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using CapstoneGroup2.Desktop.ViewModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -12,7 +15,7 @@ namespace CapstoneGroup2.Desktop
     {
         #region Data members
 
-        private readonly ViewModel.ViewModel _viewModel;
+        private readonly UserViewModel _viewModel;
 
         #endregion
 
@@ -36,31 +39,33 @@ namespace CapstoneGroup2.Desktop
 
         public LoginPage()
         {
-            this._viewModel = new ViewModel.ViewModel();
+            this._viewModel = new UserViewModel();
             this.InitializeComponent();
+
+            var size = new Size(Width, Height);
+            ApplicationView.PreferredLaunchViewSize = size;
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(size);
+            ApplicationView.GetForCurrentView().TryResizeView(size);
         }
 
         #endregion
 
         #region Methods
 
-        private async void Login()
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             await this._viewModel.Login(this.Username, this.Password);
 
-            if (this._viewModel.CurrentUser != null)
+            if (this._viewModel.ValidateAuthorization())
             {
-                Frame.Navigate(typeof(HomePage), this._viewModel);
+                Frame.Navigate(typeof(MainPage));
             }
             else
             {
                 this.ErrorTextBlock.Text = "Invalid username or password";
             }
-        }
-
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Login();
         }
 
         #endregion
