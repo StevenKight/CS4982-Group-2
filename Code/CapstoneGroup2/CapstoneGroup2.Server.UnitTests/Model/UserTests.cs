@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneGroup2.Server.UnitTests.Model;
 
+/* dotcover disable */
 [TestFixture]
 public class UserTests
 {

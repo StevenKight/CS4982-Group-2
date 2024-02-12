@@ -6,22 +6,34 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneGroup2.Server.UnitTests.Controllers;
 
+/* dotcover disable */
 [TestFixture]
 public class NotesControllerTests
 {
     #region Data members
 
-    private readonly List<Note> _notes = new()
-    {
+    private readonly List<Note> _notes =
+    [
         new Note
         {
-            SourceId = 1, Username = "testUser", NoteText = "testNote", TagsString = "testTag1,testTag2"
+            NoteId = 1,
+            SourceId = 1,
+            Username = "testUser",
+            NoteText = "testNote",
+            TagsString = "testTag1,testTag2",
+            NoteDate = new DateTime(2021, 1, 1)
         },
+
         new Note
         {
-            SourceId = 2, Username = "testUser", NoteText = "testNote2", TagsString = "testTag3,testTag4"
+            NoteId = 2,
+            SourceId = 1,
+            Username = "testUser",
+            NoteText = "testNote2",
+            TagsString = "testTag3,testTag4",
+            NoteDate = new DateTime(2021, 1, 1)
         }
-    };
+    ];
 
     private DbContextOptions<DocunotesDbContext> _options;
     private DocunotesDbContext _context;
@@ -76,7 +88,7 @@ public class NotesControllerTests
         var notesController = new NotesController(this._notesDal);
 
         // Act
-        var result = notesController.GetAll() as OkObjectResult;
+        var result = notesController.GetAll(1, "testUser") as OkObjectResult;
         var resultList = result.Value as IEnumerable<Note>;
 
         var expected = this._notes.Count();
@@ -100,41 +112,82 @@ public class NotesControllerTests
 
     [Test]
     [Order(3)]
-    public void GetByIdTest()
+    public void NullUsernameGetAllTest()
     {
         // Arrange
         var notesController = new NotesController(this._notesDal);
 
         // Act
-        var result = notesController.GetById(1) as OkObjectResult;
-        var resultObject = result.Value as Note;
+        var result = notesController.GetAll(1, null);
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.IsInstanceOf<OkObjectResult>(result);
-        Assert.IsNotNull(resultObject);
-        Assert.AreEqual(1, resultObject.SourceId);
-        Assert.AreEqual("testUser", resultObject.Username);
-        Assert.AreEqual("testNote", resultObject.NoteText);
-        Assert.AreEqual("testTag1,testTag2", resultObject.TagsString);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
     }
 
     [Test]
     [Order(4)]
+    public void EmptyUsernameGetAllTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetAll(1, "");
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
+    }
+
+    [Test]
+    [Order(5)]
+    public void WhitespaceUsernameGetAllTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetAll(1, "    ");
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
+    }
+
+    [Test]
+    [Order(6)]
+    public void InvalidSourceIdGetAllTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetAll(0, "testUser");
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    [Order(7)]
     public void CreateTest()
     {
         // Arrange
         var notesController = new NotesController(this._notesDal);
         var note = new Note
         {
+            NoteId = 3,
             SourceId = 3,
             Username = "testUser",
-            NoteText = "newTestNote",
-            TagsString = "testTag1,testTag6"
+            NoteText = "testNote3",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
         };
 
         // Act
-        var result = notesController.Create(note);
+        var result = notesController.Create("testUser", note);
 
         this._notes.Add(note);
         var expected = this._notes.Count();
@@ -147,27 +200,140 @@ public class NotesControllerTests
     }
 
     [Test]
-    [Order(5)]
+    [Order(8)]
+    public void NullUsernameCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = "testUser",
+            NoteText = "testNote3",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create(null, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
+    }
+
+    [Test]
+    [Order(9)]
+    public void EmptyUsernameCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = "testUser",
+            NoteText = "testNote3",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create("", note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
+    }
+
+    [Test]
+    [Order(10)]
+    public void WhitespaceUsernameCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = "testUser",
+            NoteText = "testNote3",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create("    ", note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
+    }
+
+    [Test]
+    [Order(11)]
+    public void NullNoteCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.Create("testUser", null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    [Order(12)]
+    public void DuplicateNoteCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 1,
+            SourceId = 1,
+            Username = "testUser",
+            NoteText = "testNote",
+            TagsString = "testTag1,testTag2",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create("testUser", note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    [Order(13)]
     public void UpdateTest()
     {
         // Arrange
         var notesController = new NotesController(this._notesDal);
         var note = new Note
         {
-            SourceId = 2,
+            NoteId = 2,
+            SourceId = 3,
             Username = "testUser",
-            NoteText = "testNoteUpdated",
-            TagsString = "testTag1,testTag2,newTag"
+            NoteText = "testNote4",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
         };
 
         // Act
-        var result = notesController.Update(note);
+        var result = notesController.Update("testUser", note);
 
         this._notes.Add(note);
         this._notes.Remove(this._notes[1]);
 
         // Assert
-        var actual = this._context.Notes.Find(2, "testUser");
+        var actual = this._context.Notes.Find(2);
         Assert.IsNotNull(result);
         Assert.IsInstanceOf<OkResult>(result);
         Assert.AreEqual(note.SourceId, actual.SourceId);
@@ -177,14 +343,101 @@ public class NotesControllerTests
     }
 
     [Test]
-    [Order(6)]
+    [Order(13)]
+    public void NullUsernameUpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = "testUser",
+            NoteText = "testNote3",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Update(null, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
+    }
+
+    [Test]
+    [Order(14)]
+    public void EmptyUsernameUpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = "testUser",
+            NoteText = "testNote3",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Update("", note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
+    }
+
+    [Test]
+    [Order(15)]
+    public void WhitespaceUsernameUpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = "testUser",
+            NoteText = "testNote3",
+            TagsString = "testTag5,testTag6",
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Update("    ", note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedObjectResult>(result);
+    }
+
+    [Test]
+    [Order(16)]
+    public void NullNoteUpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.Update("testUser", null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    [Order(17)]
     public void DeleteTest()
     {
         // Arrange
         var notesController = new NotesController(this._notesDal);
 
         // Act
-        var result = notesController.Delete(this._notes[0]);
+        var result = notesController.Delete(this._notes[0].NoteId);
 
         this._notes.Remove(this._notes[0]);
         var expected = this._notes.Count();
@@ -200,6 +453,21 @@ public class NotesControllerTests
             Assert.IsTrue(this._notes.Exists(
                 x => notes.ElementAt(i).SourceId == x.SourceId && notes.ElementAt(i).Username.Equals(x.Username)));
         }
+    }
+
+    [Test]
+    [Order(18)]
+    public void InvalidNoteIdDeleteTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.Delete(0);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
     }
 
     #endregion

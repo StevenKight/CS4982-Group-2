@@ -1,0 +1,14 @@
+.authorize-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 20em;
+}
+
+.authorize-form-input {
+    margin-bottom: 1em;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}

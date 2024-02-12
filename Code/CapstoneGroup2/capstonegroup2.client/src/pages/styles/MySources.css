@@ -1,0 +1,8 @@
+#my-sources-heading {
+    display: flex;
+    align-items: center;
+}
+
+#my-sources-heading h1 {
+    margin-right: 1em;
+}

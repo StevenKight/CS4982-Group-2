@@ -1,0 +1,8 @@
+#postauthorize-navigation {
+    display: flex;
+    justify-content: space-between;
+}
+
+.postauthorize-navigation-group * {
+    margin: 0 1em;
+}

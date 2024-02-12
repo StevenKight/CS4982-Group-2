@@ -30,7 +30,7 @@ public class NotesDal : IDbDal<Note>
             throw new InvalidCastException();
         }
 
-        var noteId = (int)(keyValues[0] ?? throw new ArgumentNullException());
+        var noteId = (int)keyValues[0]!;
         if (noteId < 1)
         {
             throw new ArgumentOutOfRangeException();
@@ -44,6 +44,11 @@ public class NotesDal : IDbDal<Note>
 
     public IEnumerable<Note> GetAll()
     {
+        if (this.sourceId < 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
         var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         var notes = this.context.Notes
@@ -82,13 +87,6 @@ public class NotesDal : IDbDal<Note>
     public bool Delete(Note entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-
-        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
-
-        if (entity.Username != username)
-        {
-            throw new UnauthorizedAccessException();
-        }
 
         this.context.Notes.Remove(entity);
         return this.context.SaveChanges() > 0;

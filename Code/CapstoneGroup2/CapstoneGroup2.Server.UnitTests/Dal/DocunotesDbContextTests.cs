@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneGroup2.Server.UnitTests.Dal;
 
+/* dotcover disable */
 [TestFixture]
 public class DocunotesDbContextTests
 {
@@ -43,12 +44,6 @@ public class DocunotesDbContextTests
     public void TestNotes()
     {
         Assert.IsNotNull(this._context.Notes);
-    }
-
-    [Test]
-    public void TestSharedNotes()
-    {
-        Assert.IsNotNull(this._context.SharedNotes);
     }
 
     [Test]

@@ -9,16 +9,17 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CapstoneGroup2.Server.UnitTests.Controllers;
 
+/* dotcover disable */
 [TestFixture]
 public class UserControllerTests
 {
     #region Data members
 
-    private readonly List<User> _users = new()
-    {
+    private readonly List<User> _users =
+    [
         new User { Username = "testUser", Password = "testPassword", Token = "testToken" },
         new User { Username = "testUser2", Password = "testPassword2", Token = "testToken2" }
-    };
+    ];
 
     private DbContextOptions<DocunotesDbContext> _options;
     private DocunotesDbContext _context;
@@ -93,7 +94,133 @@ public class UserControllerTests
     }
 
     [Test]
-    public void LoginTest_InvalidUsername()
+    public void NullUserLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var result = userController.Login(null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    public void NullUsernameLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Password = "testPassword"
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    public void EmptyUsernameLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = "",
+            Password = "testPassword"
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    public void WhitespaceUsernameLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = "    ",
+            Password = "testPassword"
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    public void NullPasswordLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = "testUser"
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    public void EmptyPasswordLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = "testUser",
+            Password = ""
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    public void WhitespacePasswordLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = "testUser",
+            Password = "    "
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    public void InvalidUsernameLoginTest()
     {
         // Arrange
         var userController = new UserController(this._userDal);
@@ -112,6 +239,25 @@ public class UserControllerTests
     }
 
     [Test]
+    public void InvalidPasswordLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = "testUser",
+            Password = "invalidPassword"
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<UnauthorizedResult>(result);
+    }
+
+    [Test]
     public void AddUserTest()
     {
         // Arrange
@@ -127,6 +273,35 @@ public class UserControllerTests
 
         Assert.AreEqual(3, this._context.Users.Count());
         Assert.Contains(user, this._context.Users.ToList());
+    }
+
+    [Test]
+    public void DuplicateUsernameAddUserTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+        var user = new User { Username = "testUser", Password = "testPassword" };
+
+        // Act
+        var result = userController.AddUser(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
+    }
+
+    [Test]
+    public void NullAddUserTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var result = userController.AddUser(null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf<BadRequestResult>(result);
     }
 
     #endregion

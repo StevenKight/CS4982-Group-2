@@ -1,0 +1,20 @@
+.source {
+    width: fit-content;
+    padding: 1em;
+    border-radius: 1rem;
+    background-color: rgb(58 58 58);
+    box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+    transition: all 0.25s ease;
+    min-width: 15em;
+    height: 10em;
+    overflow-y: hidden;
+}
+
+.source:hover {
+    transform: scale(1.05);
+}
+
+.source:active {
+    transform: scale(1);
+    background-color: black;
+}

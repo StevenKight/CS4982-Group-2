@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CapstoneGroup2.Server.Controllers;
 
-[Route("[controller]")]
+[Route("[controller]")] // source/
 [ApiController]
 public class SourceController : ControllerBase
 {
@@ -27,7 +27,7 @@ public class SourceController : ControllerBase
 
     #region Methods
 
-    // GET: <SourceController>
+    // GET: <SourceController>/username
     [HttpGet("{username}")]
     public IActionResult GetAll(string username)
     {
@@ -38,17 +38,10 @@ public class SourceController : ControllerBase
 
         this.context.SetUser(username);
 
-        try
-        {
-            return Ok(this.context.GetAll());
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized("Invalid token");
-        }
+        return Ok(this.context.GetAll());
     }
 
-    // GET <SourceController>/5
+    // GET <SourceController>/5-username
     [HttpGet("{sourceId}-{username}")]
     public IActionResult GetById(int sourceId, string username)
     {
@@ -63,15 +56,15 @@ public class SourceController : ControllerBase
         {
             return Ok(this.context.Get(sourceId));
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
-    // POST <SourceController>
+    // POST <SourceController>/username
     [HttpPost("{username}")]
-    public IActionResult Create(string username, [FromBody] Source shared)
+    public IActionResult Create(string username, [FromBody] Source newSource)
     {
         if (string.IsNullOrWhiteSpace(username))
         {
@@ -82,16 +75,15 @@ public class SourceController : ControllerBase
 
         try
         {
-            this.context.Add(shared);
-            return Ok();
+            return Ok(this.context.Add(newSource));
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
-    // PUT <SourceController>/5
+    // PUT <SourceController>/username
     [HttpPut("{username}")]
     public IActionResult Update(string username, [FromBody] Source shared)
     {
@@ -107,31 +99,24 @@ public class SourceController : ControllerBase
             this.context.Update(shared);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
     // DELETE <SourceController>/5
-    [HttpDelete("{username}")]
-    public IActionResult Delete(string username, [FromBody] Source shared)
+    [HttpDelete("{sourceId}")]
+    public IActionResult Delete(int sourceId)
     {
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            return Unauthorized("Invalid username");
-        }
-
-        this.context.SetUser(username);
-
         try
         {
-            this.context.Delete(shared);
-            return Ok();
+            var shared = new Source { SourceId = sourceId };
+            return Ok(this.context.Delete(shared));
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest("Invalid delete: " + e.Message);
         }
     }
 

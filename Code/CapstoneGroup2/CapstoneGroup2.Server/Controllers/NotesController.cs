@@ -44,32 +44,11 @@ public class NotesController : ControllerBase
             var sourceNotes = this.context.GetAll();
             return Ok(sourceNotes);
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
-
-    // GET <NotesController>/5
-    //[HttpGet("{noteId}-{username}")]
-    //public IActionResult GetById(int noteId, string username)
-    //{
-    //    if (string.IsNullOrWhiteSpace(username))
-    //    {
-    //        return Unauthorized("Invalid username");
-    //    }
-
-    //    this.context.SetUser(username);
-
-    //    try
-    //    {
-    //        return Ok(this.context.Get(noteId));
-    //    }
-    //    catch (UnauthorizedAccessException e)
-    //    {
-    //        return Unauthorized("Invalid token");
-    //    }
-    //}
 
     // POST <NotesController>
     [HttpPost("{username}")]
@@ -87,9 +66,9 @@ public class NotesController : ControllerBase
             this.context.Add(note);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
@@ -109,32 +88,25 @@ public class NotesController : ControllerBase
             this.context.Update(note);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
     // DELETE <NotesController>/5
-    [HttpDelete("{sourceId}-{username}")]
-    public IActionResult Delete(int sourceId, string username)
+    [HttpDelete("{noteId}")]
+    public IActionResult Delete(int noteId)
     {
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            return Unauthorized("Invalid username");
-        }
-
-        this.context.SetUser(username);
-
         try
         {
-            var note = this.context.Get(sourceId);
+            var note = new Note { NoteId = noteId };
             this.context.Delete(note);
             return Ok();
         }
-        catch (UnauthorizedAccessException e)
+        catch (Exception e)
         {
-            return Unauthorized("Invalid token");
+            return BadRequest();
         }
     }
 
