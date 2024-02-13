@@ -15,6 +15,10 @@ namespace CapstoneGroup2.Desktop.ViewModel
         private readonly ApplicationDataStorageHelper _applicationStorageHelper;
         private readonly SourceDal _sourceDal;
 
+        public List<Source> sources { get; set; }
+
+        public Source currentSource { get; set; }
+
         #endregion
 
         #region Constructors
@@ -41,6 +45,21 @@ namespace CapstoneGroup2.Desktop.ViewModel
             var user = JsonConvert.DeserializeObject<User>(userSerialized);
             return await this._sourceDal.GetSourcesForUser(user);
         }
+
+        public async Task<bool?> addNewSource(StorageFile storage)
+        {
+            var userSerialized = this._applicationStorageHelper.Read<string>("user");
+
+            if (userSerialized == null)
+            {
+                return null;
+            }
+
+            var user = JsonConvert.DeserializeObject<User>(userSerialized);
+
+            return await this._sourceDal.AddSourceForUser(user, storage);
+        }
+
 
         #endregion
     }

@@ -12,6 +12,7 @@
 	[type] CHAR(3) NOT NULL,
 	[is_link] BIT NOT NULL,
 	[link] VARCHAR(100) NOT NULL,
+	[content] VARBINARY(MAX),
 	[created_at] DATETIME NOT NULL
 		DEFAULT GETDATE(),
 	[updated_at] DATETIME NULL

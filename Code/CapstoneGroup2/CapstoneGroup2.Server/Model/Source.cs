@@ -33,6 +33,8 @@ public class Source
 
     public string Link { get; set; }
 
+    public byte[]? Content { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
@@ -57,6 +59,7 @@ public class SourceConfiguration : IEntityTypeConfiguration<Source>
         builder.Property(s => s.Link).HasColumnName("link");
         builder.Property(s => s.CreatedAt).HasColumnName("created_at");
         builder.Property(s => s.UpdatedAt).HasColumnName("updated_at");
+        builder.Property(s => s.Content).HasColumnName("content");
     }
 
     #endregion

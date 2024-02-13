@@ -32,6 +32,8 @@ namespace CapstoneGroup2.Desktop.Model
 
         public string Link { get; set; }
 
+        public byte[] Content { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }

@@ -5,6 +5,11 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CapstoneGroup2.Desktop.Model;
+using Windows.Storage.Pickers;
+using System.Threading.Tasks;
+using System;
+using CapstoneGroup2.Desktop.Dal;
+using CapstoneGroup2.Desktop.ViewModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -19,6 +24,8 @@ namespace CapstoneGroup2.Desktop
 
         private List<Source> _sources;
 
+        private SourceViewModel _sourceViewModel;
+
         #endregion
 
         #region Constructors
@@ -26,6 +33,8 @@ namespace CapstoneGroup2.Desktop
         public DashboardPage()
         {
             this.InitializeComponent();
+
+            this._sourceViewModel = new SourceViewModel();
 
             var size = new Size(Width, Height);
             ApplicationView.PreferredLaunchViewSize = size;
@@ -48,5 +57,19 @@ namespace CapstoneGroup2.Desktop
         }
 
         #endregion
+
+        private void sharedSourcesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Frame.Navigate(typeof(NotesPage), this._sources[this.sourcesListBox.SelectedIndex]);
+        }
+
+        private async void Button_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".pdf");
+            var file = await picker.PickSingleFileAsync();
+
+            await this._sourceViewModel.addNewSource(file);
+        }
     }
 }
