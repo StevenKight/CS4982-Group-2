@@ -53,7 +53,7 @@ namespace CapstoneGroup2.Desktop
 
         #region Methods
 
-        private async void navigationView_SelectionChanged(NavigationView sender,
+        private void navigationView_SelectionChanged(NavigationView sender,
             NavigationViewSelectionChangedEventArgs args)
         {
             var selectedItem = (NavigationViewItem)args.SelectedItem;
