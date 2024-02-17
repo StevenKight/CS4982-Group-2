@@ -12,8 +12,9 @@
 
     <Grid Padding="25,25,0,0">
         <TextBlock Text="My Sources" FontSize="48" />
+        <Button Content="Upload New" Height="50" Margin="591,15,0,0" VerticalAlignment="Top" Width="216" Click="Button_Click"></Button>
 
-        <ListBox x:Name="sourcesListBox" Margin="25,125,50,0" Height="525"
+        <ListBox SelectionChanged="sharedSourcesListBox_SelectionChanged" x:Name="sourcesListBox" Margin="25,125,50,0" Height="525"
                  VerticalAlignment="Top">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>

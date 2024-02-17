@@ -131,7 +131,7 @@ public class Source
     /// <value>
     /// The authors.
     /// </value>
-    public List<string> Authors => this.AuthorsString.Split("|").ToList();
+    public List<string>? Authors => string.IsNullOrEmpty(this.AuthorsString) ? null : this.AuthorsString.Split("|").ToList();
 
     /// <summary>
     /// Gets or sets the publisher.

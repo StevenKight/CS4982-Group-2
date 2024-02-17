@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CapstoneGroup2.Desktop.Model;
+using Windows.Storage.Pickers;
+using CapstoneGroup2.Desktop.ViewModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -17,6 +20,7 @@ namespace CapstoneGroup2.Desktop
         #region Data members
 
         private List<Source> _sources;
+        private SourceViewModel _sourceViewModel;
 
         #endregion
 
@@ -32,6 +36,7 @@ namespace CapstoneGroup2.Desktop
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(size);
             ApplicationView.GetForCurrentView().TryResizeView(size);
+            this._sourceViewModel = new SourceViewModel();
         }
 
         #endregion
@@ -44,6 +49,20 @@ namespace CapstoneGroup2.Desktop
 
             this._sources = (List<Source>)e.Parameter;
             this.sourcesListBox.ItemsSource = this._sources;
+        }
+
+        private void sharedSourcesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Frame.Navigate(typeof(NotesPage), this._sources[this.sourcesListBox.SelectedIndex]);
+        }
+
+        private async void Button_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".pdf");
+            var file = await picker.PickSingleFileAsync();
+
+            await this._sourceViewModel.addNewSource(file);
         }
 
         #endregion
