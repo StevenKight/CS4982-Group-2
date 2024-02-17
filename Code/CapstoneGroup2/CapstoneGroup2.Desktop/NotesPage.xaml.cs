@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using CapstoneGroup2.Desktop.Data;
 using System.Net;
+using Windows.UI.ViewManagement;
 
 namespace CapstoneGroup2.Desktop
 {
@@ -57,8 +58,18 @@ namespace CapstoneGroup2.Desktop
 
             if (e.Parameter is Source source)
             {
+                var view = ApplicationView.GetForCurrentView();
+                view.TryEnterFullScreenMode();
                 this._sourceViewModel.currentSource = source;
-                DataManager.SaveVarBinaryAsPdf(this._sourceViewModel.currentSource.Content, "./currentSource.pdf");
+                try
+                {
+                    DataManager.SaveVarBinaryAsPdf(this._sourceViewModel.currentSource.Content, "./currentSource.pdf");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                
                 this.setSource();
                 this.LoadNotes();
             }
@@ -66,22 +77,55 @@ namespace CapstoneGroup2.Desktop
 
         private async void setSource()
         {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile storageFile = await StorageFile.GetFileFromPathAsync(Path.Combine(localFolder.Path, "current.pdf"));
-            this.GatherDocument(storageFile);
+            try
+            {
+                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                StorageFile storageFile =
+                    await StorageFile.GetFileFromPathAsync(Path.Combine(localFolder.Path, "current.pdf"));
+                this.GatherDocument(storageFile);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         private async void LoadNotes()
         {
-            this.progressControl.Visibility = Visibility.Visible;
+            try
+            {
+                this.progressControl.Visibility = Visibility.Visible;
+                this.Notes =  await this._notesViewModel.GetSourceNotes(this._sourceViewModel.currentSource) as List<Note>;
+                var emptyNote = new Note();
+                emptyNote.Username = "";
+                emptyNote.NoteText = "";
+                this.Notes.Add(emptyNote);
+                for (int i = 0; i < this.Notes.Count; i++)
+                {
+                    var note = this.Notes[i];
 
-            var note = await this._notesViewModel.GetSourceNotes(this._sourceViewModel.currentSource);
+                    var textBox = new TextBox();
+                    textBox.MaxWidth = 200;
+                    textBox.Width = 190;
+                    textBox.TextWrapping = TextWrapping.Wrap;
+                    textBox.Name = $"noteTextBox{i}";
+                    textBox.Text = note.NoteText;
 
-            this.Notes = note.ToList();
+                    textBox.Tag = note;
 
-            this.notesListBox.ItemsSource = this.Notes;
+                    textBox.KeyDown += NoteTextBox_KeyDown;
 
-            this.progressControl.Visibility = Visibility.Collapsed;
+                    this.notesListBox.Items?.Add(textBox);
+                }
+
+                this.progressControl.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         private void NoteTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -89,33 +133,60 @@ namespace CapstoneGroup2.Desktop
             if (e.Key == VirtualKey.Enter)
             {
                 var textBox = (TextBox)sender;
+                textBox.IsEnabled = false;
+                textBox.IsEnabled = true;
                 var correspondingNote = (Note)textBox.Tag;
 
                 var updatedText = textBox.Text;
 
                 correspondingNote.NoteText = updatedText;
-                if (correspondingNote.NoteText.Equals(""))
+                if (correspondingNote.NoteText.Equals("") && (Notes.IndexOf(correspondingNote) < Notes.Count - 1))
                 {
-                    //this.DeleteNote(correspondingNote);
+                    var deleteIndex = this.Notes.IndexOf(correspondingNote);
+                    this.Notes.Remove(correspondingNote);
+                    var itemCollection = this.notesListBox.Items;
+                    if (itemCollection != null) itemCollection.RemoveAt(deleteIndex);
+                    this.DeleteNote(correspondingNote);
                 }
-                else if (correspondingNote.Username == null)
+                else if (correspondingNote.Username == "")
                 {
-                   
                     var emptyNote = new Note();
                     emptyNote.NoteText = "";
+                    emptyNote.Username = "";
                     this.Notes.Add(emptyNote);
-                    this._notesViewModel.AddNewNote(correspondingNote);
+                    correspondingNote.SourceId = this._sourceViewModel.currentSource.SourceId;
+                    this.AddNewNote(correspondingNote);
+
+                    var newTextbox = new TextBox();
+                    newTextbox.MaxWidth = 200;
+                    newTextbox.Width = 190;
+                    newTextbox.TextWrapping = TextWrapping.Wrap;
+                    newTextbox.Name = $"noteTextBox{this.Notes.Count-1}";
+                    newTextbox.Text = emptyNote.NoteText;
+                    newTextbox.Tag = emptyNote;
+                    newTextbox.KeyDown += NoteTextBox_KeyDown;
+                    this.notesListBox.Items?.Add(newTextbox);
+
                 }
 
-                //this._viewModel.updateNote(correspondingNote);
-                this.LoadNotes();
+                this.UpdateNote(correspondingNote);
             }
         }
 
-        //private async void DeleteNote(Note note)
-        //{
-        //    await this._viewModel.DeleteNote(note);
-        //}
+        private async void AddNewNote(Note note)
+        {
+            await this._notesViewModel.AddNewNote(note);
+        }
+
+        private async void DeleteNote(Note note)
+        {
+            await this._notesViewModel.DeleteNote(note);
+        }
+
+        private async void UpdateNote(Note note)
+        {
+            await this._notesViewModel.updateNote(note);
+        }
 
         private void notesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -130,19 +201,6 @@ namespace CapstoneGroup2.Desktop
 
         }
 
-        //private async void LoadDocument(object sender, RoutedEventArgs args)
-        //{
-        //    this.progressControl.Visibility = Visibility.Visible;
-
-        //    var picker = new FileOpenPicker();
-        //    picker.FileTypeFilter.Add(".pdf");
-        //    var file = await picker.PickSingleFileAsync();
-
-        //    this.GatherDocument(file);
-
-        //    this.progressControl.Visibility = Visibility.Collapsed;
-        //}
-
         private async void GatherDocument(IStorageFile file)
         {
             if (file != null)
@@ -153,6 +211,8 @@ namespace CapstoneGroup2.Desktop
                 try
                 {
                     this.pdfDocument = await PdfDocument.LoadFromFileAsync(file);
+                    this.currentPageNumber = 0;
+                    this.UpdatePage();
                 }
                 catch (Exception ex)
                 {
@@ -169,34 +229,6 @@ namespace CapstoneGroup2.Desktop
             }
         }
 
-        private async void ViewPage(object sender, SelectionChangedEventArgs e)
-        {
-            //rootPage.NotifyUser("", NotifyType.StatusMessage);
-
-            this.objectRender.Source = null;
-            this.progressControl.Visibility = Visibility.Visible;
-
-            var pageIndex = this.currentPageNumber - 1;
-
-            using (var page = this.pdfDocument.GetPage((uint)pageIndex))
-            {
-                var stream = new InMemoryRandomAccessStream();
-
-                var options1 = new PdfPageRenderOptions
-                {
-                    DestinationHeight = (uint)this.objectRender.Height
-                };
-
-                await page.RenderToStreamAsync(stream, options1);
-
-                var src = new BitmapImage();
-                this.objectRender.Source = src;
-                await src.SetSourceAsync(stream);
-            }
-
-            this.progressControl.Visibility = Visibility.Collapsed;
-        }
-
         private async void UpdatePage()
         {
             this.objectRender.Source = null;
@@ -210,7 +242,8 @@ namespace CapstoneGroup2.Desktop
 
                 var options1 = new PdfPageRenderOptions
                 {
-                    DestinationHeight = (uint)this.objectRender.Height
+                    DestinationHeight = (uint)this.objectRender.Height,
+                    DestinationWidth = (uint)this.objectRender.Width,
                 };
 
                 await page.RenderToStreamAsync(stream, options1);

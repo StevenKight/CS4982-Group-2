@@ -12,6 +12,9 @@ using Windows.Storage;
 
 namespace CapstoneGroup2.Desktop.Dal
 {
+    /// <summary>
+    ///   DAL class for Sources
+    /// </summary>
     public class SourceDal
     {
         #region Data members
@@ -23,6 +26,7 @@ namespace CapstoneGroup2.Desktop.Dal
 
         #region Constructors
 
+        /// <summary>Initializes a new instance of the <see cref="SourceDal" /> class.</summary>
         public SourceDal()
         {
             this.client = new HttpClient
@@ -30,7 +34,7 @@ namespace CapstoneGroup2.Desktop.Dal
                 BaseAddress = new Uri(BaseUrl)
             };
         }
-
+        /// <summary>Initializes a new instance of the <see cref="SourceDal" /> class.</summary>
         public SourceDal(HttpClient client)
         {
             this.client = client;
@@ -41,6 +45,11 @@ namespace CapstoneGroup2.Desktop.Dal
 
         #region Methods
 
+        /// <summary>Gets the sources for user.</summary>
+        /// <param name="user">The user.</param>
+        /// <returns>
+        ///  The sources from db or null if none
+        /// </returns>
         public async Task<IEnumerable<Source>> GetSourcesForUser(User user)
         {
             var response = await this.client.GetAsync($"/source/{user.Username}");
@@ -53,6 +62,12 @@ namespace CapstoneGroup2.Desktop.Dal
             return null;
         }
 
+        /// <summary>Adds the source for user.</summary>
+        /// <param name="user">The user.</param>
+        /// <param name="storageFile">The storage file.</param>
+        /// <returns>
+        ///  True if success, false otherwise
+        /// </returns>
         public async Task<bool> AddSourceForUser(User user, StorageFile storageFile)
         {
             Source source = new Source();
@@ -71,8 +86,6 @@ namespace CapstoneGroup2.Desktop.Dal
                 return true;
             } else {
                 Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
-
-                // Read and display the response content
                 string content = await response.Content.ReadAsStringAsync();
                 Console.WriteLine("Response Content:");
                 Console.WriteLine(content);
