@@ -55,7 +55,7 @@ export default function MySourceNotes() {
 
     const saveNote = () => {
         if (newNoteText.trim() === '') {
-            setError('Note text cannot be empty');
+            setError('Note text cannot be empty, note will not be added');
             return;
         }
 
@@ -84,11 +84,11 @@ export default function MySourceNotes() {
                         setError(null);
                         getNotes();
                     } else {
-                        throw new Error('Error saving note');
+                        throw new Error("Error saving note's data, the note will not be added");
                     }
                 })
                 .catch(() => {
-                    setError('Error saving note');
+                    setError('Error connecting to our server to save the note, the note will not be added');
                 });
         }
     };
