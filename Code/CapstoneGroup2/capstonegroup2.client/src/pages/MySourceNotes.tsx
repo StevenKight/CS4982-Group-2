@@ -6,13 +6,15 @@ import { Note } from '../interfaces/Note';
 import './styles/MySourceNotes.css';
 
 export default function MySourceNotes() {
-
     const navigate = useNavigate();
-
     const { sourceid } = useParams();
 
     const [source, setSource] = useState<Source>();
     const [notes, setNotes] = useState<Note[]>([]);
+
+    const [newNoteText, setNewNoteText] = useState<string>('');
+
+    const [newTagText, setNewTagText] = useState<string>('');
 
     const [error, setError] = useState<string | null>(null);
 
@@ -34,8 +36,8 @@ export default function MySourceNotes() {
                     setError('Error fetching sources');
                 });
         }
-    }
-        
+    };
+
     const getNotes = () => {
         const username = localStorage.getItem('username');
 
@@ -49,27 +51,70 @@ export default function MySourceNotes() {
                     setError('Error fetching notes');
                 });
         }
-    }
+    };
+
+    const saveNote = () => {
+        if (newNoteText.trim() === '') {
+            setError('Note text cannot be empty');
+            return;
+        }
+
+        const username = localStorage.getItem('username');
+
+        if (username) {
+            const tagsArray = newTagText.split(',').map(tag => tag.trim());
+
+            fetch(`/notes/${sourceid}-${username}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    noteText: newNoteText,
+                    tags: tagsArray,
+                }),
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        setNewNoteText('');
+                        setNewTagText('');
+                        setError(null);
+                        getNotes();
+                    } else {
+                        throw new Error('Error saving note');
+                    }
+                })
+                .catch(() => {
+                    setError('Error saving note');
+                });
+        }
+    };
+
+    const cancelNote = () => {
+        setNewNoteText('');
+        setNewTagText('');
+        setError(null);
+    };
 
     const deleteSource = () => {
         const username = localStorage.getItem('username');
 
         if (username) {
             fetch(`/source/${sourceid}`, {
-                    method: 'DELETE'
+                method: 'DELETE'
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        console.log('Source deleted');
+                        navigate('/my-sources');
+                    }
+                    else {
+                        throw new Error('Error deleting source');
+                    }
                 })
-                    .then((response) => {
-                        if (response.ok) {
-                            console.log('Source deleted');
-                            navigate('/my-sources');
-                        }
-                        else {
-                            throw new Error('Error deleting source');
-                        }
-                    })
-                    .catch(() => {
-                        setError('Error deleting source');
-                    });
+                .catch(() => {
+                    setError('Error deleting source');
+                });
         }
     }
 
@@ -98,21 +143,36 @@ export default function MySourceNotes() {
             <p>{source?.link}</p>
             <p>Created at: {source?.createdAt?.toString()}</p>
             {source?.updatedAt && <p>Updated at: {source?.updatedAt?.toString()}</p>}
-            <div>
-                <h2>Notes</h2>
-                <ul>
-                    {
-                        notes.map((note) => {
-                            return (
-                                <li key={note.noteId}>
-                                    <p>{note.noteText}</p>
-                                    <p>Created at: {note.noteDate?.toString()}</p>
-                                </li>
-                            );
-                        })
-                    }
-                </ul>
+            <div id='add-note-section'>
+                <h2>Add Note</h2>
+                <textarea
+                    value={newNoteText}
+                    onChange={(e) => setNewNoteText(e.target.value)}
+                    placeholder="Enter your note here..."
+                />
+                <div id='add-tag-section'>
+                    <input
+                        type="text"
+                        value={newTagText}
+                        onChange={(e) => setNewTagText(e.target.value)}
+                        placeholder="Add tags (comma-separated)..."
+                    />
+                </div>
+                <div>
+                    <button onClick={saveNote}>Save</button>
+                    <button onClick={cancelNote}>Cancel</button>
+                </div>
             </div>
+            <h2>Notes</h2>
+            <ul>
+                {notes.map((note) => (
+                    <li key={note.noteId}>
+                        <p>{note.noteText}</p>
+                        <p>Tags: {note.tagsString}</p>
+                        <p>Created at: {note.noteDate?.toString()}</p>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
