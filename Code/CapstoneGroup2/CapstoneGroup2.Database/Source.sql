@@ -15,5 +15,8 @@
 	[content] VARBINARY(MAX),
 	[created_at] DATETIME NOT NULL
 		DEFAULT GETDATE(),
-	[updated_at] DATETIME NULL
+	[updated_at] DATETIME NULL, 
+    [authors] NVARCHAR(MAX) NULL, 
+    [publisher] VARCHAR(50) NULL, 
+    [accessed_at] DATETIME NULL
 )

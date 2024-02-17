@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CapstoneGroup2.Desktop.Model
 {
@@ -115,6 +117,38 @@ namespace CapstoneGroup2.Desktop.Model
         /// The updated at.
         /// </value>
         public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Gets or sets the authors string.
+        /// </summary>
+        /// <value>
+        /// The authors string.
+        /// </value>
+        public string? AuthorsString { get; set; }
+
+        /// <summary>
+        /// Gets the authors.
+        /// </summary>
+        /// <value>
+        /// The authors.
+        /// </value>
+        public List<string> Authors => this.AuthorsString.Split("|").ToList();
+
+        /// <summary>
+        /// Gets or sets the publisher.
+        /// </summary>
+        /// <value>
+        /// The publisher.
+        /// </value>
+        public string? Publisher { get; set; }
+
+        /// <summary>
+        /// Gets or sets the accessed at.
+        /// </summary>
+        /// <value>
+        /// The accessed at.
+        /// </value>
+        public DateTime? AccessedAt { get; set; }
 
         #endregion
     }
