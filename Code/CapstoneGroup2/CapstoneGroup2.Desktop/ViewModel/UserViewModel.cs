@@ -10,17 +10,29 @@ using Newtonsoft.Json;
 
 namespace CapstoneGroup2.Desktop.ViewModel
 {
+    /// <summary>
+    /// Viewmodel for interactions is Users
+    /// </summary>
     public class UserViewModel
     {
         #region Data members
 
+        /// <summary>
+        /// The application storage helper
+        /// </summary>
         private readonly ApplicationDataStorageHelper _applicationStorageHelper;
+        /// <summary>
+        /// The user dal
+        /// </summary>
         private readonly UserDal _userDal;
 
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserViewModel"/> class.
+        /// </summary>
         public UserViewModel()
         {
             this._userDal = new UserDal();
@@ -31,6 +43,12 @@ namespace CapstoneGroup2.Desktop.ViewModel
 
         #region Methods
 
+        /// <summary>
+        /// Logins the specified username.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="password">The password.</param>
+        /// <returns></returns>
         public async Task<User> Login(string username, string password)
         {
             var user = new User
@@ -53,6 +71,22 @@ namespace CapstoneGroup2.Desktop.ViewModel
             return validUser;
         }
 
+        /// <summary>
+        /// Gets the saved user.
+        /// </summary>
+        /// <returns> The locally saved user</returns>
+        public User getSavedUser()
+        {
+            var userSerialized = this._applicationStorageHelper.Read<string>("user");
+            var user = JsonConvert.DeserializeObject<User>(userSerialized);
+
+            return user;
+        }
+
+        /// <summary>
+        /// Validates the authorization.
+        /// </summary>
+        /// <returns>True if authorized, false otherwise</returns>
         public bool ValidateAuthorization()
         {
             var userSerialized = this._applicationStorageHelper.Read<string>("user");
@@ -60,6 +94,11 @@ namespace CapstoneGroup2.Desktop.ViewModel
             return userSerialized != null;
         }
 
+        /// <summary>
+        /// Hashes the password.
+        /// </summary>
+        /// <param name="password">The password.</param>
+        /// <returns>hashed password</returns>
         private static string hashPassword(string password)
         {
             using (var sha256 = SHA256.Create())

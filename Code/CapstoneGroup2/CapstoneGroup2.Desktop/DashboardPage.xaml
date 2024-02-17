@@ -11,10 +11,11 @@
 
     <Grid Padding="25,25,25,0">
         <TextBlock Text="Dashboard" FontSize="48" />
+        <Button Content="Upload New" Height="50" Margin="591,15,0,0" VerticalAlignment="Top" Width="216" Click="Button_Click"></Button>
 
         <TextBlock Text="My Sources" FontSize="32" Margin="0,75,0,0" />
 
-        <ListBox x:Name="sourcesListBox" Margin="25,125,50,0" Height="200" VerticalAlignment="Top" >
+        <ListBox x:Name="sourcesListBox" SelectionChanged="sharedSourcesListBox_SelectionChanged" Margin="25,125,50,0" Height="200" VerticalAlignment="Top" >
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -34,7 +35,7 @@
 
         <TextBlock Text="Shared With Me" FontSize="32" Margin="0,350,0,0" />
 
-        <ListBox x:Name="sharedSourcesListBox" Margin="25,400, 50,0" Height="200" VerticalAlignment="Top">
+        <ListBox x:Name="sharedSourcesListBox" SelectionChanged="sharedSourcesListBox_SelectionChanged" Margin="25,400, 50,0" Height="200" VerticalAlignment="Top">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -52,5 +53,19 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <!--<Popup Name="sourcePopup"  Height="472" Margin="-21,25,0,0" VerticalAlignment="Top" Width="576">
+            <StackPanel>
+                <TextBlock TextWrapping="Wrap" Text="Upload a New Source" FontSize="40" VerticalAlignment="Top"/>
+                <TextBlock Text="Name"></TextBlock>
+                <TextBox FontSize="18"></TextBox>
+                <TextBlock Text="Author"></TextBlock>
+                <TextBox FontSize="18"></TextBox>
+                <TextBlock Text=""></TextBlock>
+                <TextBox FontSize="18"></TextBox>
+                <TextBlock Text="Name"></TextBlock>
+                <TextBox FontSize="18"></TextBox>
+            </StackPanel>
+            
+        </Popup>-->
     </Grid>
 </Page>

@@ -7,7 +7,7 @@
     x:Class="CapstoneGroup2.Desktop.MainPage"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Width="900"
+    Width="1200"
     Height="700">
 
     <Grid>

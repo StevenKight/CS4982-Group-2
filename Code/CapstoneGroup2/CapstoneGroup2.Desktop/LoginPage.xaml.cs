@@ -29,8 +29,8 @@ namespace CapstoneGroup2.Desktop
 
         public string Password
         {
-            get => this.PasswordTextBox.Text;
-            set => this.PasswordTextBox.Text = value;
+            get => this.PasswordTextBox.Password;
+            set => this.PasswordTextBox.Password = value;
         }
 
         #endregion

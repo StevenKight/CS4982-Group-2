@@ -7,6 +7,8 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using CapstoneGroup2.Desktop.Model;
 using CapstoneGroup2.Desktop.ViewModel;
+using System.Threading.Tasks;
+using System;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -19,7 +21,7 @@ namespace CapstoneGroup2.Desktop
     {
         #region Data members
 
-        private readonly SourceViewModel _sourcesViewModel;
+        private SourceViewModel _sourcesViewModel;
 
         private List<Source> _sources;
 
@@ -29,9 +31,14 @@ namespace CapstoneGroup2.Desktop
 
         public MainPage()
         {
-            this._sourcesViewModel = new SourceViewModel();
+            this.InitializeAsync();
+        }
 
-            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+        private async void InitializeAsync()
+        {
+            this._sourcesViewModel = await Task.Run(() => new SourceViewModel());
+
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Normal, async () =>
                 {
                     var sourcesEnumerable = await this._sourcesViewModel.GetSources();
