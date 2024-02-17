@@ -64,14 +64,17 @@ export default function MySourceNotes() {
         if (username) {
             const tagsArray = newTagText.split(',').map(tag => tag.trim());
 
-            fetch(`/notes/${sourceid}-${username}`, {
+            fetch(`/notes/${username}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    sourceId: sourceid,
+                    username: username,
                     noteText: newNoteText,
-                    tags: tagsArray,
+                    tagsString: tagsArray.join(','), 
+                    noteDate: new Date().toISOString(), 
                 }),
             })
                 .then((response) => {
@@ -89,6 +92,7 @@ export default function MySourceNotes() {
                 });
         }
     };
+
 
     const cancelNote = () => {
         setNewNoteText('');
