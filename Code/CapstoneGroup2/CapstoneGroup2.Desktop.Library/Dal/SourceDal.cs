@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using CapstoneGroup2.Desktop.Library.Mocks;
 using CapstoneGroup2.Desktop.Library.Model;
 
-namespace CapstoneGroup2.Desktop.Dal
+namespace CapstoneGroup2.Desktop.Library.Dal
 {
     /// <summary>
     ///     DAL class for Sources
@@ -79,10 +79,7 @@ namespace CapstoneGroup2.Desktop.Dal
                 return true;
             }
 
-            Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
             var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Response Content:");
-            Console.WriteLine(content);
             return false;
         }
 

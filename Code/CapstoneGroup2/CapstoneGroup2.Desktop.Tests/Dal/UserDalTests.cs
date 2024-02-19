@@ -1,4 +1,6 @@
-﻿using CapstoneGroup2.Desktop.Dal;
+﻿using System.Net;
+using System.Net.Http.Formatting;
+using CapstoneGroup2.Desktop.Library.Dal;
 using CapstoneGroup2.Desktop.Library.Mocks;
 using CapstoneGroup2.Desktop.Library.Model;
 using Moq;
@@ -8,6 +10,18 @@ namespace CapstoneGroup2.Desktop.Tests.Dal;
 [TestFixture]
 public class UserDalTests
 {
+    #region Methods
+
+    [Test]
+    public void ValidConstructor()
+    {
+        // Arrange, Act
+        var userDal = new UserDal();
+
+        // Assert
+        Assert.IsNotNull(userDal);
+    }
+
     [Test]
     public async Task Login_ValidUser_ReturnsUser()
     {
@@ -16,8 +30,8 @@ public class UserDalTests
         var expectedUri = new Uri("https://localhost:7048");
         var expectedResponse = new HttpResponseMessage
         {
-            StatusCode = System.Net.HttpStatusCode.OK,
-            Content = new ObjectContent<User>(user, new System.Net.Http.Formatting.JsonMediaTypeFormatter())
+            StatusCode = HttpStatusCode.OK,
+            Content = new ObjectContent<User>(user, new JsonMediaTypeFormatter())
         };
 
         var httpClientMock = new Mock<IHttpClientWrapper>();
@@ -53,4 +67,6 @@ public class UserDalTests
         Assert.IsNull(result);
         httpClientMock.Verify(x => x.PostAsJsonAsync("/Login", invalidUser), Times.Never);
     }
+
+    #endregion
 }

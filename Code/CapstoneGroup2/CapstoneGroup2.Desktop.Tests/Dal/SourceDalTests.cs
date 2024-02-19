@@ -1,4 +1,6 @@
-﻿using CapstoneGroup2.Desktop.Dal;
+﻿using System.Net;
+using System.Net.Http.Formatting;
+using CapstoneGroup2.Desktop.Library.Dal;
 using CapstoneGroup2.Desktop.Library.Mocks;
 using CapstoneGroup2.Desktop.Library.Model;
 using Moq;
@@ -8,6 +10,18 @@ namespace CapstoneGroup2.Desktop.Tests.Dal;
 [TestFixture]
 public class SourceDalTests
 {
+    #region Methods
+
+    [Test]
+    public void ValidConstructor()
+    {
+        // Arrange, Act
+        var sourceDal = new SourceDal();
+
+        // Assert
+        Assert.IsNotNull(sourceDal);
+    }
+
     [Test]
     public async Task GetSourcesForUser_ValidInput_ReturnsSources()
     {
@@ -17,10 +31,10 @@ public class SourceDalTests
         var expectedUri = new Uri("https://localhost:7048");
         var expectedResponse = new HttpResponseMessage
         {
-            StatusCode = System.Net.HttpStatusCode.OK,
+            StatusCode = HttpStatusCode.OK,
             Content = new ObjectContent<IEnumerable<Source>>(
-                new List<Source> { new Source { SourceId = 1, Username = "JohnDoe", Name = "Test Source", Type = "pdf" } },
-                new System.Net.Http.Formatting.JsonMediaTypeFormatter())
+                new List<Source> { new() { SourceId = 1, Username = "JohnDoe", Name = "Test Source", Type = "pdf" } },
+                new JsonMediaTypeFormatter())
         };
 
         var httpClientMock = new Mock<IHttpClientWrapper>();
@@ -45,10 +59,10 @@ public class SourceDalTests
     {
         // Arrange
         var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
-        var newSource = new Source { SourceId = 2, Name = "New Test Source", Type = "pdf"};
+        var newSource = new Source { SourceId = 2, Name = "New Test Source", Type = "pdf" };
 
         var expectedUri = new Uri("https://localhost:7048");
-        var expectedResponse = new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK };
+        var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
 
         var httpClientMock = new Mock<IHttpClientWrapper>();
         httpClientMock.Setup(x => x.BaseAddress).Returns(expectedUri);
@@ -64,4 +78,6 @@ public class SourceDalTests
         Assert.IsTrue(result);
         httpClientMock.Verify(x => x.PostAsync($"/Source/{user.Username}", It.IsAny<StringContent>()), Times.Once);
     }
+
+    #endregion
 }

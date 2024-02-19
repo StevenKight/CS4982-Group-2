@@ -23,9 +23,12 @@ public class SourceTests
             Description = "testDescription",
             IsLink = true,
             Link = "testLink",
+            Content = new byte[2],
+            AuthorsString = "testAuthors|testAuthors2",
+            Publisher = "testPublisher",
             CreatedAt = new DateTime(2021, 1, 1),
             UpdatedAt = new DateTime(2021, 1, 2),
-            Content = new byte[2],
+            AccessedAt = new DateTime(2021, 1, 3)
         };
 
         // Assert
@@ -39,9 +42,13 @@ public class SourceTests
             Assert.That(source.Description, Is.EqualTo("testDescription"));
             Assert.That(source.IsLink, Is.True);
             Assert.That(source.Link, Is.EqualTo("testLink"));
+            Assert.That(source.Content, Is.EqualTo(new byte[2]));
+            Assert.That(source.AuthorsString, Is.EqualTo("testAuthors|testAuthors2"));
+            Assert.That(source.Authors, Is.EquivalentTo(new List<string> { "testAuthors", "testAuthors2" }));
+            Assert.That(source.Publisher, Is.EqualTo("testPublisher"));
             Assert.That(source.CreatedAt, Is.EqualTo(new DateTime(2021, 1, 1)));
             Assert.That(source.UpdatedAt, Is.EqualTo(new DateTime(2021, 1, 2)));
-            Assert.That(source.Content, Is.EqualTo( new byte[2]));
+            Assert.That(source.AccessedAt, Is.EqualTo(new DateTime(2021, 1, 3)));
         });
     }
 
@@ -77,7 +84,6 @@ public class SourceTests
             Assert.That(entityType.GetProperties().ElementAt(10).GetColumnName(), Is.EqualTo("type"));
             Assert.That(entityType.GetProperties().ElementAt(11).GetColumnName(), Is.EqualTo("updated_at"));
             Assert.That(entityType.GetProperties().ElementAt(12).GetColumnName(), Is.EqualTo("username"));
-
         });
     }
 
