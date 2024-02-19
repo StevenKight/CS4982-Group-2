@@ -11,6 +11,40 @@
     justify-content: space-between;
 }
 
+.my-source-notes-content-notes {
+    width: 50%;
+}
+
+.my-source-notes-content-add-note-section {
+    width: 100%;
+}
+
+.my-source-notes-content-add-note-section .new-note {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.my-source-notes-content-add-note-section textarea {
+    width: 50%;
+    height: 5vh;
+    resize: none;
+}
+
+.my-source-notes-content-add-note-section .new-note-options {
+    width: 25%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}
+
+.my-source-notes-content-add-note-section .new-note-options button {
+    width: 100%;
+    margin-bottom: 1em;
+}
+
 .my-source-notes-content-source {
     width: 50%;
     margin-top: -1em;
