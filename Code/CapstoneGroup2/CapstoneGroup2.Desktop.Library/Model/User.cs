@@ -1,4 +1,4 @@
-﻿namespace CapstoneGroup2.Desktop.Model
+﻿namespace CapstoneGroup2.Desktop.Library.Model
 {
     /// <summary>
     ///     The User model class

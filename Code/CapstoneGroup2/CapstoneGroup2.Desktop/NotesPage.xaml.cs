@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using CapstoneGroup2.Desktop.Data;
-using CapstoneGroup2.Desktop.Model;
+using CapstoneGroup2.Desktop.Library.Model;
 using CapstoneGroup2.Desktop.ViewModel;
 
 namespace CapstoneGroup2.Desktop

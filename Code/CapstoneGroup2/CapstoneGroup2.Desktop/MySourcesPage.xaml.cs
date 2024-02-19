@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using CapstoneGroup2.Desktop.Model;
+using CapstoneGroup2.Desktop.Library.Model;
 using CapstoneGroup2.Desktop.ViewModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238

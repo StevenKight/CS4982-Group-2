@@ -5,7 +5,8 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using CapstoneGroup2.Desktop.Model;
+using CapstoneGroup2.Desktop.Library.Mocks;
+using CapstoneGroup2.Desktop.Library.Model;
 
 namespace CapstoneGroup2.Desktop.Dal
 {
@@ -17,7 +18,7 @@ namespace CapstoneGroup2.Desktop.Dal
         #region Data members
 
         private const string BaseUrl = "https://localhost:7048";
-        private readonly HttpClient client;
+        private readonly IHttpClientWrapper client;
 
         #endregion
 
@@ -26,14 +27,14 @@ namespace CapstoneGroup2.Desktop.Dal
         /// <summary>Initializes a new instance of the <see cref="SourceDal" /> class.</summary>
         public SourceDal()
         {
-            this.client = new HttpClient
+            this.client = new HttpClientWrapper(new HttpClient
             {
                 BaseAddress = new Uri(BaseUrl)
-            };
+            });
         }
 
         /// <summary>Initializes a new instance of the <see cref="SourceDal" /> class.</summary>
-        public SourceDal(HttpClient client)
+        public SourceDal(IHttpClientWrapper client)
         {
             this.client = client;
             this.client.BaseAddress = new Uri(BaseUrl);

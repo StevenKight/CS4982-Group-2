@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CapstoneGroup2.Desktop.Model
+namespace CapstoneGroup2.Desktop.Library.Model
 {
     /// <summary>
     ///     Source type enums
@@ -133,7 +133,15 @@ namespace CapstoneGroup2.Desktop.Model
         /// <value>
         ///     The authors.
         /// </value>
-        public List<string> Authors => this.AuthorsString.Split("|").ToList();
+        public List<string> Authors
+        {
+            get
+            {
+                var authorsString = this.AuthorsString;
+                if (authorsString != null) return authorsString.Split('|').ToList();
+                return null;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the publisher.

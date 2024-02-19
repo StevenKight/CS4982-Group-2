@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using CapstoneGroup2.Desktop.Data;
-using CapstoneGroup2.Desktop.Model;
+using CapstoneGroup2.Desktop.Library.Model;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 

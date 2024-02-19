@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CapstoneGroup2.Desktop.Model
+namespace CapstoneGroup2.Desktop.Library.Model
 {
     /// <summary>
     ///     The note model class
@@ -57,7 +57,7 @@ namespace CapstoneGroup2.Desktop.Model
         /// <value>
         ///     The tags.
         /// </value>
-        public List<string> Tags => this.TagsString.Split(",").ToList();
+        public List<string> Tags => this.TagsString.Split(',').ToList();
 
         /// <summary>
         ///     Gets or sets the note date.

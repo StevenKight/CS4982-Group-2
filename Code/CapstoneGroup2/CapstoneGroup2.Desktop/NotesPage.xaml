@@ -5,7 +5,7 @@
     xmlns:local="using:CapstoneGroup2.Desktop"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:model="using:CapstoneGroup2.Desktop.Model"
+    xmlns:model1="using:CapstoneGroup2.Desktop.Library.Model"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
     Height="732" 
@@ -38,7 +38,7 @@
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="model:Note">
+                <DataTemplate x:DataType="model1:Note">
                     <StackPanel>
                         <TextBox Text="{Binding NoteText}" FontWeight="Bold" LostFocus="TextBox_LostFocus" />
                     </StackPanel>

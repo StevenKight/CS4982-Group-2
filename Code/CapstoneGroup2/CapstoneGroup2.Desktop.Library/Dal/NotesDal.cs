@@ -4,7 +4,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using CapstoneGroup2.Desktop.Model;
+using CapstoneGroup2.Desktop.Library.Mocks;
+using CapstoneGroup2.Desktop.Library.Model;
 using Newtonsoft.Json;
 
 namespace CapstoneGroup2.Desktop.Dal
@@ -23,7 +24,7 @@ namespace CapstoneGroup2.Desktop.Dal
         /// <summary>
         ///     The client
         /// </summary>
-        private readonly HttpClient client;
+        private readonly IHttpClientWrapper client;
 
         #endregion
 
@@ -34,7 +35,7 @@ namespace CapstoneGroup2.Desktop.Dal
         /// </summary>
         public NotesDal()
         {
-            this.client = new HttpClient();
+            this.client = new HttpClientWrapper(new HttpClient());
             this.client.BaseAddress = new Uri(BaseUrl);
         }
 
@@ -42,9 +43,9 @@ namespace CapstoneGroup2.Desktop.Dal
         ///     Initializes a new instance of the <see cref="NotesDal" /> class.
         /// </summary>
         /// <param name="client">The client.</param>
-        public NotesDal(HttpClient client)
+        public NotesDal(IHttpClientWrapper client)
         {
-            this.client = client;
+            this.client =  client;
             this.client.BaseAddress = new Uri(BaseUrl);
         }
 
