@@ -12,8 +12,6 @@ export default function MySourceNotes() {
     const [source, setSource] = useState<Source>();
     const [notes, setNotes] = useState<Note[]>([]);
 
-    const [newNoteText, setNewNoteText] = useState<string>('');
-
     const [newTagText, setNewTagText] = useState<string>('');
 
     const [error, setError] = useState<string | null>(null);
@@ -54,6 +52,9 @@ export default function MySourceNotes() {
     };
 
     const saveNote = () => {
+        var newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
+        var newNoteText = newNoteTextarea.value;
+
         if (newNoteText.trim() === '') {
             setError('Note text cannot be empty, note will not be added');
             return;
@@ -79,7 +80,7 @@ export default function MySourceNotes() {
             })
                 .then((response) => {
                     if (response.ok) {
-                        setNewNoteText('');
+                        newNoteTextarea.value = '';
                         setNewTagText('');
                         setError(null);
                         getNotes();
@@ -93,9 +94,9 @@ export default function MySourceNotes() {
         }
     };
 
-
     const cancelNote = () => {
-        setNewNoteText('');
+        var newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
+        newNoteTextarea.value = '';
         setNewTagText('');
         setError(null);
     };
@@ -146,27 +147,28 @@ export default function MySourceNotes() {
             </div>
             <div className='my-source-notes-content'>
                 <div className='my-source-notes-content-notes'>
-                    <div id='add-note-section'>
+                    <div className='my-source-notes-content-add-note-section'>
                         <h2>Add Note</h2>
-                        <textarea
-                            value={newNoteText}
-                            onChange={(e) => setNewNoteText(e.target.value)}
-                            placeholder="Enter your note here..."
-                        />
-                        <div>
-                            <button onClick={saveNote}>Save</button>
-                            <button onClick={cancelNote}>Cancel</button>
+                        <div className='new-note'>
+                            <textarea
+                                id='new-note-text'
+                                placeholder="Enter your note here..."
+                            />
+                            <div className='new-note-options'>
+                                <button onClick={saveNote}>Save</button>
+                                <button onClick={cancelNote}>Cancel</button>
+                            </div>
                         </div>
                     </div>
                     <h2>Notes</h2>
                     <ul>
-                        {notes.map((note) => (
-                            <li key={note.noteId}>
-                                <p>{note.noteText}</p>
-                                <p>Tags: {note.tagsString}</p>
-                                <p>Created at: {note.noteDate?.toString()}</p>
-                            </li>
-                        ))}
+                        {
+                            notes.map((note) => (
+                                <li key={note.noteId}>
+                                    <p>{note.noteText}</p>
+                                </li>
+                            ))
+                        }
                     </ul>
                 </div>
                 <div className='my-source-notes-content-source'>
