@@ -17,7 +17,7 @@ export type Source = {
     description: string;
     isLink: boolean;
     link: string | null;
-    content: Uint8Array | null;
+    content: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
     authorsString: string;

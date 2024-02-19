@@ -44,7 +44,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         form.reset();
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
         const inputs = form.querySelectorAll('input');
@@ -76,8 +76,12 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
             source.link = data['link'];
         }
         else {
-            alert('File upload not implemented');
-            return;
+            const arrayBuffer = await file?.arrayBuffer();
+            if (arrayBuffer) {
+                const bytes = new Uint8Array(arrayBuffer);
+                const base64String = btoa(String.fromCharCode(...bytes));
+                source.content = base64String;
+            }
         }
 
         const username = localStorage.getItem('username');
@@ -109,6 +113,8 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
     }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        
         const file = e.currentTarget.files?.item(0);
         if (file) {
             setFile(file);
@@ -198,8 +204,8 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                         <>
                             {/* TODO: Add more file types based on source type selection */}
                             <label htmlFor='file'>File</label>
-                            <input type='file' id='file' accept='.pdf'
-                                required={!isLink} onChange={handleFileChange}/>
+                            <input type='file' id='file' accept='application/pdf'
+                                required={!isLink} onChange={(e) => handleFileChange(e)}/>
                         </>
                 }
 
@@ -214,7 +220,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                     {
                         authors.map((author, index) => {
                             return (
-                                <input key={index} type='text' id='author-1' onClick={handleAuthorClick} value={author} />
+                                <input key={index} type='text' id={'author-' + index} onClick={handleAuthorClick} value={author} />
                             );
                         })
                     }
