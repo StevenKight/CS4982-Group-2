@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop\Data\DataManager.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Windows.Storage;
+
+namespace CapstoneGroup2.Desktop.Data
+{
+    public static class DataManager
+    {
+        #region Methods
+
+        public static void SaveVarBinaryAsPdf(byte[] varBinaryData, string outputPath)
+        {
+            var localFolder = ApplicationData.Current.LocalFolder;
+
+            var filePath = Path.Combine(localFolder.Path, &quot;current.pdf&quot;);
+            using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate);
+
+            fileStream.Write(varBinaryData, 0, varBinaryData.Length);
+        }
+
+        public static async Task&lt;byte[]&gt; FileToBinary(StorageFile storageFile)
+        {
+            try
+            {
+                if (storageFile != null)
+                {
+                    using var stream = await storageFile.OpenReadAsync();
+                    using var reader = new BinaryReader(stream.AsStream());
+                    return reader.ReadBytes((int)stream.Size);
+                }
+
+                Console.WriteLine(&quot;StorageFile is null.&quot;);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(&quot;Error converting file to binary: &quot; + ex.Message);
+                return null;
+            }
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,9,13,10,0],[14,13,14,67,0],[16,13,16,74,0],[17,13,17,84,0],[19,13,19,70,0],[20,9,20,10,0],[23,9,23,10,0],[25,13,25,14,0],[26,17,26,41,0],[27,17,27,18,0],[28,21,28,74,0],[29,21,29,76,0],[30,21,30,63,0],[33,17,33,59,0],[34,17,34,29,0],[36,13,36,33,0],[37,13,37,14,0],[38,17,38,85,0],[39,17,39,29,0],[41,9,41,10,0]]);
+    </script>
+  </body>
+</html>

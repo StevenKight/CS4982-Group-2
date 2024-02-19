@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop\MainPage.xaml.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Windows.Foundation;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
+
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+
+namespace CapstoneGroup2.Desktop
+{
+    /// &lt;summary&gt;
+    ///     An empty page that can be used on its own or navigated to within a Frame.
+    /// &lt;/summary&gt;
+    public sealed partial class MainPage : Page
+    {
+        #region Constructors
+
+        public MainPage()
+        {
+            this.InitializeComponent();
+
+            var size = new Size(Width, Height);
+            ApplicationView.PreferredLaunchViewSize = size;
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(size);
+            ApplicationView.GetForCurrentView().TryResizeView(size);
+
+            this.navigationView.SelectedItem = this.navigationView.MenuItems[0];
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void navigationView_SelectionChanged(NavigationView sender,
+            NavigationViewSelectionChangedEventArgs args)
+        {
+            var selectedItem = (NavigationViewItem)args.SelectedItem;
+
+            if (selectedItem == null)
+            {
+                return;
+            }
+
+            var selectedItemContent = selectedItem.Content;
+
+            switch (selectedItemContent)
+            {
+                case &quot;Dashboard&quot;:
+                    this.contentFrame.Navigate(typeof(DashboardPage)); // TODO: Add the shared sources
+                    break;
+                case &quot;My Sources&quot;:
+                    this.contentFrame.Navigate(typeof(MySourcesPage));
+                    break;
+                case &quot;Shared With Me&quot;:
+                    this.contentFrame.Navigate(typeof(SharedPage)); // TODO: Add the shared sources
+                    break;
+                case &quot;Settings&quot;:
+                    this.contentFrame.Navigate(typeof(SettingsPage));
+                    break;
+            }
+        }
+
+        private void contentFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            this.navigationView.SelectedItem = e.SourcePageType switch
+            {
+                { } when e.SourcePageType == typeof(DashboardPage) =&gt; this.navigationView.MenuItems[0],
+                { } when e.SourcePageType == typeof(MySourcesPage) =&gt; this.navigationView.MenuItems[1],
+                { } when e.SourcePageType == typeof(SharedPage) =&gt; this.navigationView.MenuItems[2],
+                { } when e.SourcePageType == typeof(SettingsPage) =&gt; this.navigationView.SelectedItem,
+                _ =&gt; null
+            };
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,26,0],[18,9,18,10,0],[19,13,19,40,0],[21,13,21,48,0],[22,13,22,60,0],[23,13,23,113,0],[25,13,25,75,0],[26,13,26,69,0],[28,13,28,81,0],[29,9,29,10,0],[37,9,37,10,0],[38,13,38,70,0],[40,13,40,38,0],[41,13,41,14,0],[42,17,42,24,0],[45,13,45,60,0],[47,13,47,41,0],[50,21,50,71,0],[51,21,51,27,0],[53,21,53,71,0],[54,21,54,27,0],[56,21,56,68,0],[57,21,57,27,0],[59,21,59,70,0],[60,21,60,27,0],[62,9,62,10,0],[65,9,65,10,0],[66,13,68,21,0],[68,21,68,67,0],[68,67,68,71,0],[68,71,68,103,0],[68,103,69,21,0],[69,21,69,67,0],[69,67,69,71,0],[69,71,69,103,0],[69,103,70,21,0],[70,21,70,64,0],[70,64,70,68,0],[70,68,70,100,0],[70,100,71,21,0],[71,21,71,66,0],[71,66,71,70,0],[71,70,71,102,0],[71,102,72,22,0],[72,22,72,26,0],[72,26,73,15,0],[74,9,74,10,0]]);
+    </script>
+  </body>
+</html>

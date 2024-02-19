@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Controllers\NotesController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.AspNetCore.Mvc;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace CapstoneGroup2.Server.Controllers;
+
+[Route(&quot;[controller]&quot;)]
+[ApiController]
+public class NotesController : ControllerBase
+{
+    #region Data members
+
+    private readonly IDbDal&lt;Note&gt; context;
+
+    #endregion
+
+    #region Constructors
+
+    public NotesController(IDbDal&lt;Note&gt; context)
+    {
+        this.context = context;
+    }
+
+    #endregion
+
+    #region Methods
+
+    // GET: &lt;NotesController&gt;
+    [HttpGet(&quot;{sourceId}-{username}&quot;)]
+    public IActionResult GetAll(int sourceId, string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized(&quot;Invalid username&quot;);
+        }
+
+        this.context.SetUser(username);
+        this.context.SetSourceId(sourceId);
+
+        try
+        {
+            var sourceNotes = this.context.GetAll();
+            return Ok(sourceNotes);
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+    // POST &lt;NotesController&gt;
+    [HttpPost(&quot;{username}&quot;)]
+    public IActionResult Create(string username, [FromBody] Note note)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized(&quot;Invalid username&quot;);
+        }
+
+        this.context.SetUser(username);
+
+        try
+        {
+            this.context.Add(note);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+    // PUT &lt;NotesController&gt;/5
+    [HttpPut(&quot;{username}&quot;)]
+    public IActionResult Update(string username, [FromBody] Note note)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized(&quot;Invalid username&quot;);
+        }
+
+        this.context.SetUser(username);
+
+        try
+        {
+            this.context.Update(note);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+    // DELETE &lt;NotesController&gt;/5
+    [HttpDelete(&quot;{noteId}&quot;)]
+    public IActionResult Delete(int noteId)
+    {
+        try
+        {
+            var note = new Note { NoteId = noteId };
+            this.context.Delete(note);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,5,21,49,1],[22,5,22,6,1],[23,9,23,32,1],[24,5,24,6,1],[33,5,33,6,1],[34,9,34,49,1],[35,9,35,10,1],[36,13,36,53,1],[39,9,39,40,1],[40,9,40,44,1],[43,9,43,10,1],[44,13,44,53,1],[45,13,45,36,1],[47,9,47,28,1],[48,9,48,10,1],[49,13,49,33,1],[51,5,51,6,1],[56,5,56,6,1],[57,9,57,49,1],[58,9,58,10,1],[59,13,59,53,1],[62,9,62,40,1],[65,9,65,10,1],[66,13,66,36,1],[67,13,67,25,1],[69,9,69,28,1],[70,9,70,10,1],[71,13,71,33,1],[73,5,73,6,1],[78,5,78,6,1],[79,9,79,49,1],[80,9,80,10,1],[81,13,81,53,1],[84,9,84,40,1],[87,9,87,10,1],[88,13,88,39,1],[89,13,89,25,1],[91,9,91,28,1],[92,9,92,10,1],[93,13,93,33,1],[95,5,95,6,1],[100,5,100,6,1],[102,9,102,10,1],[103,13,103,53,1],[104,13,104,39,1],[105,13,105,25,1],[107,9,107,28,1],[108,9,108,10,1],[109,13,109,33,1],[111,5,111,6,1]]);
+    </script>
+  </body>
+</html>

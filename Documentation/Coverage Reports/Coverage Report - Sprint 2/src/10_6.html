@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop\NotesPage.xaml.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Windows.Data.Pdf;
+using Windows.Networking.BackgroundTransfer;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
+using CapstoneGroup2.Desktop.Data;
+using CapstoneGroup2.Desktop.Library.Model;
+using CapstoneGroup2.Desktop.ViewModel;
+
+namespace CapstoneGroup2.Desktop
+{
+    /// &lt;summary&gt;
+    ///     Notes Page for taking notes on a source
+    /// &lt;/summary&gt;
+    public sealed partial class NotesPage : Page
+    {
+        #region Data members
+
+        private PdfDocument pdfDocument;
+        private readonly NotesViewModel _notesViewModel;
+        private readonly SourceViewModel _sourceViewModel;
+
+        private int currentPageNumber;
+
+        #endregion
+
+        #region Constructors
+
+        public NotesPage()
+        {
+            this._notesViewModel = new NotesViewModel();
+            this._sourceViewModel = new SourceViewModel();
+            this.InitializeComponent();
+        }
+
+        #endregion
+
+        #region Methods
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is Source source)
+            {
+                this._sourceViewModel.currentSource = source;
+
+                this.sourceHeading.Text = this._sourceViewModel.currentSource.Name;
+
+                if (this._sourceViewModel.currentSource.IsLink)
+                {
+                    var fileUri = new Uri(this._sourceViewModel.currentSource.Link);
+
+                    var destinationFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(
+                        source.Name, CreationCollisionOption.GenerateUniqueName);
+
+                    var downloader = new BackgroundDownloader();
+                    var download = downloader.CreateDownload(fileUri, destinationFile);
+
+                    await download.StartAsync();
+
+                    this._sourceViewModel.currentSource.Content =
+                        await DataManager.FileToBinary(destinationFile);
+                }
+
+                DataManager.SaveVarBinaryAsPdf(this._sourceViewModel.currentSource.Content, &quot;./currentSource.pdf&quot;);
+
+                this.setSource();
+                this.LoadNotes();
+            }
+        }
+
+        private async void setSource()
+        {
+            try
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                var storageFile =
+                    await StorageFile.GetFileFromPathAsync(Path.Combine(localFolder.Path, &quot;current.pdf&quot;));
+                this.GatherDocument(storageFile);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private async void LoadNotes()
+        {
+            try
+            {
+                this.progressControl.Visibility = Visibility.Visible;
+                var notes =
+                    await this._notesViewModel.GetSourceNotes(this._sourceViewModel.currentSource) as List&lt;Note&gt;;
+
+                this.notesListView.Items?.Clear();
+
+                foreach (var note in notes)
+                {
+                    this.notesListView.Items?.Add(note);
+                }
+
+                this.progressControl.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private async void GatherDocument(IStorageFile file)
+        {
+            if (file != null)
+            {
+                this.pdfDocument = null;
+                this.objectRender.Source = null;
+
+                try
+                {
+                    this.pdfDocument = await PdfDocument.LoadFromFileAsync(file);
+                    this.currentPageNumber = 0;
+                    this.UpdatePage();
+
+                    if (this.pdfDocument.PageCount &lt;= 1)
+                    {
+                        this.nextPageButton.IsEnabled = false;
+                        this.previousPageButton.IsEnabled = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
+                if (this.pdfDocument is { IsPasswordProtected: true })
+                {
+                    Console.WriteLine(&quot;Pdf is Password Protected&quot;);
+                }
+            }
+        }
+
+        private async void UpdatePage()
+        {
+            this.objectRender.Source = null;
+            this.progressControl.Visibility = Visibility.Visible;
+
+            var pageIndex = this.currentPageNumber;
+
+            using (var page = this.pdfDocument.GetPage((uint)pageIndex))
+            {
+                var stream = new InMemoryRandomAccessStream();
+
+                var options1 = new PdfPageRenderOptions
+                {
+                    DestinationHeight = (uint)this.objectRender.Height,
+                    DestinationWidth = (uint)this.objectRender.Width
+                };
+
+                await page.RenderToStreamAsync(stream, options1);
+
+                var src = new BitmapImage();
+                this.objectRender.Source = src;
+                await src.SetSourceAsync(stream);
+            }
+
+            this.progressControl.Visibility = Visibility.Collapsed;
+        }
+
+        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.currentPageNumber &gt; 0)
+            {
+                this.currentPageNumber--;
+                this.UpdatePage();
+            }
+        }
+
+        private void NextPage_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.pdfDocument != null &amp;&amp; this.currentPageNumber &lt; this.pdfDocument.PageCount - 1)
+            {
+                this.currentPageNumber++;
+                this.UpdatePage();
+            }
+        }
+
+        private void notesListBox_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout((ListView)sender);
+        }
+
+        private async void AddNoteItem_Click(object sender, RoutedEventArgs e)
+        {
+            var note = new Note
+            {
+                NoteText = &quot;Enter Note...&quot;,
+                SourceId = this._sourceViewModel.currentSource.SourceId
+            };
+
+            await this._notesViewModel.AddNewNote(note);
+
+            this.LoadNotes();
+        }
+
+        private async void RemoveNoteItem_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedItemIndex = this.notesListView.SelectedIndex;
+            var selectedItem = (Note)this.notesListView.SelectedItem;
+
+            if (selectedItem == null)
+            {
+                var flyout = new Flyout
+                {
+                    Content = new TextBlock
+                    {
+                        Text = &quot;Please select a note to delete&quot;
+                    }
+                };
+
+                flyout.ShowAt(this.notesListView);
+            }
+
+            if (selectedItemIndex != -1)
+            {
+                this.notesListView.Items?.RemoveAt(selectedItemIndex);
+            }
+
+            await this._notesViewModel.DeleteNote(selectedItem);
+        }
+
+        private async void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            var selectedItemTextBox = (Note)textBox.DataContext;
+            selectedItemTextBox.NoteText = textBox.Text;
+
+            await this._notesViewModel.updateNote(selectedItemTextBox);
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[37,9,37,27,0],[38,9,38,10,0],[39,13,39,57,0],[40,13,40,59,0],[41,13,41,40,0],[42,9,42,10,0],[49,9,49,10,0],[50,13,50,35,0],[52,13,52,46,0],[53,13,53,14,0],[54,17,54,62,0],[56,17,56,84,0],[58,17,58,64,0],[59,17,59,18,0],[60,21,60,85,0],[62,21,63,82,0],[65,21,65,65,0],[66,21,66,88,0],[68,21,68,49,0],[70,21,71,73,0],[72,17,72,18,0],[74,17,74,116,0],[76,17,76,34,0],[77,17,77,34,0],[78,13,78,14,0],[79,9,79,10,0],[82,9,82,10,0],[84,13,84,14,0],[85,17,85,71,0],[86,17,87,107,0],[88,17,88,50,0],[89,13,89,14,0],[90,13,90,33,0],[91,13,91,14,0],[92,17,92,47,0],[93,13,93,14,0],[94,9,94,10,0],[97,9,97,10,0],[99,13,99,14,0],[100,17,100,70,0],[101,17,102,114,0],[104,17,104,51,0],[106,17,106,24,0],[106,26,106,34,0],[106,35,106,37,0],[106,38,106,43,0],[107,17,107,18,0],[108,21,108,57,0],[109,17,109,18,0],[111,17,111,72,0],[112,13,112,14,0],[113,13,113,33,0],[114,13,114,14,0],[115,17,115,47,0],[116,13,116,14,0],[117,9,117,10,0],[120,9,120,10,0],[121,13,121,30,0],[122,13,122,14,0],[123,17,123,41,0],[124,17,124,49,0],[127,17,127,18,0],[128,21,128,82,0],[129,21,129,48,0],[130,21,130,39,0],[132,21,132,57,0],[133,21,133,22,0],[134,25,134,63,0],[135,25,135,67,0],[136,21,136,22,0],[137,17,137,18,0],[138,17,138,37,0],[139,17,139,18,0],[140,21,140,54,0],[141,17,141,18,0],[143,17,143,71,0],[144,17,144,18,0],[145,21,145,68,0],[146,17,146,18,0],[147,13,147,14,0],[148,9,148,10,0],[151,9,151,10,0],[152,13,152,45,0],[153,13,153,66,0],[155,13,155,52,0],[157,20,157,72,0],[158,13,158,14,0],[159,17,159,63,0],[161,17,165,19,0],[167,17,167,66,0],[169,17,169,45,0],[170,17,170,48,0],[171,17,171,50,0],[172,13,172,14,0],[174,13,174,68,0],[175,9,175,10,0],[178,9,178,10,0],[179,13,179,44,0],[180,13,180,14,0],[181,17,181,42,0],[182,17,182,35,0],[183,13,183,14,0],[184,9,184,10,0],[187,9,187,10,0],[188,13,188,101,0],[189,13,189,14,0],[190,17,190,42,0],[191,17,191,35,0],[192,13,192,14,0],[193,9,193,10,0],[196,9,196,10,0],[197,13,197,61,0],[198,9,198,10,0],[201,9,201,10,0],[202,13,206,15,0],[208,13,208,57,0],[210,13,210,30,0],[211,9,211,10,0],[214,9,214,10,0],[215,13,215,70,0],[216,13,216,70,0],[218,13,218,38,0],[219,13,219,14,0],[220,17,226,19,0],[228,17,228,51,0],[229,13,229,14,0],[231,13,231,41,0],[232,13,232,14,0],[233,17,233,71,0],[234,13,234,14,0],[236,13,236,65,0],[237,9,237,10,0],[240,9,240,10,0],[241,13,241,43,0],[242,13,242,65,0],[243,13,243,57,0],[245,13,245,72,0],[246,9,246,10,0]]);
+    </script>
+  </body>
+</html>

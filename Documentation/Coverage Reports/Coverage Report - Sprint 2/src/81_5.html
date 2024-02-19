@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Dal\NotesDal.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Model;
+
+namespace CapstoneGroup2.Server.Dal;
+
+/// &lt;summary&gt;
+/// Class for accessing db for notes logic
+/// &lt;/summary&gt;
+/// &lt;seealso cref=&quot;CapstoneGroup2.Server.Dal.IDbDal&amp;lt;CapstoneGroup2.Server.Model.Note&amp;gt;&quot; /&gt;
+public class NotesDal : IDbDal&lt;Note&gt;
+{
+    #region Data members
+
+    /// &lt;summary&gt;
+    /// The context
+    /// &lt;/summary&gt;
+    private readonly DocunotesDbContext context;
+    /// &lt;summary&gt;
+    /// The source identifier
+    /// &lt;/summary&gt;
+    private int sourceId;
+
+    #endregion
+
+    #region Constructors
+
+    /// &lt;summary&gt;
+    /// Initializes a new instance of the &lt;see cref=&quot;NotesDal&quot;/&gt; class.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;context&quot;&gt;The context.&lt;/param&gt;
+    public NotesDal(DocunotesDbContext context)
+    {
+        this.context = context;
+    }
+
+    #endregion
+
+    #region Methods
+
+    /// &lt;summary&gt;
+    /// Gets the specified key values.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;keyValues&quot;&gt;The key values.&lt;/param&gt;
+    /// &lt;returns&gt;Note for given key values&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.InvalidCastException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.ArgumentOutOfRangeException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public Note Get(params object?[]? keyValues)
+    {
+        if (keyValues is not { Length: 1 } ||
+            keyValues[0] == null || typeof(int) != keyValues[0]?.GetType())
+        {
+            throw new InvalidCastException();
+        }
+
+        var noteId = (int)keyValues[0]!;
+        if (noteId &lt; 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        var note = this.context.Notes
+            .Find(noteId) ?? throw new InvalidOperationException();
+
+        return note;
+    }
+
+    /// &lt;summary&gt;
+    /// Gets all.
+    /// &lt;/summary&gt;
+    /// &lt;returns&gt;All notes&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentOutOfRangeException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public IEnumerable&lt;Note&gt; GetAll()
+    {
+        if (this.sourceId &lt; 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        var notes = this.context.Notes
+            .Where(note =&gt; note.Username.Equals(username) &amp;&amp; note.SourceId == this.sourceId);
+
+        return notes;
+    }
+
+    /// &lt;summary&gt;
+    /// Adds the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;true if success, false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentNullException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public bool Add(Note entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        entity.Username = username;
+
+        this.context.Notes.Add(entity);
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    /// Updates the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;true if success, false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentNullException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public bool Update(Note entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != username)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.Notes.Update(entity);
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    /// Deletes the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;true if success, false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentNullException&quot;&gt;&lt;/exception&gt;
+    public bool Delete(Note entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        this.context.Notes.Remove(entity);
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    /// Sets the user.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+    public void SetUser(string username)
+    {
+        var user = new User { Username = username };
+        this.context.CurrentUser = user;
+    }
+
+    /// &lt;summary&gt;
+    /// Sets the source identifier.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;sourceId&quot;&gt;The source identifier.&lt;/param&gt;
+    public void SetSourceId(int sourceId)
+    {
+        this.sourceId = sourceId;
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[30,5,30,48,1],[31,5,31,6,1],[32,9,32,32,1],[33,5,33,6,1],[48,5,48,6,1],[49,9,50,76,1],[51,9,51,10,1],[52,13,52,46,1],[55,9,55,41,1],[56,9,56,24,1],[57,9,57,10,1],[58,13,58,53,1],[61,9,62,68,1],[64,9,64,21,1],[65,5,65,6,1],[74,5,74,6,1],[75,9,75,31,1],[76,9,76,10,1],[77,13,77,53,1],[80,9,80,102,1],[82,9,83,94,1],[85,9,85,22,1],[86,5,86,6,1],[96,5,96,6,1],[97,9,97,51,1],[99,9,99,102,1],[101,9,101,36,1],[103,9,103,40,1],[104,9,104,47,1],[105,5,105,6,1],[115,5,115,6,1],[116,9,116,51,1],[118,9,118,102,1],[120,9,120,41,1],[121,9,121,10,1],[122,13,122,53,1],[125,9,125,43,1],[126,9,126,47,1],[127,5,127,6,1],[136,5,136,6,1],[137,9,137,51,1],[139,9,139,43,1],[140,9,140,47,1],[141,5,141,6,1],[148,5,148,6,1],[149,9,149,53,1],[150,9,150,41,1],[151,5,151,6,1],[158,5,158,6,1],[159,9,159,34,1],[160,5,160,6,1]]);
+    </script>
+  </body>
+</html>

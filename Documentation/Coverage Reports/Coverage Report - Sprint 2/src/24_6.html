@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop\SettingsPage.xaml.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Windows.UI.Xaml.Controls;
+using CapstoneGroup2.Desktop.ViewModel;
+
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+
+namespace CapstoneGroup2.Desktop
+{
+    /// &lt;summary&gt;
+    ///     An empty page that can be used on its own or navigated to within a Frame.
+    /// &lt;/summary&gt;
+    public sealed partial class SettingsPage : Page
+    {
+        #region Data members
+
+        private readonly UserViewModel _viewModel;
+
+        #endregion
+
+        #region Constructors
+
+        public SettingsPage()
+        {
+            this._viewModel = new UserViewModel();
+            this.InitializeComponent();
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,9,21,30,0],[22,9,22,10,0],[23,13,23,51,0],[24,13,24,40,0],[25,9,25,10,0]]);
+    </script>
+  </body>
+</html>

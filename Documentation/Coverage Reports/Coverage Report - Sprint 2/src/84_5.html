@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Model\Note.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace CapstoneGroup2.Server.Model;
+
+/// &lt;summary&gt;
+/// Note model Class
+/// &lt;/summary&gt;
+public class Note
+{
+    #region Properties
+
+    /// &lt;summary&gt;
+    /// Gets or sets the note identifier.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    /// The note identifier.
+    /// &lt;/value&gt;
+    public int NoteId { get; set; }
+
+    /// &lt;summary&gt;
+    /// Gets or sets the source identifier.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    /// The source identifier.
+    /// &lt;/value&gt;
+    public int SourceId { get; set; }
+
+    /// &lt;summary&gt;
+    /// Gets or sets the username.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    /// The username.
+    /// &lt;/value&gt;
+    public string Username { get; set; }
+
+    /// &lt;summary&gt;
+    /// Gets or sets the note text.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    /// The note text.
+    /// &lt;/value&gt;
+    public string NoteText { get; set; }
+
+    /// &lt;summary&gt;
+    /// Gets or sets the tags string.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    /// The tags string.
+    /// &lt;/value&gt;
+    public string TagsString { get; set; }
+
+    /// &lt;summary&gt;
+    /// Gets the tags.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    /// The tags.
+    /// &lt;/value&gt;
+    public List&lt;string&gt; Tags =&gt; this.TagsString.Split(&quot;,&quot;).ToList();
+
+    /// &lt;summary&gt;
+    /// Gets or sets the note date.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    /// The note date.
+    /// &lt;/value&gt;
+    public DateTime NoteDate { get; set; }
+
+    #endregion
+}
+
+/// &lt;summary&gt;
+/// 
+/// &lt;/summary&gt;
+/// &lt;seealso cref=&quot;Microsoft.EntityFrameworkCore.IEntityTypeConfiguration&amp;lt;CapstoneGroup2.Server.Model.Note&amp;gt;&quot; /&gt;
+public class NoteConfiguration : IEntityTypeConfiguration&lt;Note&gt;
+{
+    #region Methods
+
+    /// &lt;summary&gt;
+    /// Configures the entity of type &lt;typeparamref name=&quot;TEntity&quot; /&gt;.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;builder&quot;&gt;The builder to be used to configure the entity type.&lt;/param&gt;
+    public void Configure(EntityTypeBuilder&lt;Note&gt; builder)
+    {
+        builder.ToTable(&quot;Note&quot;);
+        builder.HasKey(n =&gt; n.NoteId);
+        builder.Property(n =&gt; n.NoteId).HasColumnName(&quot;note_id&quot;);
+        builder.Property(n =&gt; n.SourceId).HasColumnName(&quot;source_id&quot;);
+        builder.Property(n =&gt; n.Username).HasColumnName(&quot;username&quot;);
+        builder.Property(n =&gt; n.NoteText).HasColumnName(&quot;note_text&quot;);
+        builder.Property(n =&gt; n.TagsString).HasColumnName(&quot;tags&quot;);
+        builder.Property(n =&gt; n.NoteDate).HasColumnName(&quot;note_date&quot;);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,25,19,29,1],[19,30,19,34,1],[27,27,27,31,1],[27,32,27,36,1],[35,30,35,34,1],[35,35,35,39,1],[43,30,43,34,1],[43,35,43,39,1],[51,32,51,36,1],[51,37,51,41,1],[59,33,59,68,1],[67,32,67,36,1],[67,37,67,41,1],[85,5,85,6,1],[86,9,86,33,1],[87,9,87,39,1],[88,9,88,66,1],[89,9,89,70,1],[90,9,90,69,1],[91,9,91,70,1],[92,9,92,67,1],[93,9,93,70,1],[94,5,94,6,1]]);
+    </script>
+  </body>
+</html>

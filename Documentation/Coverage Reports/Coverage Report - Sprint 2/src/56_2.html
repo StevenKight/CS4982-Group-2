@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Controllers\SourceControllerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Controllers;
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace CapstoneGroup2.Server.UnitTests.Controllers;
+
+/* dotcover disable */
+[TestFixture]
+public class SourceControllerTests
+{
+    #region Data members
+
+    private readonly List&lt;Source&gt; _sources =
+    [
+        new Source
+        {
+            SourceId = 1,
+            Name = &quot;testSource&quot;,
+            Description = &quot;testDescription&quot;,
+            IsLink = true,
+            Link = &quot;testUrl&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        },
+
+        new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource2&quot;,
+            Description = &quot;testDescription2&quot;,
+            IsLink = true,
+            Link = &quot;testUrl2&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        }
+    ];
+
+    private DbContextOptions&lt;DocunotesDbContext&gt; _options;
+    private DocunotesDbContext _context;
+
+    private SourceDal _sourceDal;
+
+    #endregion
+
+    #region Methods
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        this._options = new DbContextOptionsBuilder&lt;DocunotesDbContext&gt;()
+            .UseInMemoryDatabase(&quot;Docunotes&quot;)
+            .EnableSensitiveDataLogging()
+            .Options;
+        this._context = new DocunotesDbContext(this._options);
+
+        this._context.Database.EnsureDeleted();
+        this._context.Database.EnsureCreated();
+
+        this._context.Sources.AddRange(this._sources);
+        this._context.SaveChanges();
+
+        this._sourceDal = new SourceDal(this._context);
+    }
+
+    [SetUp]
+    public void SetupEach()
+    {
+        this._context.ChangeTracker.Clear();
+    }
+
+    [Test]
+    [Order(1)]
+    public void ConstructorTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Assert
+        Assert.IsNotNull(sourceController);
+    }
+
+    [Test]
+    [Order(2)]
+    public void GetAllTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetAll(&quot;testUser&quot;) as OkObjectResult;
+        var resultList = result.Value as IEnumerable&lt;Source&gt;;
+
+        var expected = this._sources.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkObjectResult&gt;(result);
+        Assert.IsNotNull(resultList);
+        Assert.AreEqual(expected, resultList.Count());
+
+        for (var i = 0; i &lt; expected; i++)
+        {
+            var source = this._sources[i];
+            var actual = resultList.ElementAt(i);
+            Assert.AreEqual(source.SourceId, actual.SourceId);
+            Assert.AreEqual(source.Username, actual.Username);
+            Assert.AreEqual(source.Type, actual.Type);
+            Assert.AreEqual(source.NoteType, actual.NoteType);
+            Assert.AreEqual(source.Name, actual.Name);
+            Assert.AreEqual(source.IsLink, actual.IsLink);
+            Assert.AreEqual(source.Link, actual.Link);
+        }
+    }
+
+    [Test]
+    [Order(3)]
+    public void NullUsernameGetAllTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetAll(null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(4)]
+    public void EmptyUsernameGetAllTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetAll(&quot;&quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(5)]
+    public void WhitespaceUsernameGetAllTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetAll(&quot;    &quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(6)]
+    public void GetByIdTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetById(1, &quot;testUser&quot;) as OkObjectResult;
+        var resultObject = result.Value as Source;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkObjectResult&gt;(result);
+        Assert.IsNotNull(resultObject);
+        Assert.AreEqual(1, resultObject.SourceId);
+        Assert.AreEqual(&quot;testSource&quot;, resultObject.Name);
+    }
+
+    [Test]
+    [Order(7)]
+    public void NullUsernameGetByIdTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetById(1, null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(8)]
+    public void EmptyUsernameGetByIdTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetById(1, &quot;&quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(9)]
+    public void WhitespaceUsernameGetByIdTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetById(1, &quot;    &quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(10)]
+    public void InvalidSourceIdGetByIdTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.GetById(0, &quot;testUser&quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    [Order(11)]
+    public void CreateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+        var source = new Source
+        {
+            SourceId = 3,
+            Name = &quot;testSource3&quot;,
+            Description = &quot;testDescription3&quot;,
+            IsLink = true,
+            Link = &quot;testUrl3&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        };
+
+        // Act
+        var result = sourceController.Create(&quot;testUser&quot;, source);
+
+        this._sources.Add(source);
+        var expected = this._sources.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkObjectResult&gt;(result);
+        Assert.AreEqual(expected, this._context.Sources.Count());
+        Assert.Contains(source, this._context.Sources.ToList());
+    }
+
+    [Test]
+    [Order(12)]
+    public void NullUsernameCreateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+        var source = new Source
+        {
+            SourceId = 3,
+            Name = &quot;testSource3&quot;,
+            Description = &quot;testDescription3&quot;,
+            IsLink = true,
+            Link = &quot;testUrl3&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        };
+
+        // Act
+        var result = sourceController.Create(null, source);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(13)]
+    public void EmptyUsernameCreateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+        var source = new Source
+        {
+            SourceId = 3,
+            Name = &quot;testSource3&quot;,
+            Description = &quot;testDescription3&quot;,
+            IsLink = true,
+            Link = &quot;testUrl3&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        };
+
+        // Act
+        var result = sourceController.Create(&quot;&quot;, source);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(14)]
+    public void WhitespaceUsernameCreateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+        var source = new Source
+        {
+            SourceId = 3,
+            Name = &quot;testSource3&quot;,
+            Description = &quot;testDescription3&quot;,
+            IsLink = true,
+            Link = &quot;testUrl3&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        };
+
+        // Act
+        var result = sourceController.Create(&quot;    &quot;, source);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(15)]
+    public void NullSourceCreateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.Create(&quot;testUser&quot;, null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    [Order(16)]
+    public void UpdateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+        var source = new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource4&quot;,
+            IsLink = true,
+            Link = &quot;testUrl4&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;
+        };
+
+        // Act
+        var result = sourceController.Update(&quot;testUser&quot;, source);
+
+        this._sources.Add(source);
+        this._sources.Remove(this._sources[1]);
+
+        // Assert
+        var actual = this._context.Sources.Find(2);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkResult&gt;(result);
+        Assert.AreEqual(source.Name, actual.Name);
+        Assert.AreEqual(source.Link, actual.Link);
+        Assert.AreEqual(source.Type, actual.Type);
+        Assert.AreEqual(source.Username, actual.Username);
+    }
+
+    [Test]
+    [Order(17)]
+    public void NullUsernameUpdateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+        var source = new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource4&quot;,
+            IsLink = true,
+            Link = &quot;testUrl4&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;
+        };
+
+        // Act
+        var result = sourceController.Update(null, source);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(18)]
+    public void EmptyUsernameUpdateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+        var source = new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource4&quot;,
+            IsLink = true,
+            Link = &quot;testUrl4&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;
+        };
+
+        // Act
+        var result = sourceController.Update(&quot;&quot;, source);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(19)]
+    public void WhitespaceUsernameUpdateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+        var source = new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource4&quot;,
+            IsLink = true,
+            Link = &quot;testUrl4&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;
+        };
+
+        // Act
+        var result = sourceController.Update(&quot;    &quot;, source);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(20)]
+    public void NullSourceUpdateTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.Update(&quot;testUser&quot;, null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    [Order(21)]
+    public void DeleteTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.Delete(this._sources[0].SourceId);
+
+        this._sources.Remove(this._sources[0]);
+        var expected = this._sources.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkObjectResult&gt;(result);
+        Assert.AreEqual(expected, this._context.Sources.Count());
+
+        var sources = this._context.Sources.ToList();
+        for (var i = 0; i &lt; expected; i++)
+        {
+            Assert.IsTrue(this._sources.Exists(x =&gt; sources.ElementAt(i).Name.Equals(x.Name)));
+        }
+    }
+
+    [Test]
+    [Order(22)]
+    public void InvalidSourceIdDeleteTest()
+    {
+        // Arrange
+        var sourceController = new SourceController(this._sourceDal);
+
+        // Act
+        var result = sourceController.Delete(0);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestObjectResult&gt;(result);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,5,42,7,1],[55,5,55,6,1],[56,9,59,22,1],[60,9,60,63,1],[62,9,62,48,1],[63,9,63,48,1],[65,9,65,55,1],[66,9,66,37,1],[68,9,68,56,1],[69,5,69,6,1],[73,5,73,6,1],[74,9,74,45,1],[75,5,75,6,1],[80,5,80,6,1],[82,9,82,70,1],[85,9,85,44,1],[86,5,86,6,1],[91,5,91,6,1],[93,9,93,70,1],[96,9,96,76,1],[97,9,97,62,1],[99,9,99,46,1],[102,9,102,34,1],[103,9,103,53,1],[104,9,104,38,1],[105,9,105,55,1],[107,14,107,23,1],[107,25,107,37,1],[107,39,107,42,1],[108,9,108,10,1],[109,13,109,43,1],[110,13,110,50,1],[111,13,111,63,1],[112,13,112,63,1],[113,13,113,55,1],[114,13,114,63,1],[115,13,115,55,1],[116,13,116,59,1],[117,13,117,55,1],[118,9,118,10,1],[119,5,119,6,1],[124,5,124,6,1],[126,9,126,70,1],[129,9,129,52,1],[132,9,132,34,1],[133,9,133,63,1],[134,5,134,6,1],[139,5,139,6,1],[141,9,141,70,1],[144,9,144,50,1],[147,9,147,34,1],[148,9,148,63,1],[149,5,149,6,1],[154,5,154,6,1],[156,9,156,70,1],[159,9,159,54,1],[162,9,162,34,1],[163,9,163,63,1],[164,5,164,6,1],[169,5,169,6,1],[171,9,171,70,1],[174,9,174,80,1],[175,9,175,51,1],[178,9,178,34,1],[179,9,179,53,1],[180,9,180,40,1],[181,9,181,51,1],[182,9,182,58,1],[183,5,183,6,1],[188,5,188,6,1],[190,9,190,70,1],[193,9,193,56,1],[196,9,196,34,1],[197,9,197,63,1],[198,5,198,6,1],[203,5,203,6,1],[205,9,205,70,1],[208,9,208,54,1],[211,9,211,34,1],[212,9,212,63,1],[213,5,213,6,1],[218,5,218,6,1],[220,9,220,70,1],[223,9,223,58,1],[226,9,226,34,1],[227,9,227,63,1],[228,5,228,6,1],[233,5,233,6,1],[235,9,235,70,1],[238,9,238,62,1],[241,9,241,34,1],[242,9,242,55,1],[243,5,243,6,1],[248,5,248,6,1],[250,9,250,70,1],[251,9,262,11,1],[265,9,265,66,1],[267,9,267,35,1],[268,9,268,46,1],[271,9,271,34,1],[272,9,272,53,1],[273,9,273,66,1],[274,9,274,65,1],[275,5,275,6,1],[280,5,280,6,1],[282,9,282,70,1],[283,9,294,11,1],[297,9,297,60,1],[300,9,300,34,1],[301,9,301,63,1],[302,5,302,6,1],[307,5,307,6,1],[309,9,309,70,1],[310,9,321,11,1],[324,9,324,58,1],[327,9,327,34,1],[328,9,328,63,1],[329,5,329,6,1],[334,5,334,6,1],[336,9,336,70,1],[337,9,348,11,1],[351,9,351,62,1],[354,9,354,34,1],[355,9,355,63,1],[356,5,356,6,1],[361,5,361,6,1],[363,9,363,70,1],[366,9,366,64,1],[369,9,369,34,1],[370,9,370,55,1],[371,5,371,6,1],[376,5,376,6,1],[378,9,378,70,1],[379,9,387,11,1],[390,9,390,66,1],[392,9,392,35,1],[393,9,393,48,1],[396,9,396,52,1],[397,9,397,34,1],[398,9,398,47,1],[399,9,399,51,1],[400,9,400,51,1],[401,9,401,51,1],[402,9,402,59,1],[403,5,403,6,1],[408,5,408,6,1],[410,9,410,70,1],[411,9,419,11,1],[422,9,422,60,1],[425,9,425,34,1],[426,9,426,63,1],[427,5,427,6,1],[432,5,432,6,1],[434,9,434,70,1],[435,9,443,11,1],[446,9,446,58,1],[449,9,449,34,1],[450,9,450,63,1],[451,5,451,6,1],[456,5,456,6,1],[458,9,458,70,1],[459,9,467,11,1],[470,9,470,62,1],[473,9,473,34,1],[474,9,474,63,1],[475,5,475,6,1],[480,5,480,6,1],[482,9,482,70,1],[485,9,485,64,1],[488,9,488,34,1],[489,9,489,55,1],[490,5,490,6,1],[495,5,495,6,1],[497,9,497,70,1],[500,9,500,73,1],[502,9,502,48,1],[503,9,503,46,1],[506,9,506,34,1],[507,9,507,53,1],[508,9,508,66,1],[510,9,510,54,1],[511,14,511,23,1],[511,25,511,37,1],[511,39,511,42,1],[512,9,512,10,1],[513,13,513,53,1],[513,53,513,93,1],[513,93,513,96,1],[514,9,514,10,1],[515,5,515,6,1],[520,5,520,6,1],[522,9,522,70,1],[525,9,525,49,1],[528,9,528,34,1],[529,9,529,61,1],[530,5,530,6,1]]);
+    </script>
+  </body>
+</html>
