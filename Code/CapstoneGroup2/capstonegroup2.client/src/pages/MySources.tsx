@@ -76,7 +76,14 @@ export default function MySources() {
     if (sources.length === 0 && !loading) {
         return (
             <div>
-                <h1>My Sources</h1>
+                <AddSourceDialog id="add-source-dialog" onAdd={getSources}/>
+                <div id="my-sources-heading">
+                    <h1>My Sources</h1>
+                    <button aria-label="Add Source"
+                        onClick={addSource}>
+                        +
+                    </button>
+                </div>
                 <p>No sources found</p>
             </div>
         );
