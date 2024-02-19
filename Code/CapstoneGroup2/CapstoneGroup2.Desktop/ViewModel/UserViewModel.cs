@@ -11,18 +11,19 @@ using Newtonsoft.Json;
 namespace CapstoneGroup2.Desktop.ViewModel
 {
     /// <summary>
-    /// Viewmodel for interactions is Users
+    ///     Viewmodel for interactions is Users
     /// </summary>
     public class UserViewModel
     {
         #region Data members
 
         /// <summary>
-        /// The application storage helper
+        ///     The application storage helper
         /// </summary>
         private readonly ApplicationDataStorageHelper _applicationStorageHelper;
+
         /// <summary>
-        /// The user dal
+        ///     The user dal
         /// </summary>
         private readonly UserDal _userDal;
 
@@ -31,7 +32,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserViewModel"/> class.
+        ///     Initializes a new instance of the <see cref="UserViewModel" /> class.
         /// </summary>
         public UserViewModel()
         {
@@ -44,7 +45,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         #region Methods
 
         /// <summary>
-        /// Logins the specified username.
+        ///     Logins the specified username.
         /// </summary>
         /// <param name="username">The username.</param>
         /// <param name="password">The password.</param>
@@ -72,7 +73,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
-        /// Gets the saved user.
+        ///     Gets the saved user.
         /// </summary>
         /// <returns> The locally saved user</returns>
         public User getSavedUser()
@@ -84,7 +85,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
-        /// Validates the authorization.
+        ///     Validates the authorization.
         /// </summary>
         /// <returns>True if authorized, false otherwise</returns>
         public bool ValidateAuthorization()
@@ -95,7 +96,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
-        /// Hashes the password.
+        ///     Hashes the password.
         /// </summary>
         /// <param name="password">The password.</param>
         /// <returns>hashed password</returns>

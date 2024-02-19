@@ -23,14 +23,14 @@ namespace CapstoneGroup2.Desktop
 
         public string Username
         {
-            get => this.UsernameTextBox.Text;
-            set => this.UsernameTextBox.Text = value;
+            get => this.usernameTextBox.Text;
+            set => this.usernameTextBox.Text = value;
         }
 
         public string Password
         {
-            get => this.PasswordTextBox.Password;
-            set => this.PasswordTextBox.Password = value;
+            get => this.passwordTextBox.Password;
+            set => this.passwordTextBox.Password = value;
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace CapstoneGroup2.Desktop
             }
             else
             {
-                this.ErrorTextBlock.Text = "Invalid username or password";
+                this.errorTextBlock.Text = "Invalid username or password";
             }
         }
 

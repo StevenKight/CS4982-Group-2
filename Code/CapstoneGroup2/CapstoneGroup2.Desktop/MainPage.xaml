@@ -3,7 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:custom="using:Microsoft.UI.Xaml.Controls"
     x:Class="CapstoneGroup2.Desktop.MainPage"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -11,28 +10,29 @@
     Height="700">
 
     <Grid>
-        <NavigationView x:Name="navigationView" SelectionChanged="navigationView_SelectionChanged" IsBackButtonVisible="Collapsed">
+        <NavigationView x:Name="navigationView" SelectionChanged="navigationView_SelectionChanged"
+                        IsBackButtonVisible="Collapsed">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Dashboard" Tag="home">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE80F;"/>
+                        <FontIcon Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="My Sources" Tag="sources">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8B7;"/>
+                        <FontIcon Glyph="&#xE8B7;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="Shared With Me" Tag="shared">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE1A6;"/>
+                        <FontIcon Glyph="&#xE1A6;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
 
-            <Frame x:Name="contentFrame" Navigated="contentFrame_Navigated"/>
+            <Frame x:Name="contentFrame" Navigated="contentFrame_Navigated" />
         </NavigationView>
     </Grid>
 </Page>

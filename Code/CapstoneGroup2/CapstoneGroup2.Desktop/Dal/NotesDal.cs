@@ -10,19 +10,18 @@ using Newtonsoft.Json;
 namespace CapstoneGroup2.Desktop.Dal
 {
     /// <summary>
-    /// 
     /// </summary>
     public class NotesDal
     {
         #region Data members
 
         /// <summary>
-        /// The base URL
+        ///     The base URL
         /// </summary>
         private static readonly string BaseUrl = "https://localhost:7048";
 
         /// <summary>
-        /// The client
+        ///     The client
         /// </summary>
         private readonly HttpClient client;
 
@@ -31,7 +30,7 @@ namespace CapstoneGroup2.Desktop.Dal
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NotesDal"/> class.
+        ///     Initializes a new instance of the <see cref="NotesDal" /> class.
         /// </summary>
         public NotesDal()
         {
@@ -40,7 +39,7 @@ namespace CapstoneGroup2.Desktop.Dal
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NotesDal"/> class.
+        ///     Initializes a new instance of the <see cref="NotesDal" /> class.
         /// </summary>
         /// <param name="client">The client.</param>
         public NotesDal(HttpClient client)
@@ -54,7 +53,7 @@ namespace CapstoneGroup2.Desktop.Dal
         #region Methods
 
         /// <summary>
-        /// Gets the user source notes.
+        ///     Gets the user source notes.
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="source">The source.</param>
@@ -72,12 +71,12 @@ namespace CapstoneGroup2.Desktop.Dal
         }
 
         /// <summary>
-        /// Creates the new note.
+        ///     Creates the new note.
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="note">The note.</param>
         /// <returns>true if successful, false otherwise</returns>
-        public async Task<bool> createNewNote(User user,Note note)
+        public async Task<bool> createNewNote(User user, Note note)
         {
             note.NoteDate = DateTime.Now;
             note.TagsString = "";
@@ -86,46 +85,47 @@ namespace CapstoneGroup2.Desktop.Dal
 
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-            var response = await this.client.PostAsync($"/Notes/{user.Username}",content);
+            var response = await this.client.PostAsync($"/Notes/{user.Username}", content);
 
             return response.IsSuccessStatusCode;
         }
 
         /// <summary>
-        /// Updates the note.
+        ///     Updates the note.
         /// </summary>
         /// <param name="note">The note.</param>
         /// <param name="user">The user.</param>
         /// <returns>true if successful, false otherwise</returns>
         public async Task<bool> UpdateNote(Note note, User user)
         {
+            var jsonData = JsonConvert.SerializeObject(note);
 
-            string jsonData = JsonConvert.SerializeObject(note);
+            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-            StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await this.client.PutAsync($"/Notes/{user.Username}", content);
+            var response = await this.client.PutAsync($"/Notes/{user.Username}", content);
 
             if (response.IsSuccessStatusCode)
             {
                 return true;
             }
+
             return false;
         }
 
         /// <summary>
-        /// Deletes the note.
+        ///     Deletes the note.
         /// </summary>
         /// <param name="note">The note.</param>
         /// <returns>true if successful, false otherwise</returns>
         public async Task<bool> DeleteNote(Note note)
         {
-            HttpResponseMessage response = await this.client.DeleteAsync($"/Notes/{note.NoteId}");
+            var response = await this.client.DeleteAsync($"/Notes/{note.NoteId}");
 
             if (response.IsSuccessStatusCode)
             {
                 return true;
             }
+
             return false;
         }
 

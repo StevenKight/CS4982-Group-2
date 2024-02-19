@@ -131,6 +131,9 @@
     <Compile Include="Dal\SourceDal.cs" />
     <Compile Include="Dal\UserDal.cs" />
     <Compile Include="Data\DataManager.cs" />
+    <Compile Include="AddSourceDialog.xaml.cs">
+      <DependentUpon>AddSourceDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NotesPage.xaml.cs">
       <DependentUpon>NotesPage.xaml</DependentUpon>
     </Compile>
@@ -180,6 +183,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AddSourceDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="NotesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
