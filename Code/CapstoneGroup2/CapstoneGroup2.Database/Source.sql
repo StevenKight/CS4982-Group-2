@@ -11,8 +11,12 @@
 	[description] VARCHAR(100) NOT NULL,
 	[type] CHAR(3) NOT NULL,
 	[is_link] BIT NOT NULL,
-	[link] VARCHAR(100) NOT NULL,
+	[link] VARCHAR(100),
+	[content] VARBINARY(MAX),
 	[created_at] DATETIME NOT NULL
 		DEFAULT GETDATE(),
-	[updated_at] DATETIME NULL
+	[updated_at] DATETIME NULL, 
+    [authors] NVARCHAR(MAX) NULL, 
+    [publisher] VARCHAR(50) NULL, 
+    [accessed_at] DATETIME NULL
 )
