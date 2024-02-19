@@ -1,4 +1,3 @@
-
 export type Note = {
     noteId: number;
     sourceId: number;

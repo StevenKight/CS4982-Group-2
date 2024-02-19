@@ -3,9 +3,17 @@ import { Link } from 'react-router-dom';
 
 import './styles/Navigation.css';
 
+/**
+ * React component for the navigation bar.
+ *
+ * @returns {JSX.Element} - JSX representation of the Navigation component.
+ */
 export default function Navigation() {
     const [username, setUsername] = useState<string>('');
 
+    /**
+     * useEffect hook to set the username from local storage on component mount.
+     */
     useEffect(() => {
         const auth = localStorage.getItem('auth');
         const username = localStorage.getItem('username');
@@ -14,6 +22,9 @@ export default function Navigation() {
         }
     }, []);
 
+    /**
+     * Handles the logout action by removing authentication information from local storage.
+     */
     const logout = () => {
         localStorage.removeItem('auth');
         localStorage.removeItem('username');

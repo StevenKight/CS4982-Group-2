@@ -3,10 +3,20 @@ import { Link } from 'react-router-dom';
 
 import './styles/Authorize.css';
 
+/**
+ * React component for the login form.
+ *
+ * @returns {JSX.Element} - JSX representation of the LoginForm component.
+ */
 export default function LoginForm() {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
+    /**
+     * Handles the form submission, sends a login request, and updates local storage upon success.
+     *
+     * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
+     */
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 

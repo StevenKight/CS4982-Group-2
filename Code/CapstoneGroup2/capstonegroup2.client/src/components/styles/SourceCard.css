@@ -18,3 +18,12 @@
     transform: scale(1);
     background-color: black;
 }
+
+@media (prefers-color-scheme: light) {
+    .source {
+        background-color: #bfbfbf;
+    }
+    .source:active {
+        background-color: white;
+    }
+}

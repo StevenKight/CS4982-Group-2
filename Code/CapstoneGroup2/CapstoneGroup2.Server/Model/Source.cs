@@ -156,7 +156,7 @@ public class Source
 
 /// <summary>
 /// </summary>
-/// <seealso cref="Microsoft.EntityFrameworkCore.IEntityTypeConfiguration&lt;CapstoneGroup2.Server.Model.Source&gt;" />
+/// <seealso cref="Source" />
 public class SourceConfiguration : IEntityTypeConfiguration<Source>
 {
     #region Methods

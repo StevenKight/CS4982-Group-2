@@ -9,12 +9,25 @@ import { Source } from '../interfaces/Source';
 //     {type: SourceType.Pdf, extensions: ['pdf']},
 // ]
 
+/**
+ * React component for adding a new source.
+ *
+ * @param {string} id - The unique identifier for the dialog.
+ * @param {() => void} onAdd - Callback function invoked when a source is successfully added.
+ * @returns {JSX.Element} - JSX representation of the AddSourceDialog component.
+ */
 export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () => void }) {
 
     const [isLink, setIsLink] = useState(false);
 
     const [file, setFile] = useState(null as File | null);
 
+    const [authors, setAuthors] = useState([] as string[]);
+    const [selectedAuthor, setSelectedAuthor] = useState(null as string | null);
+
+    /**
+     * Closes the dialog and resets the form state.
+     */
     const closeDialog = () => {
         // Close the dialog
         const dialog = document.getElementById('add-source-dialog') as HTMLDialogElement;
@@ -22,14 +35,32 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
             dialog.close();
         }
 
+        var authorOptions = document.querySelector('.add-source-dialog-author-selector');
+
+        if (!authorOptions) return;
+
+        var selected = authorOptions.querySelector('.selected');
+        if (selected) {
+            selected.classList.remove('selected');
+        }
+
         setIsLink(false);
+        setFile(null);
+        setAuthors([]);
+        setSelectedAuthor(null);
 
         // Reset the form
         const form = document.querySelector('.add-source-dialog') as HTMLFormElement;
         form.reset();
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    /**
+     * Handles the form submission, processes form data, and triggers API request to add a new source.
+     *
+     * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
+     * @returns {Promise<void>} - A Promise resolving after the form submission is processed.
+     */
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
         const inputs = form.querySelectorAll('input');
@@ -48,17 +79,31 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         });
 
         const source = {
-            name: data.name,
-            description: data.description,
+            type: 'Pdf',
+            name: data['name'],
+            description: data['description'],
             isLink: isLink,
-            link: data.link,
-            file: file,
-            type: 'Pdf', // TODO: Add a way to select the source type
+            authorsString: authors.join('|'),
+            publisher: data['publisher'],
+            accessedAt: data['accessedAt'],
         } as Source;
+
+        if (isLink) {
+            source.link = data['link'];
+        }
+        else {
+            const arrayBuffer = await file?.arrayBuffer();
+            if (arrayBuffer) {
+                const bytes = new Uint8Array(arrayBuffer);
+                const base64String = btoa(String.fromCharCode(...bytes));
+                source.content = base64String;
+            }
+        }
 
         const username = localStorage.getItem('username');
         if (username) {
             source.username = username;
+
             fetch(`/source/${username}`, {
                     method: 'POST',
                     headers: {
@@ -83,11 +128,78 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         }
     }
 
+    /**
+     * Handles file input change and updates the file state.
+     *
+     * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event.
+     */
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        
         const file = e.currentTarget.files?.item(0);
         if (file) {
             setFile(file);
         }
+    }
+
+    /**
+     * Handles author click and updates the selected author state.
+     *
+     * @param {React.MouseEvent<HTMLInputElement>} e - The author click event.
+     */
+    const handleAuthorClick = (e: React.MouseEvent<HTMLInputElement>) => {
+        const author = e.currentTarget;
+        
+        var authorOptions = document.querySelector('.add-source-dialog-author-selector');
+
+        if (!authorOptions) return;
+
+        var selected = authorOptions.querySelector('.selected');
+        if (selected) {
+            selected.classList.remove('selected');
+        }
+
+        setSelectedAuthor(author.value); // TODO: Change to author name
+        author.classList.toggle('selected');
+    }
+
+    /**
+     * Adds a new author to the authors state.
+     *
+     * @param {React.MouseEvent<HTMLButtonElement>} e - The add author button click event.
+     */
+    const handleAddAuthor = (e: React.MouseEvent<HTMLButtonElement>) => {
+
+        e.preventDefault();
+
+        // Add an author
+        var authorOptions = document.querySelector('.add-source-dialog-author-selector');
+
+        if (!authorOptions) return;
+
+        var selected = authorOptions.querySelector('.selected');
+        if (selected) {
+            selected.classList.remove('selected');
+        }
+
+        var authorName = prompt('Enter the author name');
+        if (!authorName) return;
+
+        const updatedAuthors = authors.concat(authorName);
+        setAuthors(updatedAuthors);
+    }
+
+    /**
+     * Removes the selected author from the authors state.
+     *
+     * @param {React.MouseEvent<HTMLButtonElement>} e - The remove author button click event.
+     */
+    const handleRemoveAuthor = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        
+        // Remove an author
+        const updatedAuthors = authors.filter(author => author !== selectedAuthor);
+        setAuthors(updatedAuthors);
     }
 
     return (
@@ -104,9 +216,6 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
 
                 <label htmlFor='description'>Description</label>
                 <input type='text' id='description' placeholder='Enter a description...' />
-
-                <label htmlFor='tags'>Tags</label>
-                <input type='text' id='tags' placeholder='Enter tags...' />
 
                 <div className='add-source-dialog-linkable-row'>
                     <div>
@@ -131,10 +240,33 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                         <>
                             {/* TODO: Add more file types based on source type selection */}
                             <label htmlFor='file'>File</label>
-                            <input type='file' id='file' accept='.pdf'
-                                required={!isLink} onChange={handleFileChange}/>
+                            <input type='file' id='file' accept='application/pdf'
+                                required={!isLink} onChange={(e) => handleFileChange(e)}/>
                         </>
                 }
+
+                <div className='add-source-dialog-author-heading'>
+                    <label>Authors:</label>
+                    <div style={{display: 'flex'}}>
+                        <button onClick={handleAddAuthor}>+</button>
+                        <button onClick={handleRemoveAuthor} disabled={selectedAuthor === null}>-</button>
+                    </div>
+                </div>
+                <div className='add-source-dialog-author-selector'>
+                    {
+                        authors.map((author, index) => {
+                            return (
+                                <input key={index} type='text' id={'author-' + index} onClick={handleAuthorClick} value={author} />
+                            );
+                        })
+                    }
+                </div>
+
+                <label htmlFor='publisher'>Publisher</label>
+                <input type='text' id='publisher' placeholder='Enter the publisher...' />
+
+                <label htmlFor='accessedAt'>Accessed At</label>
+                <input type='date' id='accessedAt'/>
 
                 <div className='add-source-dialog-finish-row'>
                     <input type='submit' value='Add'/>

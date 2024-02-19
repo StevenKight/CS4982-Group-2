@@ -16,9 +16,13 @@ export type Source = {
     name: string;
     description: string;
     isLink: boolean;
-    link: string;
+    link: string | null;
+    content: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
-    file: File | null;
+    authorsString: string;
+    authors: string[];
+    publisher: string;
+    accessedAt: Date | null;
 };
 
