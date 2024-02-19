@@ -11,7 +11,7 @@
 	[description] VARCHAR(100) NOT NULL,
 	[type] CHAR(3) NOT NULL,
 	[is_link] BIT NOT NULL,
-	[link] VARCHAR(100) NOT NULL,
+	[link] VARCHAR(100),
 	[content] VARBINARY(MAX),
 	[created_at] DATETIME NOT NULL
 		DEFAULT GETDATE(),

@@ -4,18 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CapstoneGroup2.Server.Model;
 
 /// <summary>
-/// Source Type enums
+///     Source Type enums
 /// </summary>
 public enum SourceType
 {
     #region Enum members
 
     /// <summary>
-    /// The PDF
+    ///     The PDF
     /// </summary>
     Pdf = 1,
+
     /// <summary>
-    /// The vid
+    ///     The vid
     /// </summary>
     Vid = 2
 
@@ -23,129 +24,130 @@ public enum SourceType
 }
 
 /// <summary>
-/// Source Model class
+///     Source Model class
 /// </summary>
 public class Source
 {
     #region Properties
 
     /// <summary>
-    /// Gets or sets the source identifier.
+    ///     Gets or sets the source identifier.
     /// </summary>
     /// <value>
-    /// The source identifier.
+    ///     The source identifier.
     /// </value>
     public int SourceId { get; set; }
 
     /// <summary>
-    /// Gets or sets the username.
+    ///     Gets or sets the username.
     /// </summary>
     /// <value>
-    /// The username.
+    ///     The username.
     /// </value>
     public string Username { get; set; }
 
     /// <summary>
-    /// Gets or sets the type.
+    ///     Gets or sets the type.
     /// </summary>
     /// <value>
-    /// The type.
+    ///     The type.
     /// </value>
     public string Type { get; set; }
 
     /// <summary>
-    /// Gets the type of the note.
+    ///     Gets the type of the note.
     /// </summary>
     /// <value>
-    /// The type of the note.
+    ///     The type of the note.
     /// </value>
     public SourceType NoteType => (SourceType)Enum.Parse(typeof(SourceType), this.Type, true);
 
     /// <summary>
-    /// Gets or sets the name.
+    ///     Gets or sets the name.
     /// </summary>
     /// <value>
-    /// The name.
+    ///     The name.
     /// </value>
     public string Name { get; set; }
 
     /// <summary>
-    /// Gets or sets the description.
+    ///     Gets or sets the description.
     /// </summary>
     /// <value>
-    /// The description.
+    ///     The description.
     /// </value>
     public string Description { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether this instance is link.
+    ///     Gets or sets a value indicating whether this instance is link.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if this instance is link; otherwise, <c>false</c>.
+    ///     <c>true</c> if this instance is link; otherwise, <c>false</c>.
     /// </value>
     public bool IsLink { get; set; }
 
     /// <summary>
-    /// Gets or sets the link.
+    ///     Gets or sets the link.
     /// </summary>
     /// <value>
-    /// The link.
+    ///     The link.
     /// </value>
-    public string Link { get; set; }
+    public string? Link { get; set; }
 
     /// <summary>
-    /// Gets or sets the content.
+    ///     Gets or sets the content.
     /// </summary>
     /// <value>
-    /// The content.
+    ///     The content.
     /// </value>
     public byte[]? Content { get; set; }
 
     /// <summary>
-    /// Gets or sets the created at.
+    ///     Gets or sets the created at.
     /// </summary>
     /// <value>
-    /// The created at.
+    ///     The created at.
     /// </value>
     public DateTime CreatedAt { get; set; }
 
     /// <summary>
-    /// Gets or sets the updated at.
+    ///     Gets or sets the updated at.
     /// </summary>
     /// <value>
-    /// The updated at.
+    ///     The updated at.
     /// </value>
     public DateTime? UpdatedAt { get; set; }
 
     /// <summary>
-    /// Gets or sets the authors string.
+    ///     Gets or sets the authors string.
     /// </summary>
     /// <value>
-    /// The authors string.
+    ///     The authors string.
     /// </value>
     public string? AuthorsString { get; set; }
 
     /// <summary>
-    /// Gets the authors.
+    ///     Gets the authors.
     /// </summary>
     /// <value>
-    /// The authors.
+    ///     The authors.
     /// </value>
-    public List<string>? Authors => string.IsNullOrEmpty(this.AuthorsString) ? null : this.AuthorsString.Split("|").ToList();
+    public List<string>? Authors =>
+        string.IsNullOrEmpty(this.AuthorsString) ? null : this.AuthorsString.Split("|").ToList();
 
     /// <summary>
-    /// Gets or sets the publisher.
+    ///     Gets or sets the publisher.
     /// </summary>
     /// <value>
-    /// The publisher.
+    ///     The publisher.
     /// </value>
     public string? Publisher { get; set; }
 
     /// <summary>
-    /// Gets or sets the accessed at.
+    ///     Gets or sets the accessed at.
     /// </summary>
     /// <value>
-    /// The accessed at.
+    ///     The accessed at.
     /// </value>
     public DateTime? AccessedAt { get; set; }
 
@@ -153,7 +155,6 @@ public class Source
 }
 
 /// <summary>
-/// 
 /// </summary>
 /// <seealso cref="Microsoft.EntityFrameworkCore.IEntityTypeConfiguration&lt;CapstoneGroup2.Server.Model.Source&gt;" />
 public class SourceConfiguration : IEntityTypeConfiguration<Source>
@@ -161,7 +162,7 @@ public class SourceConfiguration : IEntityTypeConfiguration<Source>
     #region Methods
 
     /// <summary>
-    /// Configures the entity of type <typeparamref name="TEntity" />.
+    ///     Configures the entity of type <typeparamref name="TEntity" />.
     /// </summary>
     /// <param name="builder">The builder to be used to configure the entity type.</param>
     public void Configure(EntityTypeBuilder<Source> builder)
