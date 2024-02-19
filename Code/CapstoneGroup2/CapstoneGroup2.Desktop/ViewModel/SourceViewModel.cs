@@ -9,34 +9,39 @@ using Newtonsoft.Json;
 namespace CapstoneGroup2.Desktop.ViewModel
 {
     /// <summary>
-    /// Viewmodel for interactions with source
+    ///     Viewmodel for interactions with source
     /// </summary>
     public class SourceViewModel
     {
         #region Data members
 
         /// <summary>
-        /// The application storage helper
+        ///     The application storage helper
         /// </summary>
         private readonly ApplicationDataStorageHelper _applicationStorageHelper;
+
         /// <summary>
-        /// The source dal
+        ///     The source dal
         /// </summary>
         private readonly SourceDal _sourceDal;
 
+        #endregion
+
+        #region Properties
+
         /// <summary>
-        /// Gets or sets the sources.
+        ///     Gets or sets the sources.
         /// </summary>
         /// <value>
-        /// The sources.
+        ///     The sources.
         /// </value>
         public List<Source> sources { get; set; }
 
         /// <summary>
-        /// Gets or sets the current source.
+        ///     Gets or sets the current source.
         /// </summary>
         /// <value>
-        /// The current source.
+        ///     The current source.
         /// </value>
         public Source currentSource { get; set; }
 
@@ -45,7 +50,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SourceViewModel"/> class.
+        ///     Initializes a new instance of the <see cref="SourceViewModel" /> class.
         /// </summary>
         public SourceViewModel()
         {
@@ -58,7 +63,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         #region Methods
 
         /// <summary>
-        /// Gets the sources.
+        ///     Gets the sources.
         /// </summary>
         /// <returns>Null if no user, the sources from db otherwise</returns>
         public async Task<IEnumerable<Source>> GetSources()
@@ -67,7 +72,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
 
             if (userSerialized == null)
             {
-                return null;
+                return null; // TODO: Throw exception
             }
 
             var user = JsonConvert.DeserializeObject<User>(userSerialized);
@@ -75,24 +80,23 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
-        /// Adds the new source.
+        ///     Adds the new source.
         /// </summary>
-        /// <param name="storage">The storage.</param>
+        /// <param name="newSource">The new source to add.</param>
         /// <returns>True if success, null if no user, false otherwise</returns>
-        public async Task<bool?> addNewSource(StorageFile storage)
+        public async Task<bool?> addNewSource(Source newSource)
         {
             var userSerialized = this._applicationStorageHelper.Read<string>("user");
 
             if (userSerialized == null)
             {
-                return null;
+                return null; // TODO: Throw exception
             }
 
             var user = JsonConvert.DeserializeObject<User>(userSerialized);
 
-            return await this._sourceDal.AddSourceForUser(user, storage);
+            return await this._sourceDal.AddSourceForUser(user, newSource);
         }
-
 
         #endregion
     }

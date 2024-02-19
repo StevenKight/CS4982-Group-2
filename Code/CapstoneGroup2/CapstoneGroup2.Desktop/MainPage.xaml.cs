@@ -1,14 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.UI.Core;
+﻿using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
-using CapstoneGroup2.Desktop.Model;
-using CapstoneGroup2.Desktop.ViewModel;
-using System.Threading.Tasks;
-using System;
+using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -19,33 +12,10 @@ namespace CapstoneGroup2.Desktop
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        #region Data members
-
-        private SourceViewModel _sourcesViewModel;
-
-        private List<Source> _sources;
-
-        #endregion
-
         #region Constructors
 
         public MainPage()
         {
-            this.InitializeAsync();
-        }
-
-        private async void InitializeAsync()
-        {
-            this._sourcesViewModel = await Task.Run(() => new SourceViewModel());
-
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                CoreDispatcherPriority.Normal, async () =>
-                {
-                    var sourcesEnumerable = await this._sourcesViewModel.GetSources();
-                    this._sources = sourcesEnumerable.ToList();
-                    this.navigationView.SelectedItem = this.navigationView.MenuItems[0];
-                });
-
             this.InitializeComponent();
 
             var size = new Size(Width, Height);
@@ -54,6 +24,8 @@ namespace CapstoneGroup2.Desktop
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(size);
             ApplicationView.GetForCurrentView().TryResizeView(size);
+
+            this.navigationView.SelectedItem = this.navigationView.MenuItems[0];
         }
 
         #endregion
@@ -64,15 +36,21 @@ namespace CapstoneGroup2.Desktop
             NavigationViewSelectionChangedEventArgs args)
         {
             var selectedItem = (NavigationViewItem)args.SelectedItem;
+
+            if (selectedItem == null)
+            {
+                return;
+            }
+
             var selectedItemContent = selectedItem.Content;
 
             switch (selectedItemContent)
             {
                 case "Dashboard":
-                    this.contentFrame.Navigate(typeof(DashboardPage), this._sources); // TODO: Add the shared sources
+                    this.contentFrame.Navigate(typeof(DashboardPage)); // TODO: Add the shared sources
                     break;
                 case "My Sources":
-                    this.contentFrame.Navigate(typeof(MySourcesPage), this._sources);
+                    this.contentFrame.Navigate(typeof(MySourcesPage));
                     break;
                 case "Shared With Me":
                     this.contentFrame.Navigate(typeof(SharedPage)); // TODO: Add the shared sources
@@ -81,6 +59,18 @@ namespace CapstoneGroup2.Desktop
                     this.contentFrame.Navigate(typeof(SettingsPage));
                     break;
             }
+        }
+
+        private void contentFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            this.navigationView.SelectedItem = e.SourcePageType switch
+            {
+                { } when e.SourcePageType == typeof(DashboardPage) => this.navigationView.MenuItems[0],
+                { } when e.SourcePageType == typeof(MySourcesPage) => this.navigationView.MenuItems[1],
+                { } when e.SourcePageType == typeof(SharedPage) => this.navigationView.MenuItems[2],
+                { } when e.SourcePageType == typeof(SettingsPage) => this.navigationView.SelectedItem,
+                _ => null
+            };
         }
 
         #endregion
