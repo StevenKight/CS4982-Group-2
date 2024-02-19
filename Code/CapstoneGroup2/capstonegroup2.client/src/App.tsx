@@ -20,7 +20,6 @@ function App() {
     }, []);
 
     const checkAuth = () => {
-        console.log('checking auth');
         const auth = Boolean(localStorage.getItem('auth') ?? false);
         setAuth(auth);
     }
