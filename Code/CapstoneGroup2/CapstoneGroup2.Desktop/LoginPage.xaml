@@ -10,22 +10,24 @@
     Height="700">
 
     <Grid Margin="0,0,0,0">
-        <TextBlock Name="ErrorTextBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text=""
+        <TextBlock Name="errorTextBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text=""
                    VerticalAlignment="Center" FontSize="30" Visibility="Collapsed" />
-        <TextBlock Name="BrandingTextBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Welcome to DocuNotes"
-                   VerticalAlignment="Top" FontSize="40" Margin="0,50,0,0" Height="165" TextAlignment="Center" Padding="0,50,0,0" />
-        <TextBox Name="UsernameTextBox" HorizontalAlignment="Center"
+        <TextBlock Name="brandingTextBlock" HorizontalAlignment="Center" TextWrapping="Wrap"
+                   Text="Welcome to DocuNotes"
+                   VerticalAlignment="Top" FontSize="40" Margin="0,50,0,0" Height="165" TextAlignment="Center"
+                   Padding="0,50,0,0" />
+        <TextBox Name="usernameTextBox" HorizontalAlignment="Center"
                  PlaceholderText="Username" VerticalAlignment="Top" Height="64" Width="317"
                  FontSize="30" Margin="0,225,0,0" />
-        <PasswordBox Name="PasswordTextBox" HorizontalAlignment="Center" 
-                 PlaceholderText="Password" VerticalAlignment="Top" Height="64" Width="317"
-                 FontSize="30" Margin="0,325,0,0" />
-        <Button Name="LoginButton" Content="Login" Margin="0,450,0,0" VerticalAlignment="Top"
+        <PasswordBox Name="passwordTextBox" HorizontalAlignment="Center"
+                     PlaceholderText="Password" VerticalAlignment="Top" Height="64" Width="317"
+                     FontSize="30" Margin="0,325,0,0" />
+        <Button Name="loginButton" Content="Login" Margin="0,450,0,0" VerticalAlignment="Top"
                 Height="50" Width="175" FontSize="25" Click="LoginButton_Click" HorizontalAlignment="Center" />
-        <TextBlock x:Name="BrandingTextBlock_Copy" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Or"
+        <TextBlock x:Name="brandingTextBlockCopy" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Or"
                    VerticalAlignment="Top" FontSize="20" Margin="0,525,0,0" MaxWidth="400"
-                   Height="50" Width="40" TextAlignment="Center"/>
-        <Button x:Name="CreateButton" Content="Create" Margin="0,575,0,0"
+                   Height="50" Width="40" TextAlignment="Center" />
+        <Button x:Name="createButton" Content="Create" Margin="0,575,0,0"
                 VerticalAlignment="Top" Height="50" Width="175" FontSize="25" HorizontalAlignment="Center" />
     </Grid>
 </Page>

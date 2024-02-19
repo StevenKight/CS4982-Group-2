@@ -67,7 +67,7 @@ namespace CapstoneGroup2.Desktop.Dal
                 return null;
             }
 
-            var response = await this.client.PostAsJsonAsync("/login", user);
+            var response = await this.client.PostAsJsonAsync("/Login", user);
             if (response.IsSuccessStatusCode)
             {
                 user = await response.Content.ReadFromJsonAsync<User>();

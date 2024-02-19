@@ -5,15 +5,12 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using CapstoneGroup2.Desktop.Data;
 using CapstoneGroup2.Desktop.Model;
-using Newtonsoft.Json.Linq;
-using Windows.Storage;
 
 namespace CapstoneGroup2.Desktop.Dal
 {
     /// <summary>
-    ///   DAL class for Sources
+    ///     DAL class for Sources
     /// </summary>
     public class SourceDal
     {
@@ -34,6 +31,7 @@ namespace CapstoneGroup2.Desktop.Dal
                 BaseAddress = new Uri(BaseUrl)
             };
         }
+
         /// <summary>Initializes a new instance of the <see cref="SourceDal" /> class.</summary>
         public SourceDal(HttpClient client)
         {
@@ -48,11 +46,11 @@ namespace CapstoneGroup2.Desktop.Dal
         /// <summary>Gets the sources for user.</summary>
         /// <param name="user">The user.</param>
         /// <returns>
-        ///  The sources from db or null if none
+        ///     The sources from db or null if none
         /// </returns>
         public async Task<IEnumerable<Source>> GetSourcesForUser(User user)
         {
-            var response = await this.client.GetAsync($"/source/{user.Username}");
+            var response = await this.client.GetAsync($"/Source/{user.Username}");
             if (response.IsSuccessStatusCode)
             {
                 var sources = await response.Content.ReadFromJsonAsync<IEnumerable<Source>>();
@@ -64,33 +62,27 @@ namespace CapstoneGroup2.Desktop.Dal
 
         /// <summary>Adds the source for user.</summary>
         /// <param name="user">The user.</param>
-        /// <param name="storageFile">The storage file.</param>
+        /// <param name="newSource">The new source to add.</param>
         /// <returns>
-        ///  True if success, false otherwise
+        ///     True if success, false otherwise
         /// </returns>
-        public async Task<bool> AddSourceForUser(User user, StorageFile storageFile)
+        public async Task<bool> AddSourceForUser(User user, Source newSource)
         {
-            Source source = new Source();
-            source.UpdatedAt = DateTime.Now;
-            source.CreatedAt = DateTime.Now;
-            source.Username = user.Username;
-            source.IsLink = false;
-            source.Link = "";
-            source.Description = "pdf";
-            source.Type = "pdf";
-            source.Name = storageFile.Name;
-            source.Content = await DataManager.FileToBinary(storageFile);
-            var response = await this.client.PostAsync($"/source/{user.Username}",new StringContent(JsonSerializer.Serialize(source), Encoding.UTF8, "application/json"));
+            newSource.Username = user.Username;
+
+            var response = await this.client.PostAsync($"/Source/{user.Username}",
+                new StringContent(JsonSerializer.Serialize(newSource), Encoding.UTF8, "application/json"));
+
             if (response.IsSuccessStatusCode)
             {
                 return true;
-            } else {
-                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
-                string content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Response Content:");
-                Console.WriteLine(content);
-                return false; 
             }
+
+            Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("Response Content:");
+            Console.WriteLine(content);
+            return false;
         }
 
         #endregion

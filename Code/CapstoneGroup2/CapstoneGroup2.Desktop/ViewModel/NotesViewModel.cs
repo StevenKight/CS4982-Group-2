@@ -1,27 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
 using CapstoneGroup2.Desktop.Dal;
 using CapstoneGroup2.Desktop.Model;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Newtonsoft.Json;
-using System;
 
 namespace CapstoneGroup2.Desktop.ViewModel
 {
     /// <summary>
-    ///  Viewmodel for Notes interactions
+    ///     Viewmodel for Notes interactions
     /// </summary>
     public class NotesViewModel
     {
         #region Data members
 
         /// <summary>
-        /// The application storage helper
+        ///     The application storage helper
         /// </summary>
         private readonly ApplicationDataStorageHelper _applicationStorageHelper;
+
         /// <summary>
-        /// The notes dal
+        ///     The notes dal
         /// </summary>
         private readonly NotesDal notesDal;
 
@@ -30,7 +31,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NotesViewModel"/> class.
+        ///     Initializes a new instance of the <see cref="NotesViewModel" /> class.
         /// </summary>
         public NotesViewModel()
         {
@@ -39,7 +40,7 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NotesViewModel"/> class.
+        ///     Initializes a new instance of the <see cref="NotesViewModel" /> class.
         /// </summary>
         /// <param name="notesDal">The notes dal.</param>
         public NotesViewModel(NotesDal notesDal)
@@ -52,11 +53,11 @@ namespace CapstoneGroup2.Desktop.ViewModel
         #region Methods
 
         /// <summary>
-        /// Gets the source notes.
+        ///     Gets the source notes.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <returns>
-        /// notes if success, null otherwise
+        ///     notes if success, null otherwise
         /// </returns>
         public async Task<IEnumerable<Note>> GetSourceNotes(Source source)
         {
@@ -72,11 +73,11 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
-        /// Adds the new note.
+        ///     Adds the new note.
         /// </summary>
         /// <param name="note">The note.</param>
         /// <returns>
-        /// True if success, null if no user, False otherwise
+        ///     True if success, null if no user, False otherwise
         /// </returns>
         public async Task<bool?> AddNewNote(Note note)
         {
@@ -93,11 +94,11 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
-        /// Updates the note.
+        ///     Updates the note.
         /// </summary>
         /// <param name="note">The note.</param>
         /// <returns>
-        /// True if success, null if no user, False otherwise
+        ///     True if success, null if no user, False otherwise
         /// </returns>
         public async Task<bool?> updateNote(Note note)
         {
@@ -107,12 +108,13 @@ namespace CapstoneGroup2.Desktop.ViewModel
             {
                 return null;
             }
+
             if (note != null)
             {
                 try
                 {
                     var user = JsonConvert.DeserializeObject<User>(userSerialized);
-                    return await this.notesDal.UpdateNote(note,user);
+                    return await this.notesDal.UpdateNote(note, user);
                 }
                 catch (Exception ex)
                 {
@@ -120,19 +122,16 @@ namespace CapstoneGroup2.Desktop.ViewModel
                     return false;
                 }
             }
-            else
-            {
-                return false;
-            }
 
+            return false;
         }
 
         /// <summary>
-        /// Deletes the note.
+        ///     Deletes the note.
         /// </summary>
         /// <param name="note">The note.</param>
         /// <returns>
-        /// True if success, null if no user, False otherwise
+        ///     True if success, null if no user, False otherwise
         /// </returns>
         public async Task<bool> DeleteNote(Note note)
         {
@@ -148,11 +147,8 @@ namespace CapstoneGroup2.Desktop.ViewModel
                     return false;
                 }
             }
-            else
-            {
-                return false;
-            }
 
+            return false;
         }
 
         #endregion

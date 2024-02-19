@@ -5,21 +5,45 @@
     xmlns:local="using:CapstoneGroup2.Desktop"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:CapstoneGroup2.Desktop.Model"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="732" Width="880">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+    Height="732" 
+    Width="880">
 
     <Grid Height="700" VerticalAlignment="Center" Width="880" Margin="0,0,0,0">
         <ProgressRing x:Name="progressControl" Height="50" Width="50" IsActive="True" Visibility="Visible" Margin="-17,302,0,0" VerticalAlignment="Top" />
-        <Button Name="NextPageButton" Click="NextPage_Click" Content="->" Margin="605,3,0,0" VerticalAlignment="Top"
-                Height="36" Width="45" Canvas.ZIndex="1" />
-        <Button Name="PreviousPageButton" Click="PreviousPage_Click" Content="&lt;-" Margin="560,3,0,0"
-                VerticalAlignment="Top" Height="36" Width="45" Canvas.ZIndex="1"  />
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto"
-                      ZoomMode="Enabled" MinZoomFactor="0.5" Margin="-200,0,0,0" VerticalAlignment="Center" Width="680" Height="713" MaxZoomFactor="0.6">
 
+        <TextBlock Name="sourceHeading" Margin="25,0,0,0" Width="450" Height="50" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="0,5,0,0" Text="SOURCE TITLE" FontSize="32" />
+
+        <Button Name="previousPageButton" Click="PreviousPage_Click" Content="&lt;-" Margin="500,3,0,0"
+                VerticalAlignment="Top" Height="36" Width="45" Canvas.ZIndex="1" />
+        <Button Name="nextPageButton" Click="NextPage_Click" Content="->" Margin="550,3,0,0" VerticalAlignment="Top"
+                Height="36" Width="45" Canvas.ZIndex="1" />
+
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto" HorizontalAlignment="Left"
+                      ZoomMode="Enabled" MinZoomFactor="0.5" Margin="25,50,0,0" VerticalAlignment="Center" Width="550" Height="650" MaxZoomFactor="0.6">
             <Image x:Name="objectRender" AutomationProperties.Name="PDF document content" Stretch="None" />
         </ScrollViewer>
-        <ListBox x:Name="notesListBox" Margin="654,0,0,0" VerticalAlignment="Stretch" Width="216" Height="715">
-        </ListBox>
+
+        <Button Click="AddNoteItem_Click" Content="Add Note" Margin="625,3,0,0"
+                VerticalAlignment="Top" Height="35" Width="100" Canvas.ZIndex="1" />
+        <Button Click="RemoveNoteItem_Click" Content="Remove Note" Margin="725,3,0,0"
+                VerticalAlignment="Top" Height="35" Width="125" Canvas.ZIndex="1" />
+        <ListView x:Name="notesListView" Margin="600,50,0,0" Padding="0,0,0,25" VerticalAlignment="Top" Width="275" Height="650" RightTapped="notesListBox_RightTapped">
+            <FlyoutBase.AttachedFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="Add Note" Click="AddNoteItem_Click" />
+                    <MenuFlyoutItem Text="Remove Note" Click="RemoveNoteItem_Click" />
+                </MenuFlyout>
+            </FlyoutBase.AttachedFlyout>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:Note">
+                    <StackPanel>
+                        <TextBox Text="{Binding NoteText}" FontWeight="Bold" LostFocus="TextBox_LostFocus" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

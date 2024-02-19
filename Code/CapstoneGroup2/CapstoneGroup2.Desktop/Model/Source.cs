@@ -5,18 +5,19 @@ using System.Linq;
 namespace CapstoneGroup2.Desktop.Model
 {
     /// <summary>
-    /// Source type enums
+    ///     Source type enums
     /// </summary>
     public enum SourceType
     {
         #region Enum members
 
         /// <summary>
-        /// The PDF
+        ///     The PDF
         /// </summary>
         Pdf = 1,
+
         /// <summary>
-        /// The vid
+        ///     The vid
         /// </summary>
         Vid = 2
 
@@ -24,129 +25,129 @@ namespace CapstoneGroup2.Desktop.Model
     }
 
     /// <summary>
-    /// The Source Model class
+    ///     The Source Model class
     /// </summary>
     public class Source
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets the source identifier.
+        ///     Gets or sets the source identifier.
         /// </summary>
         /// <value>
-        /// The source identifier.
+        ///     The source identifier.
         /// </value>
         public int SourceId { get; set; }
 
         /// <summary>
-        /// Gets or sets the username.
+        ///     Gets or sets the username.
         /// </summary>
         /// <value>
-        /// The username.
+        ///     The username.
         /// </value>
         public string Username { get; set; }
 
         /// <summary>
-        /// Gets or sets the type.
+        ///     Gets or sets the type.
         /// </summary>
         /// <value>
-        /// The type.
+        ///     The type.
         /// </value>
         public string Type { get; set; }
 
         /// <summary>
-        /// Gets the type of the note.
+        ///     Gets the type of the note.
         /// </summary>
         /// <value>
-        /// The type of the note.
+        ///     The type of the note.
         /// </value>
         public SourceType NoteType => (SourceType)Enum.Parse(typeof(SourceType), this.Type, true);
 
         /// <summary>
-        /// Gets or sets the name.
+        ///     Gets or sets the name.
         /// </summary>
         /// <value>
-        /// The name.
+        ///     The name.
         /// </value>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the description.
+        ///     Gets or sets the description.
         /// </summary>
         /// <value>
-        /// The description.
+        ///     The description.
         /// </value>
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is link.
+        ///     Gets or sets a value indicating whether this instance is link.
         /// </summary>
         /// <value>
-        ///   <c>true</c> if this instance is link; otherwise, <c>false</c>.
+        ///     <c>true</c> if this instance is link; otherwise, <c>false</c>.
         /// </value>
         public bool IsLink { get; set; }
 
         /// <summary>
-        /// Gets or sets the link.
+        ///     Gets or sets the link.
         /// </summary>
         /// <value>
-        /// The link.
+        ///     The link.
         /// </value>
         public string Link { get; set; }
 
         /// <summary>
-        /// Gets or sets the content.
+        ///     Gets or sets the content.
         /// </summary>
         /// <value>
-        /// The content.
+        ///     The content.
         /// </value>
         public byte[] Content { get; set; }
 
         /// <summary>
-        /// Gets or sets the created at.
+        ///     Gets or sets the created at.
         /// </summary>
         /// <value>
-        /// The created at.
+        ///     The created at.
         /// </value>
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
-        /// Gets or sets the updated at.
+        ///     Gets or sets the updated at.
         /// </summary>
         /// <value>
-        /// The updated at.
+        ///     The updated at.
         /// </value>
         public DateTime? UpdatedAt { get; set; }
 
         /// <summary>
-        /// Gets or sets the authors string.
+        ///     Gets or sets the authors string.
         /// </summary>
         /// <value>
-        /// The authors string.
+        ///     The authors string.
         /// </value>
         public string? AuthorsString { get; set; }
 
         /// <summary>
-        /// Gets the authors.
+        ///     Gets the authors.
         /// </summary>
         /// <value>
-        /// The authors.
+        ///     The authors.
         /// </value>
         public List<string> Authors => this.AuthorsString.Split("|").ToList();
 
         /// <summary>
-        /// Gets or sets the publisher.
+        ///     Gets or sets the publisher.
         /// </summary>
         /// <value>
-        /// The publisher.
+        ///     The publisher.
         /// </value>
         public string? Publisher { get; set; }
 
         /// <summary>
-        /// Gets or sets the accessed at.
+        ///     Gets or sets the accessed at.
         /// </summary>
         /// <value>
-        /// The accessed at.
+        ///     The accessed at.
         /// </value>
         public DateTime? AccessedAt { get; set; }
 
