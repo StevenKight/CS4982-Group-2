@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Dal\UserDalTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.EntityFrameworkCore;
+
+namespace CapstoneGroup2.Server.UnitTests.Dal;
+
+/* dotcover disable */
+[TestFixture]
+public class UserDalTests
+{
+    #region Data members
+
+    private readonly List&lt;User&gt; _users =
+    [
+        new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot;, Token = &quot;testToken&quot; },
+        new User { Username = &quot;testUser2&quot;, Password = &quot;testPassword2&quot;, Token = &quot;testToken2&quot; }
+    ];
+
+    private DbContextOptions&lt;DocunotesDbContext&gt; _options;
+    private DocunotesDbContext _context;
+
+    #endregion
+
+    #region Methods
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        this._options = new DbContextOptionsBuilder&lt;DocunotesDbContext&gt;()
+            .UseInMemoryDatabase(&quot;Docunotes&quot;)
+            .EnableSensitiveDataLogging()
+            .Options;
+        this._context = new DocunotesDbContext(this._options);
+
+        this._context.Database.EnsureDeleted();
+        this._context.Database.EnsureCreated();
+
+        this._context.Users.AddRange(this._users);
+        this._context.SaveChanges();
+    }
+
+    [Test]
+    public void ConstructorTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Assert
+        Assert.IsNotNull(userDal);
+    }
+
+    [Test]
+    public void GetUserByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Act
+        var result = userDal.Get(&quot;testUser&quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(&quot;testUser&quot;, result.Username);
+    }
+
+    [Test]
+    public void InvalidNumberOfKeysGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; userDal.Get(1, &quot;test&quot;));
+    }
+
+    [Test]
+    public void InvalidNullKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; userDal.Get(null));
+    }
+
+    [Test]
+    public void InvalidNonStringKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; userDal.Get(0));
+    }
+
+    [Test]
+    public void InvalidEmptyKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;ArgumentOutOfRangeException&gt;(() =&gt; userDal.Get(&quot;&quot;));
+    }
+
+    [Test]
+    public void InvalidWhitespaceKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;ArgumentOutOfRangeException&gt;(() =&gt; userDal.Get(&quot;   &quot;));
+    }
+
+    [Test]
+    public void InvalidNonExistentKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; userDal.Get(&quot;testingInvalidUsername&quot;));
+    }
+
+    [Test]
+    public void GetAllUsersTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Act
+        var result = userDal.GetAll();
+
+        var expected = this._users.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(expected, result.Count());
+        Assert.AreEqual(this._users, result.ToList());
+    }
+
+    [Test]
+    public void AddUserTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+        var user = new User { Username = &quot;testUser3&quot;, Password = &quot;test&quot;, Token = &quot;test&quot; };
+
+        // Act
+        var result = userDal.Add(user);
+
+        this._users.Add(user);
+        var expected = this._users.Count();
+
+        // Assert
+        Assert.IsTrue(result);
+        Assert.AreEqual(expected, this._context.Users.Count());
+        Assert.Contains(user, this._context.Users.ToList());
+    }
+
+    [Test]
+    public void UpdateUserTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; userDal.Update(new User()));
+    }
+
+    [Test]
+    public void DeleteUserTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; userDal.Delete(new User()));
+    }
+
+    [Test]
+    public void SetUserTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; userDal.SetUser(&quot;testUser&quot;));
+    }
+
+    [Test]
+    public void SetSourceIdTest()
+    {
+        // Arrange
+        var userDal = new UserDal(this._context);
+
+        // Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; userDal.SetSourceId(1));
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,5,17,7,1],[28,5,28,6,1],[29,9,32,22,1],[33,9,33,63,1],[35,9,35,48,1],[36,9,36,48,1],[38,9,38,51,1],[39,9,39,37,1],[40,5,40,6,1],[44,5,44,6,1],[46,9,46,50,1],[49,9,49,35,1],[50,5,50,6,1],[54,5,54,6,1],[56,9,56,50,1],[59,9,59,46,1],[62,9,62,34,1],[63,9,63,54,1],[64,5,64,6,1],[68,5,68,6,1],[70,9,70,50,1],[71,9,71,99,1],[74,9,74,51,1],[74,51,74,73,1],[74,73,74,75,1],[75,5,75,6,1],[79,5,79,6,1],[81,9,81,50,1],[82,9,82,99,1],[85,9,85,51,1],[85,51,85,68,1],[85,68,85,70,1],[86,5,86,6,1],[90,5,90,6,1],[92,9,92,50,1],[93,9,93,99,1],[96,9,96,51,1],[96,51,96,65,1],[96,65,96,67,1],[97,5,97,6,1],[101,5,101,6,1],[103,9,103,50,1],[104,9,104,99,1],[107,9,107,58,1],[107,58,107,73,1],[107,73,107,75,1],[108,5,108,6,1],[112,5,112,6,1],[114,9,114,50,1],[115,9,115,99,1],[118,9,118,58,1],[118,58,118,76,1],[118,76,118,78,1],[119,5,119,6,1],[123,5,123,6,1],[125,9,125,50,1],[126,9,126,99,1],[129,9,129,56,1],[129,56,129,93,1],[129,93,129,95,1],[130,5,130,6,1],[134,5,134,6,1],[136,9,136,50,1],[139,9,139,39,1],[141,9,141,44,1],[144,9,144,34,1],[145,9,145,51,1],[146,9,146,55,1],[147,5,147,6,1],[151,5,151,6,1],[153,9,153,50,1],[154,9,154,91,1],[157,9,157,40,1],[159,9,159,31,1],[160,9,160,44,1],[163,9,163,31,1],[164,9,164,64,1],[165,9,165,61,1],[166,5,166,6,1],[170,5,170,6,1],[172,9,172,50,1],[175,9,175,56,1],[175,56,175,82,1],[175,82,175,84,1],[176,5,176,6,1],[180,5,180,6,1],[182,9,182,50,1],[185,9,185,56,1],[185,56,185,82,1],[185,82,185,84,1],[186,5,186,6,1],[190,5,190,6,1],[192,9,192,50,1],[195,9,195,56,1],[195,56,195,83,1],[195,83,195,85,1],[196,5,196,6,1],[200,5,200,6,1],[202,9,202,50,1],[205,9,205,56,1],[205,56,205,78,1],[205,78,205,80,1],[206,5,206,6,1]]);
+    </script>
+  </body>
+</html>

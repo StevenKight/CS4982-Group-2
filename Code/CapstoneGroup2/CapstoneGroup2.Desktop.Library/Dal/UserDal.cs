@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CapstoneGroup2.Desktop.Library.Mocks;
 using CapstoneGroup2.Desktop.Library.Model;
 
-namespace CapstoneGroup2.Desktop.Dal
+namespace CapstoneGroup2.Desktop.Library.Dal
 {
     /// <summary>
     /// </summary>

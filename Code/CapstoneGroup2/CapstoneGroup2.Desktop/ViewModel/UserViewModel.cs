@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using CapstoneGroup2.Desktop.Dal;
+using CapstoneGroup2.Desktop.Library.Dal;
 using CapstoneGroup2.Desktop.Library.Model;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Newtonsoft.Json;

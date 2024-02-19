@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop.Tests\Dal\UserDalTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Net;
+using System.Net.Http.Formatting;
+using CapstoneGroup2.Desktop.Library.Dal;
+using CapstoneGroup2.Desktop.Library.Mocks;
+using CapstoneGroup2.Desktop.Library.Model;
+using Moq;
+
+namespace CapstoneGroup2.Desktop.Tests.Dal;
+
+[TestFixture]
+public class UserDalTests
+{
+    #region Methods
+
+    [Test]
+    public void ValidConstructor()
+    {
+        // Arrange, Act
+        var userDal = new UserDal();
+
+        // Assert
+        Assert.IsNotNull(userDal);
+    }
+
+    [Test]
+    public async Task Login_ValidUser_ReturnsUser()
+    {
+        // Arrange
+        var user = new User { Username = &quot;JohnDoe&quot;, Password = &quot;SecurePassword&quot; };
+        var expectedUri = new Uri(&quot;https://localhost:7048&quot;);
+        var expectedResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new ObjectContent&lt;User&gt;(user, new JsonMediaTypeFormatter())
+        };
+
+        var httpClientMock = new Mock&lt;IHttpClientWrapper&gt;();
+        httpClientMock.Setup(x =&gt; x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x =&gt; x.PostAsJsonAsync(&quot;/Login&quot;, user)).ReturnsAsync(expectedResponse);
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act
+        var result = await userDal.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(&quot;JohnDoe&quot;, result.Username);
+        Assert.AreEqual(&quot;SecurePassword&quot;, result.Password);
+        httpClientMock.Verify(x =&gt; x.PostAsJsonAsync(&quot;/Login&quot;, user), Times.Once);
+    }
+
+    [Test]
+    public async Task Login_InvalidUser_ReturnsNull()
+    {
+        // Arrange
+        var invalidUser = new User { Username = &quot;&quot;, Password = &quot;&quot; };
+
+        var httpClientMock = new Mock&lt;IHttpClientWrapper&gt;();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act
+        var result = await userDal.Login(invalidUser);
+
+        // Assert
+        Assert.IsNull(result);
+        httpClientMock.Verify(x =&gt; x.PostAsJsonAsync(&quot;/Login&quot;, invalidUser), Times.Never);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,5,17,6,1],[19,9,19,37,1],[22,9,22,35,1],[23,5,23,6,1],[27,5,27,6,1],[29,9,29,83,1],[30,9,30,61,1],[31,9,35,11,1],[37,9,37,61,1],[38,9,38,71,1],[39,9,39,101,1],[41,9,41,58,1],[44,9,44,48,1],[47,9,47,34,1],[48,9,48,53,1],[49,9,49,60,1],[50,9,50,83,1],[51,5,51,6,1],[55,5,55,6,1],[57,9,57,69,1],[59,9,59,61,1],[61,9,61,58,1],[64,9,64,55,1],[67,9,67,31,1],[68,9,68,91,1],[69,5,69,6,1]]);
+    </script>
+  </body>
+</html>

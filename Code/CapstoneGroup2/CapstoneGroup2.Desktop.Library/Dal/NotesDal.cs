@@ -8,7 +8,7 @@ using CapstoneGroup2.Desktop.Library.Mocks;
 using CapstoneGroup2.Desktop.Library.Model;
 using Newtonsoft.Json;
 
-namespace CapstoneGroup2.Desktop.Dal
+namespace CapstoneGroup2.Desktop.Library.Dal
 {
     /// <summary>
     /// </summary>
@@ -45,7 +45,7 @@ namespace CapstoneGroup2.Desktop.Dal
         /// <param name="client">The client.</param>
         public NotesDal(IHttpClientWrapper client)
         {
-            this.client =  client;
+            this.client = client;
             this.client.BaseAddress = new Uri(BaseUrl);
         }
 

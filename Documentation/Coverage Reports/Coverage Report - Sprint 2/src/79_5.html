@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Dal\DocunotesDbContext.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Model;
+using Microsoft.EntityFrameworkCore;
+
+namespace CapstoneGroup2.Server.Dal;
+
+public class DocunotesDbContext : DbContext
+{
+    #region Properties
+
+    public User? CurrentUser { get; set; }
+
+    public DbSet&lt;Note&gt; Notes { get; set; }
+
+    public DbSet&lt;Source&gt; Sources { get; set; }
+
+    public DbSet&lt;User&gt; Users { get; set; }
+
+    #endregion
+
+    #region Constructors
+
+    public DocunotesDbContext(DbContextOptions&lt;DocunotesDbContext&gt; options) : base(options)
+    {
+    }
+
+    #endregion
+
+    #region Methods
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder
+            .ApplyConfiguration(new NoteConfiguration())
+            .ApplyConfiguration(new SourceConfiguration())
+            .ApplyConfiguration(new UserConfiguration());
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,32,10,36,1],[10,37,10,41,1],[12,32,12,36,1],[12,37,12,41,1],[14,36,14,40,1],[14,41,14,45,1],[16,32,16,36,1],[16,37,16,41,1],[22,79,22,92,1],[23,5,23,6,1],[24,5,24,6,1],[31,5,31,6,1],[32,9,35,58,1],[36,5,36,6,1]]);
+    </script>
+  </body>
+</html>

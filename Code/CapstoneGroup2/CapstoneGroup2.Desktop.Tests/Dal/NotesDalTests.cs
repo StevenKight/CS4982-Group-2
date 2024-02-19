@@ -1,4 +1,6 @@
-﻿using CapstoneGroup2.Desktop.Dal;
+﻿using System.Net;
+using System.Net.Http.Formatting;
+using CapstoneGroup2.Desktop.Library.Dal;
 using CapstoneGroup2.Desktop.Library.Mocks;
 using CapstoneGroup2.Desktop.Library.Model;
 using Moq;
@@ -8,6 +10,18 @@ namespace CapstoneGroup2.Desktop.Tests.Dal;
 [TestFixture]
 public class NotesDalTests
 {
+    #region Methods
+
+    [Test]
+    public void ValidConstructor()
+    {
+        // Arrange, Act
+        var notesDal = new NotesDal();
+
+        // Assert
+        Assert.IsNotNull(notesDal);
+    }
+
     [Test]
     public async Task GetUserSourceNotes_ValidInput_ReturnsNotes()
     {
@@ -18,15 +32,17 @@ public class NotesDalTests
         var expectedUri = new Uri("https://localhost:7048");
         var expectedResponse = new HttpResponseMessage
         {
-            StatusCode = System.Net.HttpStatusCode.OK,
+            StatusCode = HttpStatusCode.OK,
             Content = new ObjectContent<IEnumerable<Note>>(
-                new List<Note> { new Note { NoteId = 1, Username = "JohnDoe", NoteText = "Test note", TagsString =  "test,test"} },
-                new System.Net.Http.Formatting.JsonMediaTypeFormatter())
+                new List<Note>
+                    { new() { NoteId = 1, Username = "JohnDoe", NoteText = "Test note", TagsString = "test,test" } },
+                new JsonMediaTypeFormatter())
         };
 
         var httpClientMock = new Mock<IHttpClientWrapper>();
         httpClientMock.Setup(x => x.BaseAddress).Returns(expectedUri);
-        httpClientMock.Setup(x => x.GetAsync($"/Notes/{source.SourceId}-{user.Username}")).ReturnsAsync(expectedResponse);
+        httpClientMock.Setup(x => x.GetAsync($"/Notes/{source.SourceId}-{user.Username}"))
+            .ReturnsAsync(expectedResponse);
 
         var notesDal = new NotesDal(httpClientMock.Object);
 
@@ -46,10 +62,10 @@ public class NotesDalTests
     {
         // Arrange
         var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
-        var note = new Note { NoteId = 1, NoteText = "New test note", TagsString =  "test,test"};
+        var note = new Note { NoteId = 1, NoteText = "New test note", TagsString = "test,test" };
 
         var expectedUri = new Uri("https://localhost:7048");
-        var expectedResponse = new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK };
+        var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
 
         var httpClientMock = new Mock<IHttpClientWrapper>();
         httpClientMock.Setup(x => x.BaseAddress).Returns(expectedUri);
@@ -71,10 +87,10 @@ public class NotesDalTests
     {
         // Arrange
         var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
-        var note = new Note { NoteId = 1, NoteText = "Updated test note", TagsString = "test,test"};
+        var note = new Note { NoteId = 1, NoteText = "Updated test note", TagsString = "test,test" };
 
         var expectedUri = new Uri("https://localhost:7048");
-        var expectedResponse = new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK };
+        var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
 
         var httpClientMock = new Mock<IHttpClientWrapper>();
         httpClientMock.Setup(x => x.BaseAddress).Returns(expectedUri);
@@ -98,7 +114,7 @@ public class NotesDalTests
         var note = new Note { NoteId = 1, NoteText = "Test note to delete" };
 
         var expectedUri = new Uri("https://localhost:7048");
-        var expectedResponse = new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK };
+        var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
 
         var httpClientMock = new Mock<IHttpClientWrapper>();
         httpClientMock.Setup(x => x.BaseAddress).Returns(expectedUri);
@@ -113,4 +129,6 @@ public class NotesDalTests
         Assert.IsTrue(result);
         httpClientMock.Verify(x => x.DeleteAsync($"/Notes/{note.NoteId}"), Times.Once);
     }
+
+    #endregion
 }

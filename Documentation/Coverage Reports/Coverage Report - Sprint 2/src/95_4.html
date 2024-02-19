@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop.Tests\Model\UserTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using CapstoneGroup2.Desktop.Library.Model;
+
+namespace CapstoneGroup2.Desktop.Tests.Model
+{
+    [TestFixture]
+    public class UserTests
+    {
+        [Test]
+        public void UserProperties_SetAndGetCorrectly()
+        {
+            // Arrange
+            User user = new User();
+
+            // Act
+            user.Username = &quot;JohnDoe&quot;;
+            user.Password = &quot;SecurePassword&quot;;
+            user.Token = &quot;Token123&quot;;
+
+            // Assert
+            Assert.AreEqual(&quot;JohnDoe&quot;, user.Username);
+            Assert.AreEqual(&quot;SecurePassword&quot;, user.Password);
+            Assert.AreEqual(&quot;Token123&quot;, user.Token);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,1],[17,13,17,36,1],[20,13,20,39,1],[21,13,21,46,1],[22,13,22,37,1],[25,13,25,55,1],[26,13,26,62,1],[27,13,27,53,1],[28,9,28,10,1]]);
+    </script>
+  </body>
+</html>

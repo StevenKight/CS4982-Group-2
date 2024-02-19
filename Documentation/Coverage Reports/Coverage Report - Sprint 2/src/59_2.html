@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Dal\NotesDalTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.EntityFrameworkCore;
+
+namespace CapstoneGroup2.Server.UnitTests.Dal;
+
+/* dotcover disable */
+[TestFixture]
+public class NotesDalTests
+{
+    #region Data members
+
+    private readonly List&lt;Note&gt; _notes =
+    [
+        new Note
+        {
+            NoteId = 1,
+            SourceId = 1,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote&quot;,
+            TagsString = &quot;testTag1,testTag2&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        },
+
+        new Note
+        {
+            NoteId = 2,
+            SourceId = 1,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote2&quot;,
+            TagsString = &quot;testTag3,testTag4&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        }
+    ];
+
+    private DbContextOptions&lt;DocunotesDbContext&gt; _options;
+    private DocunotesDbContext _context;
+
+    #endregion
+
+    #region Methods
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        this._options = new DbContextOptionsBuilder&lt;DocunotesDbContext&gt;()
+            .UseInMemoryDatabase(&quot;Docunotes&quot;)
+            .EnableSensitiveDataLogging()
+            .Options;
+        this._context = new DocunotesDbContext(this._options);
+
+        this._context.Notes.AddRange(this._notes);
+        this._context.SaveChanges();
+    }
+
+    [SetUp]
+    public void SetupEach()
+    {
+        this._context.ChangeTracker.Clear();
+    }
+
+    [Test]
+    [Order(1)]
+    public void ConstructorTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+
+        // Assert
+        Assert.IsNotNull(noteDal);
+    }
+
+    [Test]
+    [Order(2)]
+    public void GetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act
+        var result = noteDal.Get(1);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.SourceId);
+        Assert.AreEqual(&quot;testUser&quot;, result.Username);
+        Assert.AreEqual(&quot;testNote&quot;, result.NoteText);
+        Assert.AreEqual(&quot;testTag1,testTag2&quot;, result.TagsString);
+    }
+
+    [Test]
+    [Order(3)]
+    public void InvalidNumberOfKeysGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; noteDal.Get(1, &quot;test&quot;));
+    }
+
+    [Test]
+    [Order(4)]
+    public void InvalidNullKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; noteDal.Get(null));
+    }
+
+    [Test]
+    [Order(5)]
+    public void InvalidNonIntKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; noteDal.Get(&quot;test&quot;));
+    }
+
+    [Test]
+    [Order(6)]
+    public void InvalidZeroKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;ArgumentOutOfRangeException&gt;(() =&gt; noteDal.Get(0));
+    }
+
+    [Test]
+    [Order(7)]
+    public void InvalidNonExistentKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; noteDal.Get(10));
+    }
+
+    [Test]
+    [Order(8)]
+    public void GetAllNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+        noteDal.SetSourceId(1);
+
+        // Act
+        var result = noteDal.GetAll();
+
+        var expected = this._notes.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(expected, result.Count());
+
+        for (var i = 0; i &lt; expected; i++)
+        {
+            var note = this._notes[i];
+            var actual = result.ElementAt(i);
+            Assert.AreEqual(note.SourceId, actual.SourceId);
+            Assert.AreEqual(note.Username, actual.Username);
+            Assert.AreEqual(note.NoteText, actual.NoteText);
+            Assert.AreEqual(note.TagsString, actual.TagsString);
+        }
+    }
+
+    [Test]
+    [Order(8)]
+    public void InvalidSourceIdGetAllNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+        noteDal.SetSourceId(0);
+
+        // Act, Assert
+        Assert.Throws&lt;ArgumentOutOfRangeException&gt;(() =&gt; noteDal.GetAll());
+    }
+
+    [Test]
+    [Order(9)]
+    public void AddNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote3&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = noteDal.Add(note);
+
+        this._notes.Add(note);
+        var expected = this._notes.Count();
+
+        // Assert
+        Assert.IsTrue(result);
+        Assert.AreEqual(expected, this._context.Notes.Count());
+        Assert.Contains(note, this._context.Notes.ToList());
+    }
+
+    [Test]
+    [Order(10)]
+    public void UpdateNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+        var note = new Note
+        {
+            NoteId = 2,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote4&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = noteDal.Update(note);
+
+        this._notes.Add(note);
+        this._notes.Remove(this._notes[1]);
+
+        // Assert
+        var actual = this._context.Notes.Find(2);
+        Assert.IsTrue(result);
+        Assert.AreEqual(note.SourceId, actual.SourceId);
+        Assert.AreEqual(note.Username, actual.Username);
+        Assert.AreEqual(note.NoteText, actual.NoteText);
+        Assert.AreEqual(note.TagsString, actual.TagsString);
+    }
+
+    [Test]
+    [Order(11)]
+    public void InvalidUserInvalidUpdateNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser2&quot;, Password = &quot;testPassword&quot; };
+        var note = new Note
+        {
+            NoteId = 2,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote4&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act, Assert
+        Assert.Throws&lt;UnauthorizedAccessException&gt;(() =&gt; noteDal.Update(note));
+    }
+
+    [Test]
+    [Order(12)]
+    public void NoUserInvalidUpdateNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        var note = new Note
+        {
+            NoteId = 2,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote4&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act, Assert
+        Assert.Throws&lt;UnauthorizedAccessException&gt;(() =&gt; noteDal.Update(note));
+    }
+
+    [Test]
+    [Order(13)]
+    public void DeleteNoteTest()
+    {
+        // Arrange
+        var noteDal = new NotesDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act
+        var result = noteDal.Delete(this._notes[0]);
+
+        this._notes.Remove(this._notes[0]);
+        var expected = this._notes.Count();
+
+        // Assert
+        Assert.IsTrue(result);
+        Assert.AreEqual(expected, this._context.Notes.Count());
+
+        var notes = this._context.Notes.ToList();
+        for (var i = 0; i &lt; expected; i++)
+        {
+            Assert.IsTrue(this._notes.Exists(
+                x =&gt; notes.ElementAt(i).SourceId == x.SourceId &amp;&amp; notes.ElementAt(i).Username.Equals(x.Username)));
+        }
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,5,34,7,1],[45,5,45,6,1],[46,9,49,22,1],[50,9,50,63,1],[52,9,52,51,1],[53,9,53,37,1],[54,5,54,6,1],[58,5,58,6,1],[59,9,59,45,1],[60,5,60,6,1],[65,5,65,6,1],[67,9,67,51,1],[70,9,70,35,1],[71,5,71,6,1],[76,5,76,6,1],[78,9,78,51,1],[79,9,79,99,1],[82,9,82,37,1],[85,9,85,34,1],[86,9,86,45,1],[87,9,87,54,1],[88,9,88,54,1],[89,9,89,65,1],[90,5,90,6,1],[95,5,95,6,1],[97,9,97,51,1],[98,9,98,99,1],[101,9,101,51,1],[101,51,101,73,1],[101,73,101,75,1],[102,5,102,6,1],[107,5,107,6,1],[109,9,109,51,1],[110,9,110,99,1],[113,9,113,51,1],[113,51,113,68,1],[113,68,113,70,1],[114,5,114,6,1],[119,5,119,6,1],[121,9,121,51,1],[122,9,122,99,1],[125,9,125,51,1],[125,51,125,70,1],[125,70,125,72,1],[126,5,126,6,1],[131,5,131,6,1],[133,9,133,51,1],[134,9,134,99,1],[137,9,137,58,1],[137,58,137,72,1],[137,72,137,74,1],[138,5,138,6,1],[143,5,143,6,1],[145,9,145,51,1],[146,9,146,99,1],[149,9,149,56,1],[149,56,149,71,1],[149,71,149,73,1],[150,5,150,6,1],[155,5,155,6,1],[157,9,157,51,1],[158,9,158,99,1],[159,9,159,32,1],[162,9,162,39,1],[164,9,164,44,1],[167,9,167,34,1],[168,9,168,51,1],[170,14,170,23,1],[170,25,170,37,1],[170,39,170,42,1],[171,9,171,10,1],[172,13,172,39,1],[173,13,173,46,1],[174,13,174,61,1],[175,13,175,61,1],[176,13,176,61,1],[177,13,177,65,1],[178,9,178,10,1],[179,5,179,6,1],[184,5,184,6,1],[186,9,186,51,1],[187,9,187,99,1],[188,9,188,32,1],[191,9,191,58,1],[191,58,191,74,1],[191,74,191,76,1],[192,5,192,6,1],[197,5,197,6,1],[199,9,199,51,1],[200,9,200,99,1],[201,9,209,11,1],[212,9,212,40,1],[214,9,214,31,1],[215,9,215,44,1],[218,9,218,31,1],[219,9,219,64,1],[220,9,220,61,1],[221,5,221,6,1],[226,5,226,6,1],[228,9,228,51,1],[229,9,229,99,1],[230,9,238,11,1],[241,9,241,43,1],[243,9,243,31,1],[244,9,244,44,1],[247,9,247,50,1],[248,9,248,31,1],[249,9,249,57,1],[250,9,250,57,1],[251,9,251,57,1],[252,9,252,61,1],[253,5,253,6,1],[258,5,258,6,1],[260,9,260,51,1],[261,9,261,100,1],[262,9,270,11,1],[273,9,273,58,1],[273,58,273,78,1],[273,78,273,80,1],[274,5,274,6,1],[279,5,279,6,1],[281,9,281,51,1],[282,9,290,11,1],[293,9,293,58,1],[293,58,293,78,1],[293,78,293,80,1],[294,5,294,6,1],[299,5,299,6,1],[301,9,301,51,1],[302,9,302,99,1],[305,9,305,53,1],[307,9,307,44,1],[308,9,308,44,1],[311,9,311,31,1],[312,9,312,64,1],[314,9,314,50,1],[315,14,315,23,1],[315,25,315,37,1],[315,39,315,42,1],[316,9,316,10,1],[317,13,318,22,1],[318,22,318,113,1],[318,113,318,116,1],[319,9,319,10,1],[320,5,320,6,1]]);
+    </script>
+  </body>
+</html>
