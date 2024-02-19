@@ -13,6 +13,11 @@ const dummySources: Source[] = [
     { sourceId: 8, name: "Source 8", description: "Description 8", isLink: true, link: "http://www.example.com", username: "StevenC", noteType: SourceType.Pdf, createdAt: new Date(), updatedAt: new Date()},
 ];
 
+/**
+ * MyShared component displaying sources shared with the current user.
+ * 
+ * @returns {JSX.Element} The rendered MyShared component.
+ */
 export default function MyShared() {
     return (
         <div>

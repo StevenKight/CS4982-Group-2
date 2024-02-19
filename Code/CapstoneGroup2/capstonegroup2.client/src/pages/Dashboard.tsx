@@ -17,6 +17,11 @@ const dummySharedSources: Source[] = [
     { sourceId: 8, name: "Source 8", description: "Description 8", isLink: true, link: "http://www.example.com", type: "Pdf", username: "StevenC", noteType: SourceType.Pdf, createdAt: new Date(), updatedAt: new Date(), file: null},
 ];
 
+/**
+ * Dashboard component displaying user's notes and recently shared sources.
+ * 
+ * @returns {JSX.Element} The rendered Dashboard component.
+ */
 export default function Dashboard() {
 
     const [sources, setSources] = useState<Source[]>([]);
@@ -25,15 +30,22 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    /**
+     * Fetch user's sources and recently shared sources on component mount.
+     */
     useEffect(() => {
         setLoading(true);
         const username = localStorage.getItem('username');
 
         if (username) {
             fetch(`/source/${username}`)
-                .then((response) => response.json())
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Error fetching sources');
+                    }
+                    return response.json();
+                })
                 .then((data) => {
-                    console.log(data);
                     setSources(data);
                     setLoading(false);
                 })
@@ -48,17 +60,8 @@ export default function Dashboard() {
     if (error) {
         return (
             <div>
-                <h1>My Sources</h1>
+                <h1>Dashboard</h1>
                 <p>{error}</p>
-            </div>
-        );
-    }
-
-    if (sources.length === 0 && loading) {
-        return (
-            <div>
-                <h1>My Sources</h1>
-                <p>Loading...</p>
             </div>
         );
     }
@@ -69,27 +72,35 @@ export default function Dashboard() {
             <div>
                 {/* TODO: Make this recent notes */}
                 <h3>User Notes</h3>
-                <div className='dashboard-notes-row'>
-                    {
-                        sources.map((source) => {
-                            return (
-                                <SourceCard key={source.sourceId} source={source} showDate />
-                            );
-                        })
-                    }
-                </div>
+                {
+                    sources.length !== 0 || !loading ?
+                    <div className='dashboard-notes-row'>
+                        {
+                            sources.map((source) => {
+                                return (
+                                    <SourceCard key={source.sourceId} source={source} showDate />
+                                );
+                            })
+                        }
+                    </div> :
+                    <p>Loading...</p>
+                }
             </div>
             <div>
                 <h3>Dummy Recently Shared with you</h3>
-                <div className='dashboard-notes-row'>
-                    {
-                        shared.map((source) => {
-                            return (
-                                <SourceCard key={source.sourceId} source={source} showUser showDate/>
-                            );
-                        })
-                    }
-                </div>
+                {
+                    shared.length !== 0 || !loading ?
+                    <div className='dashboard-notes-row'>
+                        {
+                            shared.map((source) => {
+                                return (
+                                    <SourceCard key={source.sourceId} source={source} showUser showDate/>
+                                );
+                            })
+                        }
+                    </div> :
+                    <p>Loading...</p>
+                }
             </div>
         </div>
     );
