@@ -9,6 +9,13 @@ import { Source } from '../interfaces/Source';
 //     {type: SourceType.Pdf, extensions: ['pdf']},
 // ]
 
+/**
+ * React component for adding a new source.
+ *
+ * @param {string} id - The unique identifier for the dialog.
+ * @param {() => void} onAdd - Callback function invoked when a source is successfully added.
+ * @returns {JSX.Element} - JSX representation of the AddSourceDialog component.
+ */
 export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () => void }) {
 
     const [isLink, setIsLink] = useState(false);
@@ -18,6 +25,9 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
     const [authors, setAuthors] = useState([] as string[]);
     const [selectedAuthor, setSelectedAuthor] = useState(null as string | null);
 
+    /**
+     * Closes the dialog and resets the form state.
+     */
     const closeDialog = () => {
         // Close the dialog
         const dialog = document.getElementById('add-source-dialog') as HTMLDialogElement;
@@ -44,6 +54,12 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         form.reset();
     }
 
+    /**
+     * Handles the form submission, processes form data, and triggers API request to add a new source.
+     *
+     * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
+     * @returns {Promise<void>} - A Promise resolving after the form submission is processed.
+     */
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
@@ -112,6 +128,11 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         }
     }
 
+    /**
+     * Handles file input change and updates the file state.
+     *
+     * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event.
+     */
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         
@@ -121,6 +142,11 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         }
     }
 
+    /**
+     * Handles author click and updates the selected author state.
+     *
+     * @param {React.MouseEvent<HTMLInputElement>} e - The author click event.
+     */
     const handleAuthorClick = (e: React.MouseEvent<HTMLInputElement>) => {
         const author = e.currentTarget;
         
@@ -137,6 +163,11 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         author.classList.toggle('selected');
     }
 
+    /**
+     * Adds a new author to the authors state.
+     *
+     * @param {React.MouseEvent<HTMLButtonElement>} e - The add author button click event.
+     */
     const handleAddAuthor = (e: React.MouseEvent<HTMLButtonElement>) => {
 
         e.preventDefault();
@@ -158,6 +189,11 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         setAuthors(updatedAuthors);
     }
 
+    /**
+     * Removes the selected author from the authors state.
+     *
+     * @param {React.MouseEvent<HTMLButtonElement>} e - The remove author button click event.
+     */
     const handleRemoveAuthor = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         
