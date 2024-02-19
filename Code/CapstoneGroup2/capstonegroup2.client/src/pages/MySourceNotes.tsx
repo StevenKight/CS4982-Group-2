@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Source } from '../interfaces/Source';
+import { Source, SourceType } from '../interfaces/Source';
 import { Note } from '../interfaces/Note';
 
 import './styles/MySourceNotes.css';
@@ -144,39 +144,77 @@ export default function MySourceNotes() {
                     </button>
                 </div>
             </div>
-            <p>{source?.link}</p>
-            <p>Created at: {source?.createdAt?.toString()}</p>
-            {source?.updatedAt && <p>Updated at: {source?.updatedAt?.toString()}</p>}
-            <div id='add-note-section'>
-                <h2>Add Note</h2>
-                <textarea
-                    value={newNoteText}
-                    onChange={(e) => setNewNoteText(e.target.value)}
-                    placeholder="Enter your note here..."
-                />
-                <div id='add-tag-section'>
-                    <input
-                        type="text"
-                        value={newTagText}
-                        onChange={(e) => setNewTagText(e.target.value)}
-                        placeholder="Add tags (comma-separated)..."
-                    />
+            <div className='my-source-notes-content'>
+                <div className='my-source-notes-content-notes'>
+                    <div id='add-note-section'>
+                        <h2>Add Note</h2>
+                        <textarea
+                            value={newNoteText}
+                            onChange={(e) => setNewNoteText(e.target.value)}
+                            placeholder="Enter your note here..."
+                        />
+                        <div>
+                            <button onClick={saveNote}>Save</button>
+                            <button onClick={cancelNote}>Cancel</button>
+                        </div>
+                    </div>
+                    <h2>Notes</h2>
+                    <ul>
+                        {notes.map((note) => (
+                            <li key={note.noteId}>
+                                <p>{note.noteText}</p>
+                                <p>Tags: {note.tagsString}</p>
+                                <p>Created at: {note.noteDate?.toString()}</p>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-                <div>
-                    <button onClick={saveNote}>Save</button>
-                    <button onClick={cancelNote}>Cancel</button>
+                <div className='my-source-notes-content-source'>
+                    {
+                        source?.noteType === SourceType.Pdf ? 
+                            <PdfViewer pdf={source}/> : 
+                            <h3>Source type not supported yet.</h3>
+                    }
                 </div>
             </div>
-            <h2>Notes</h2>
-            <ul>
-                {notes.map((note) => (
-                    <li key={note.noteId}>
-                        <p>{note.noteText}</p>
-                        <p>Tags: {note.tagsString}</p>
-                        <p>Created at: {note.noteDate?.toString()}</p>
-                    </li>
-                ))}
-            </ul>
+        </div>
+    );
+}
+
+function PdfViewer({ pdf }: { pdf: Source }) {
+
+    const loadPdf = () => {
+        var objectURL = '';
+        if (!pdf.isLink && pdf.content) {
+            const base64String = pdf.content;
+
+            // Decode the Base64 string to a Uint8Array
+            const binaryString = atob(base64String);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            objectURL = URL.createObjectURL(blob);
+        }
+        else if (pdf.isLink && pdf.link) {
+            objectURL = pdf.link;
+        }
+
+        return (
+            <iframe
+                src={objectURL}
+                height="100%"
+                width="100%"
+            />
+        );
+    }
+
+    return (
+        <div>
+            {
+                loadPdf()
+            }
         </div>
     );
 }
