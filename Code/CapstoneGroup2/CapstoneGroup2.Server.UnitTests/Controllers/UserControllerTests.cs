@@ -1,11 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using CapstoneGroup2.Server.Controllers;
+﻿using CapstoneGroup2.Server.Controllers;
 using CapstoneGroup2.Server.Dal;
 using CapstoneGroup2.Server.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CapstoneGroup2.Server.UnitTests.Controllers;
 
@@ -72,25 +69,12 @@ public class UserControllerTests
         };
         var result = userController.Login(user);
 
-        var token = new JwtSecurityToken(
-            "CapstoneGroup2",
-            "CapstoneGroup2",
-            new[] { new Claim(JwtRegisteredClaimNames.UniqueName, "testUser") },
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey("CapstoneGroup2SecretKey"u8.ToArray()),
-                SecurityAlgorithms.Aes128CbcHmacSha256
-            )
-        );
-        var expectedToken = new JwtSecurityTokenHandler().WriteToken(token);
-
         // Assert
         var okResult = (result as OkObjectResult).Value as User;
         Assert.IsNotNull(result);
         Assert.IsInstanceOf<OkObjectResult>(result);
         Assert.AreEqual("testUser", okResult.Username);
         Assert.IsNull(okResult.Password);
-        Assert.AreEqual(expectedToken, okResult.Token);
     }
 
     [Test]

@@ -20,9 +20,16 @@ export default function SourceCard({ source, showUser, showDate }:
         
     return (
         <div className='source' onClick={onSourceClick}>
-            <h4>{source.name}</h4>
+            <div style={{
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between',
+                    marginRight: '1em'
+                }}>
+                <h4>{source.name}</h4>
+                <small>{source.type}</small>
+            </div>
             <p>{source.description}</p>
-            <p>{source.link}</p>
             {(showDate && !showUser && source.updatedAt) && <p>Updated on: {source.updatedAt.toDateString()}</p>}
             {/* FIXME: Instead of created at for shared, make it shared date */}
             {(showDate && showUser && source.createdAt) && <p>Shared on: {source.createdAt.toDateString()}</p>} 

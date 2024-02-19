@@ -24,7 +24,8 @@ public class SourceTests
             IsLink = true,
             Link = "testLink",
             CreatedAt = new DateTime(2021, 1, 1),
-            UpdatedAt = new DateTime(2021, 1, 2)
+            UpdatedAt = new DateTime(2021, 1, 2),
+            Content = new byte[2],
         };
 
         // Assert
@@ -40,6 +41,7 @@ public class SourceTests
             Assert.That(source.Link, Is.EqualTo("testLink"));
             Assert.That(source.CreatedAt, Is.EqualTo(new DateTime(2021, 1, 1)));
             Assert.That(source.UpdatedAt, Is.EqualTo(new DateTime(2021, 1, 2)));
+            Assert.That(source.Content, Is.EqualTo( new byte[2]));
         });
     }
 
@@ -63,14 +65,19 @@ public class SourceTests
             Assert.That(entityType!.GetTableName(), Is.EqualTo("Source"));
             Assert.That(entityType!.FindPrimaryKey()?.Properties[0].Name, Is.EqualTo("SourceId"));
             Assert.That(entityType.GetProperties().ElementAt(0).GetColumnName(), Is.EqualTo("source_id"));
-            Assert.That(entityType.GetProperties().ElementAt(8).GetColumnName(), Is.EqualTo("username"));
-            Assert.That(entityType.GetProperties().ElementAt(5).GetColumnName(), Is.EqualTo("name"));
-            Assert.That(entityType.GetProperties().ElementAt(2).GetColumnName(), Is.EqualTo("description"));
-            Assert.That(entityType.GetProperties().ElementAt(6).GetColumnName(), Is.EqualTo("type"));
-            Assert.That(entityType.GetProperties().ElementAt(3).GetColumnName(), Is.EqualTo("is_link"));
-            Assert.That(entityType.GetProperties().ElementAt(4).GetColumnName(), Is.EqualTo("link"));
-            Assert.That(entityType.GetProperties().ElementAt(1).GetColumnName(), Is.EqualTo("created_at"));
-            Assert.That(entityType.GetProperties().ElementAt(7).GetColumnName(), Is.EqualTo("updated_at"));
+            Assert.That(entityType.GetProperties().ElementAt(1).GetColumnName(), Is.EqualTo("accessed_at"));
+            Assert.That(entityType.GetProperties().ElementAt(2).GetColumnName(), Is.EqualTo("authors"));
+            Assert.That(entityType.GetProperties().ElementAt(3).GetColumnName(), Is.EqualTo("content"));
+            Assert.That(entityType.GetProperties().ElementAt(4).GetColumnName(), Is.EqualTo("created_at"));
+            Assert.That(entityType.GetProperties().ElementAt(5).GetColumnName(), Is.EqualTo("description"));
+            Assert.That(entityType.GetProperties().ElementAt(6).GetColumnName(), Is.EqualTo("is_link"));
+            Assert.That(entityType.GetProperties().ElementAt(7).GetColumnName(), Is.EqualTo("link"));
+            Assert.That(entityType.GetProperties().ElementAt(8).GetColumnName(), Is.EqualTo("name"));
+            Assert.That(entityType.GetProperties().ElementAt(9).GetColumnName(), Is.EqualTo("publisher"));
+            Assert.That(entityType.GetProperties().ElementAt(10).GetColumnName(), Is.EqualTo("type"));
+            Assert.That(entityType.GetProperties().ElementAt(11).GetColumnName(), Is.EqualTo("updated_at"));
+            Assert.That(entityType.GetProperties().ElementAt(12).GetColumnName(), Is.EqualTo("username"));
+
         });
     }
 
