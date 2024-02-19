@@ -1,6 +1,5 @@
 ﻿using Windows.Foundation;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using CapstoneGroup2.Desktop.ViewModel;
 
@@ -11,7 +10,7 @@ namespace CapstoneGroup2.Desktop
     /// <summary>
     ///     An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginPage : Page
+    public sealed partial class SettingsPage : Page
     {
         #region Data members
 
@@ -19,25 +18,9 @@ namespace CapstoneGroup2.Desktop
 
         #endregion
 
-        #region Properties
-
-        public string Username
-        {
-            get => this.UsernameTextBox.Text;
-            set => this.UsernameTextBox.Text = value;
-        }
-
-        public string Password
-        {
-            get => this.PasswordTextBox.Password;
-            set => this.PasswordTextBox.Password = value;
-        }
-
-        #endregion
-
         #region Constructors
 
-        public LoginPage()
+        public SettingsPage()
         {
             this._viewModel = new UserViewModel();
             this.InitializeComponent();
@@ -48,24 +31,6 @@ namespace CapstoneGroup2.Desktop
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(size);
             ApplicationView.GetForCurrentView().TryResizeView(size);
-        }
-
-        #endregion
-
-        #region Methods
-
-        private async void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            await this._viewModel.Login(this.Username, this.Password);
-
-            if (this._viewModel.ValidateAuthorization())
-            {
-                Frame.Navigate(typeof(MainPage));
-            }
-            else
-            {
-                this.ErrorTextBlock.Text = "Invalid username or password";
-            }
         }
 
         #endregion
