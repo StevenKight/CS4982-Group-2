@@ -7,16 +7,27 @@ import SourcesGrid from "../components/SourcesGrid";
 import './styles/MySources.css';
 import AddSourceDialog from "../components/AddSourceDialog";
 
+/**
+ * MySources component displaying a user's sources.
+ * 
+ * @returns {JSX.Element} The rendered MySources component.
+ */
 export default function MySources() {
     const [sources, setSources] = useState<Source[]>([]);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    /**
+     * Effect hook to fetch and update user's sources.
+     */
     useEffect(() => {
         getSources();
     }, []);
 
+    /**
+     * Function to fetch user's sources from the server.
+     */
     const getSources = () => {
         setLoading(true);
         const username = localStorage.getItem('username');
@@ -34,6 +45,9 @@ export default function MySources() {
         }
     }
 
+    /**
+     * Function to open the Add Source dialog.
+     */
     const addSource = () => {
         const dialog = document.getElementById('add-source-dialog') as HTMLDialogElement;
         if (dialog) {

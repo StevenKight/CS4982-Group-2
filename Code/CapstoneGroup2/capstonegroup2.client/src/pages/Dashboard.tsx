@@ -17,6 +17,11 @@ const dummySharedSources: Source[] = [
     { sourceId: 8, name: "Source 8", description: "Description 8", isLink: true, link: "http://www.example.com", type: "Pdf", username: "StevenC", noteType: SourceType.Pdf, createdAt: new Date(), updatedAt: new Date(), file: null},
 ];
 
+/**
+ * Dashboard component displaying user's notes and recently shared sources.
+ * 
+ * @returns {JSX.Element} The rendered Dashboard component.
+ */
 export default function Dashboard() {
 
     const [sources, setSources] = useState<Source[]>([]);
@@ -25,6 +30,9 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    /**
+     * Fetch user's sources and recently shared sources on component mount.
+     */
     useEffect(() => {
         setLoading(true);
         const username = localStorage.getItem('username');

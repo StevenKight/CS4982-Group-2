@@ -5,6 +5,11 @@ import { Note } from '../interfaces/Note';
 
 import './styles/MySourceNotes.css';
 
+/**
+ * MySourceNotes component displaying notes for a specific source.
+ * 
+ * @returns {JSX.Element} The rendered MySourceNotes component.
+ */
 export default function MySourceNotes() {
     const navigate = useNavigate();
     const { sourceid } = useParams();
@@ -20,6 +25,9 @@ export default function MySourceNotes() {
         getSource();
     }, [sourceid]);
 
+    /**
+     * Function to retrieve the source information and associated notes.
+     */
     const getSource = () => {
         const username = localStorage.getItem('username');
 
@@ -36,6 +44,9 @@ export default function MySourceNotes() {
         }
     };
 
+    /**
+     * Function to retrieve notes associated with the current source.
+     */
     const getNotes = () => {
         const username = localStorage.getItem('username');
 
@@ -51,6 +62,9 @@ export default function MySourceNotes() {
         }
     };
 
+    /**
+     * Function to save a new note.
+     */
     const saveNote = () => {
         var newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
         var newNoteText = newNoteTextarea.value;
@@ -94,6 +108,9 @@ export default function MySourceNotes() {
         }
     };
 
+    /**
+     * Function to cancel creating a new note.
+     */
     const cancelNote = () => {
         var newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
         newNoteTextarea.value = '';
@@ -101,6 +118,9 @@ export default function MySourceNotes() {
         setError(null);
     };
 
+    /**
+     * Function to delete the current source.
+     */
     const deleteSource = () => {
         const username = localStorage.getItem('username');
 
@@ -183,6 +203,13 @@ export default function MySourceNotes() {
     );
 }
 
+/**
+ * PdfViewer component for rendering PDF content.
+ * 
+ * @param {Object} props - The component properties.
+ * @param {Source} props.pdf - The source containing PDF information.
+ * @returns {JSX.Element} The rendered PdfViewer component.
+ */
 function PdfViewer({ pdf }: { pdf: Source }) {
 
     const loadPdf = () => {
