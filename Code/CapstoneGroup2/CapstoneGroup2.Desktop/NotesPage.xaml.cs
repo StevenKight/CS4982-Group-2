@@ -245,6 +245,14 @@ namespace CapstoneGroup2.Desktop
             await this._notesViewModel.updateNote(selectedItemTextBox);
         }
 
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            var selectedItemTextBox = (Note)textBox.DataContext;
+
+            this.notesListView.SelectedItem = selectedItemTextBox;
+        }
+
         #endregion
     }
 }

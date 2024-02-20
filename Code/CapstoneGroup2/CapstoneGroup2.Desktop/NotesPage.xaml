@@ -40,7 +40,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="model1:Note">
                     <StackPanel>
-                        <TextBox Text="{Binding NoteText}" FontWeight="Bold" LostFocus="TextBox_LostFocus" />
+                        <TextBox Text="{Binding NoteText}" FontWeight="Bold" LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
