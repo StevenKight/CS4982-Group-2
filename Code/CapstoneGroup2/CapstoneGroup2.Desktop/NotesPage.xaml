@@ -5,7 +5,7 @@
     xmlns:local="using:CapstoneGroup2.Desktop"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:model1="using:CapstoneGroup2.Desktop.Library.Model"
+    xmlns:model="using:CapstoneGroup2.Desktop.Library.Model"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
     Height="732" 
@@ -22,7 +22,8 @@
                 Height="36" Width="45" Canvas.ZIndex="1" />
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto" HorizontalAlignment="Left"
-                      ZoomMode="Enabled" MinZoomFactor="0.5" Margin="25,50,0,0" VerticalAlignment="Center" Width="550" Height="650" MaxZoomFactor="0.6">
+                      ZoomMode="Enabled" Margin="25,50,0,0" VerticalAlignment="Center" 
+                      MinZoomFactor="0.5" MaxZoomFactor="0.6" Width="550" Height="650">
             <Image x:Name="objectRender" AutomationProperties.Name="PDF document content" Stretch="None" />
         </ScrollViewer>
 
@@ -38,10 +39,13 @@
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="model1:Note">
-                    <StackPanel>
-                        <TextBox Text="{Binding NoteText}" FontWeight="Bold" LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus" />
-                    </StackPanel>
+                <DataTemplate x:DataType="model:Note">
+                    <Grid>
+                        <TextBox Text="{Binding NoteText}" FontWeight="Bold" LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus" 
+                                 AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="30" Width="275" Margin="-5,0,0,0"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                        <TextBlock Text=". . ." Margin="0,5,5,0" HorizontalAlignment="Right" FontWeight="Bold" />
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
