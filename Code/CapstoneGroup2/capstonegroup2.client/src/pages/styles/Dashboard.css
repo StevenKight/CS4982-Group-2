@@ -10,3 +10,7 @@
     margin-right: 1em;
     max-width: 15em;
 }
+
+.dashboard-no-data {
+    height: 10em;
+}

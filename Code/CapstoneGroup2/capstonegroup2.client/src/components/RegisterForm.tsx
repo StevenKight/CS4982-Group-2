@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { User } from '../interfaces/User';
 
 import './styles/Authorize.css';
 
@@ -9,9 +10,11 @@ import './styles/Authorize.css';
  * @returns {JSX.Element} - JSX representation of the RegisterForm component.
  */
 export default function RegisterForm() {
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [confirmPassword, setConfirmPassword] = useState<string>('');
 
     /**
      * Handles the form submission for user registration.
@@ -20,9 +23,43 @@ export default function RegisterForm() {
      */
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        alert('Register form submitted but not yet implemented.');
-        // TODO: Send the form data to the server for registration
-        // FIXME: Should it automatically log the user in after registration?
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match.'); // FIXME: Use a better way to display error messages
+            return;
+        }
+
+        var user = {
+            username: username,
+            password: password
+        } as User;
+
+        fetch('/sign-up', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                else {
+                    throw new Error('Failed to register user.');
+                }
+            })
+            .then(data => {
+                localStorage.setItem('auth', 'true');
+                localStorage.setItem('username', username);
+                localStorage.setItem('token', data.token);
+
+                window.dispatchEvent(new Event("storage"));
+                navigate('/');
+            })
+            .catch(error => {
+                console.error(error);
+            });
     }
 
     return (
@@ -35,6 +72,10 @@ export default function RegisterForm() {
             <div className='authorize-form-input'>
                 <label htmlFor='password'>Password</label>
                 <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+            </div>
+            <div className='authorize-form-input'>
+                <label htmlFor='confirmPassword'>Confirm Password</label>
+                <input type='password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
             </div>
             <button type='submit'>Sign-up</button>
             <h3>or</h3>
