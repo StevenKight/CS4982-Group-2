@@ -58,6 +58,34 @@ public class NotesDalTests
     }
 
     [Test]
+    public async Task GetUserSourceNotes_InvalidInput_ReturnsNull()
+    {
+        // Arrange
+        var user = new User { Username = "", Password = "" };
+        var source = new Source { SourceId = 1, Username = "", Type = "" };
+
+        var expectedUri = new Uri("https://localhost:7048");
+        var expectedResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.BadRequest
+        };
+
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+        httpClientMock.Setup(x => x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x => x.GetAsync($"/Notes/{source.SourceId}-{user.Username}"))
+            .ReturnsAsync(expectedResponse);
+
+        var notesDal = new NotesDal(httpClientMock.Object);
+
+        // Act
+        var result = await notesDal.GetUserSourceNotes(user, source);
+
+        // Assert
+        Assert.IsNull(result);
+        httpClientMock.Verify(x => x.GetAsync($"/Notes/{source.SourceId}-{user.Username}"), Times.Once);
+    }
+
+    [Test]
     public async Task createNewNote_ValidInput_ReturnsTrue()
     {
         // Arrange

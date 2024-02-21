@@ -253,7 +253,7 @@ public class UserControllerTests
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.IsInstanceOf<OkResult>(result);
+        Assert.IsInstanceOf<OkObjectResult>(result);
 
         Assert.AreEqual(3, this._context.Users.Count());
         Assert.Contains(user, this._context.Users.ToList());
