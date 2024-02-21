@@ -39,9 +39,9 @@ namespace CapstoneGroup2.Desktop.Library.Mocks
         }
 
         public HttpRequestHeaders DefaultRequestHeaders => _httpClient.DefaultRequestHeaders;
-        public virtual Task<HttpResponseMessage> PostAsJsonAsync(string login, User user)
+        public virtual Task<HttpResponseMessage> PostAsJsonAsync(string url, User user)
         {
-            return _httpClient.PostAsJsonAsync("/Login", user);
+            return _httpClient.PostAsJsonAsync(url, user);
         }
 
         public virtual Task<HttpResponseMessage> GetAsync(string requestUri)

@@ -68,6 +68,11 @@ namespace CapstoneGroup2.Desktop
             }
         }
 
+        private void createButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(SignUpPage));
+        }
+
         #endregion
     }
 }

@@ -65,10 +65,34 @@ namespace CapstoneGroup2.Desktop.Library.Dal
                 string.IsNullOrEmpty(user.Username) ||
                 string.IsNullOrEmpty(user.Password))
             {
-                return null;
+                throw new ArgumentOutOfRangeException();
             }
 
             var response = await this.client.PostAsJsonAsync("/Login", user);
+            if (response.IsSuccessStatusCode)
+            {
+                user = await response.Content.ReadFromJsonAsync<User>();
+                return user;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        ///     Creates a new account using given user.
+        /// </summary>
+        /// <param name="user">The user to create.</param>
+        /// <returns>The new user that was created if successful, null otherwise</returns>
+        public async Task<User> CreateAccount(User user)
+        {
+            if (user == null ||
+                string.IsNullOrEmpty(user.Username) ||
+                string.IsNullOrEmpty(user.Password))
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            var response = await this.client.PostAsJsonAsync("/Sign-up", user);
             if (response.IsSuccessStatusCode)
             {
                 user = await response.Content.ReadFromJsonAsync<User>();
