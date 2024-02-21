@@ -23,6 +23,7 @@
     .source {
         background-color: #bfbfbf;
     }
+
     .source:active {
         background-color: white;
     }

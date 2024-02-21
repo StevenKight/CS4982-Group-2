@@ -67,8 +67,8 @@ export default function MySourceNotes() {
      * Function to save a new note.
      */
     const saveNote = () => {
-        var newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
-        var newNoteText = newNoteTextarea.value;
+        const newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
+        const newNoteText = newNoteTextarea.value;
 
         if (newNoteText.trim() === '') {
             setError('Note text cannot be empty, note will not be added');
@@ -113,7 +113,7 @@ export default function MySourceNotes() {
      * Function to cancel creating a new note.
      */
     const cancelNote = () => {
-        var newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
+        const newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
         newNoteTextarea.value = '';
         setNewTagText('');
         setError(null);
@@ -252,7 +252,7 @@ function NoteEditor({ note }: { note: Note }) {
 function PdfViewer({ pdf }: { pdf: Source }) {
 
     const loadPdf = () => {
-        var objectURL = '';
+        let objectURL = '';
         if (!pdf.isLink && pdf.content) {
             const base64String = pdf.content;
 

@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import SourcesGrid from "../components/SourcesGrid";
 
 import { Source, SourceType } from "../interfaces/Source";
+
+import "../styles/MyShared.css";
 
 const dummySources: Source[] = [
     { sourceId: 1, name: "Source 1", description: "Description 1", isLink: true, link: "http://www.example.com", username: "StevenC", noteType: SourceType.Pdf, createdAt: new Date(), updatedAt: new Date()},
@@ -19,10 +22,77 @@ const dummySources: Source[] = [
  * @returns {JSX.Element} The rendered MyShared component.
  */
 export default function MyShared() {
+
+    const [sharedSources, setSharedSources] = useState<Source[]>([]);
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    /**
+     * Effect hook to fetch and update user's sources.
+     */
+    useEffect(() => {
+        getSharedSources();
+    }, []);
+
+    /**
+     * Function to fetch user's sources from the server.
+     */
+    const getSharedSources = () => {
+        setLoading(true);
+        const username = localStorage.getItem('username');
+
+        if (username) {
+            setSharedSources(dummySources); // TODO: Replace with fetch call
+        }
+        else {
+            setError('No user logged in');
+        }
+
+        setLoading(false);
+    }
+
+    if (error) {
+        return (
+            <div>
+                <div id="shared-sources-heading">
+                    <h1>Shared Sources</h1>
+                </div>
+                <p>{error}</p>
+            </div>
+        );
+    }
+
+    if (sharedSources.length === 0 && loading) {
+        return (
+            <div>
+                <div id="shared-sources-heading">
+                    <h1>Shared Sources</h1>
+                </div>
+                <p>loading sources...</p>
+            </div>
+        );
+    }
+
+    if (sharedSources.length === 0 && !loading) {
+        return (
+            <div>
+                <div id="shared-sources-heading">
+                    <h1>Shared Sources</h1>
+                </div>
+                <p>No sources found</p>
+            </div>
+        );
+    }
+
     return (
-        <div>
-            <h1>Dummy Shared with me</h1>
-            <SourcesGrid sources={dummySources} showUser/>
-        </div>
+        <>
+            <div>
+                <div id="shared-sources-heading">
+                    <h1>Shared Sources</h1>
+                </div>
+                <SourcesGrid sources={sharedSources}/>
+            </div>
+        </>
     );
 }

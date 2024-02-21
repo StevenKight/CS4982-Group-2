@@ -29,7 +29,7 @@ export default function RegisterForm() {
             return;
         }
 
-        var user = {
+        const user = {
             username: username,
             password: password
         } as User;

@@ -58,7 +58,9 @@ export default function MySources() {
     if (error) {
         return (
             <div>
-                <h1>My Sources</h1>
+                <div id="my-sources-heading">
+                    <h1>My Sources</h1>
+                </div>
                 <p>{error}</p>
             </div>
         );
@@ -67,8 +69,10 @@ export default function MySources() {
     if (sources.length === 0 && loading) {
         return (
             <div>
-                <h1>My Sources</h1>
-                <p>Loading...</p>
+                <div id="my-sources-heading">
+                    <h1>My Sources</h1>
+                </div>
+                <p>loading sources...</p>
             </div>
         );
     }
