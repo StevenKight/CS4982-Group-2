@@ -3,7 +3,7 @@
 namespace CapstoneGroup2.Server.Dal;
 
 /// <summary>
-/// Class for accessing db for Source logic
+///     Class for accessing db for Source logic
 /// </summary>
 /// <seealso cref="CapstoneGroup2.Server.Dal.IDbDal&lt;CapstoneGroup2.Server.Model.Source&gt;" />
 public class SourceDal : IDbDal<Source>
@@ -11,7 +11,7 @@ public class SourceDal : IDbDal<Source>
     #region Data members
 
     /// <summary>
-    /// The context
+    ///     The context
     /// </summary>
     private readonly DocunotesDbContext context;
 
@@ -20,7 +20,7 @@ public class SourceDal : IDbDal<Source>
     #region Constructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SourceDal"/> class.
+    ///     Initializes a new instance of the <see cref="SourceDal" /> class.
     /// </summary>
     /// <param name="context">The context.</param>
     public SourceDal(DocunotesDbContext context)
@@ -33,7 +33,7 @@ public class SourceDal : IDbDal<Source>
     #region Methods
 
     /// <summary>
-    /// Gets the specified key values.
+    ///     Gets the specified key values.
     /// </summary>
     /// <param name="keyValues">The key values.</param>
     /// <returns>Source for with given key values</returns>
@@ -63,7 +63,7 @@ public class SourceDal : IDbDal<Source>
     }
 
     /// <summary>
-    /// Gets all.
+    ///     Gets all.
     /// </summary>
     /// <returns>Sources</returns>
     /// <exception cref="System.UnauthorizedAccessException"></exception>
@@ -75,7 +75,7 @@ public class SourceDal : IDbDal<Source>
     }
 
     /// <summary>
-    /// Adds the specified entity.
+    ///     Adds the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns>true if success, false otherwise</returns>
@@ -96,7 +96,7 @@ public class SourceDal : IDbDal<Source>
     }
 
     /// <summary>
-    /// Updates the specified entity.
+    ///     Updates the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns>true if success, false otherwise</returns>
@@ -118,7 +118,7 @@ public class SourceDal : IDbDal<Source>
     }
 
     /// <summary>
-    /// Deletes the specified entity.
+    ///     Deletes the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns>true if success, false otherwise</returns>
@@ -150,7 +150,7 @@ public class SourceDal : IDbDal<Source>
     }
 
     /// <summary>
-    /// Sets the user.
+    ///     Sets the user.
     /// </summary>
     /// <param name="username">The username.</param>
     public void SetUser(string username)
@@ -160,7 +160,7 @@ public class SourceDal : IDbDal<Source>
     }
 
     /// <summary>
-    /// Sets the source identifier.
+    ///     Sets the source identifier.
     /// </summary>
     /// <param name="sourceId">The source identifier.</param>
     /// <exception cref="System.InvalidOperationException"></exception>

@@ -138,7 +138,11 @@ namespace CapstoneGroup2.Desktop.Library.Model
             get
             {
                 var authorsString = this.AuthorsString;
-                if (authorsString != null) return authorsString.Split('|').ToList();
+                if (authorsString != null)
+                {
+                    return authorsString.Split('|').ToList();
+                }
+
                 return null;
             }
         }

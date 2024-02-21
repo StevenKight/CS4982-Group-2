@@ -14,19 +14,20 @@
 
         <TextBlock Text="My Sources" FontSize="32" Margin="0,75,0,0" />
 
-        <ListBox x:Name="sourcesListBox" SelectionChanged="sharedSourcesListBox_SelectionChanged" Margin="25,125,50,0" Height="200" VerticalAlignment="Top" >
+        <ListBox x:Name="sourcesListBox" SelectionChanged="sharedSourcesListBox_SelectionChanged" Margin="25,125,50,0"
+                 Height="200" VerticalAlignment="Top">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
+                    <StackPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical" Width="150" VerticalAlignment="Top">
-                        <TextBlock Text="{Binding Name}" FontSize="16"/>
-                        <TextBlock Text="{Binding Type}" FontSize="12" Margin="0,10,0,0"/>
-                        <TextBlock Text="{Binding Description}" FontSize="10" 
-                                   Margin="0,10,0,0" TextWrapping="WrapWholeWords"/>
+                        <TextBlock Text="{Binding Name}" FontSize="16" />
+                        <TextBlock Text="{Binding Type}" FontSize="12" Margin="0,10,0,0" />
+                        <TextBlock Text="{Binding Description}" FontSize="10"
+                                   Margin="0,10,0,0" TextWrapping="WrapWholeWords" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -34,20 +35,21 @@
 
         <TextBlock Text="Shared With Me" FontSize="32" Margin="0,350,0,0" />
 
-        <ListBox x:Name="sharedSourcesListBox" SelectionChanged="sharedSourcesListBox_SelectionChanged" Margin="25,400, 50,0" Height="200" VerticalAlignment="Top">
+        <ListBox x:Name="sharedSourcesListBox" SelectionChanged="sharedSourcesListBox_SelectionChanged"
+                 Margin="25,400, 50,0" Height="200" VerticalAlignment="Top">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
+                    <StackPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical" Width="150" VerticalAlignment="Top">
-                        <TextBlock Text="{Binding Name}" FontSize="16"/>
-                        <TextBlock Text="{Binding Type}" FontSize="12" Margin="0,10,0,0"/>
-                        <TextBlock Text="{Binding Username}" FontSize="12" Margin="0,10,0,0"/>
-                        <TextBlock Text="{Binding Description}" FontSize="10" 
-                                   Margin="0,10,0,0" TextWrapping="WrapWholeWords"/>
+                        <TextBlock Text="{Binding Name}" FontSize="16" />
+                        <TextBlock Text="{Binding Type}" FontSize="12" Margin="0,10,0,0" />
+                        <TextBlock Text="{Binding Username}" FontSize="12" Margin="0,10,0,0" />
+                        <TextBlock Text="{Binding Description}" FontSize="10"
+                                   Margin="0,10,0,0" TextWrapping="WrapWholeWords" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

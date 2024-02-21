@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using CapstoneGroup2.Desktop.Library.Model;
 using CapstoneGroup2.Desktop.ViewModel;
 
@@ -20,7 +9,7 @@ using CapstoneGroup2.Desktop.ViewModel;
 namespace CapstoneGroup2.Desktop
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    ///     An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class SignUpPage : Page
     {
@@ -52,12 +41,18 @@ namespace CapstoneGroup2.Desktop
 
         #endregion
 
+        #region Constructors
+
         public SignUpPage()
         {
             this._viewModel = new UserViewModel();
 
             this.InitializeComponent();
         }
+
+        #endregion
+
+        #region Methods
 
         private async void signUpButton_Click(object sender, RoutedEventArgs e)
         {
@@ -67,7 +62,7 @@ namespace CapstoneGroup2.Desktop
                 return;
             }
 
-            var user = new User()
+            var user = new User
             {
                 Username = this.Username,
                 Password = this.Password
@@ -87,7 +82,9 @@ namespace CapstoneGroup2.Desktop
 
         private void loginButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(LoginPage));
+            Frame.Navigate(typeof(LoginPage));
         }
+
+        #endregion
     }
 }

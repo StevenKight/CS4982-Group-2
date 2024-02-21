@@ -4,65 +4,65 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CapstoneGroup2.Server.Model;
 
 /// <summary>
-/// Note model Class
+///     Note model Class
 /// </summary>
 public class Note
 {
     #region Properties
 
     /// <summary>
-    /// Gets or sets the note identifier.
+    ///     Gets or sets the note identifier.
     /// </summary>
     /// <value>
-    /// The note identifier.
+    ///     The note identifier.
     /// </value>
     public int NoteId { get; set; }
 
     /// <summary>
-    /// Gets or sets the source identifier.
+    ///     Gets or sets the source identifier.
     /// </summary>
     /// <value>
-    /// The source identifier.
+    ///     The source identifier.
     /// </value>
     public int SourceId { get; set; }
 
     /// <summary>
-    /// Gets or sets the username.
+    ///     Gets or sets the username.
     /// </summary>
     /// <value>
-    /// The username.
+    ///     The username.
     /// </value>
     public string Username { get; set; }
 
     /// <summary>
-    /// Gets or sets the note text.
+    ///     Gets or sets the note text.
     /// </summary>
     /// <value>
-    /// The note text.
+    ///     The note text.
     /// </value>
     public string NoteText { get; set; }
 
     /// <summary>
-    /// Gets or sets the tags string.
+    ///     Gets or sets the tags string.
     /// </summary>
     /// <value>
-    /// The tags string.
+    ///     The tags string.
     /// </value>
     public string TagsString { get; set; }
 
     /// <summary>
-    /// Gets the tags.
+    ///     Gets the tags.
     /// </summary>
     /// <value>
-    /// The tags.
+    ///     The tags.
     /// </value>
     public List<string> Tags => this.TagsString.Split(",").ToList();
 
     /// <summary>
-    /// Gets or sets the note date.
+    ///     Gets or sets the note date.
     /// </summary>
     /// <value>
-    /// The note date.
+    ///     The note date.
     /// </value>
     public DateTime NoteDate { get; set; }
 
@@ -70,7 +70,6 @@ public class Note
 }
 
 /// <summary>
-/// 
 /// </summary>
 /// <seealso cref="Microsoft.EntityFrameworkCore.IEntityTypeConfiguration&lt;CapstoneGroup2.Server.Model.Note&gt;" />
 public class NoteConfiguration : IEntityTypeConfiguration<Note>
@@ -78,7 +77,7 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
     #region Methods
 
     /// <summary>
-    /// Configures the entity of type <typeparamref name="TEntity" />.
+    ///     Configures the entity of type <typeparamref name="TEntity" />.
     /// </summary>
     /// <param name="builder">The builder to be used to configure the entity type.</param>
     public void Configure(EntityTypeBuilder<Note> builder)
