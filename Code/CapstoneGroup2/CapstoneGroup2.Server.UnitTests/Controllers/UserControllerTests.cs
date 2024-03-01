@@ -3,6 +3,7 @@ using CapstoneGroup2.Server.Dal;
 using CapstoneGroup2.Server.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace CapstoneGroup2.Server.UnitTests.Controllers;
 
@@ -271,7 +272,7 @@ public class UserControllerTests
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.IsInstanceOf<BadRequestResult>(result);
+        Assert.IsInstanceOf<ConflictResult>(result);
     }
 
     [Test]
@@ -285,6 +286,23 @@ public class UserControllerTests
 
         // Assert
         Assert.IsNotNull(result);
+        Assert.IsInstanceOf<NoContentResult>(result);
+    }
+
+    [Test]
+    public void AddUser_ExceptionThrown_ReturnsBadRequest()
+    {
+        // Arrange
+        var mockDbDal = new Mock<IDbDal<User>>();
+        mockDbDal.Setup(x => x.Add(It.IsAny<User>())).Throws<Exception>();
+
+        var controller = new UserController(mockDbDal.Object);
+        var newUser = new User { Username = "testuser", Password = "testpassword" };
+
+        // Act
+        var result = controller.AddUser(newUser);
+
+        // Assert
         Assert.IsInstanceOf<BadRequestResult>(result);
     }
 

@@ -51,7 +51,7 @@ public class UserDalTests
     }
 
     [Test]
-    public async Task Login_ValidInser_ReturnsNull()
+    public async Task Login_InvalidUser_ReturnsNull()
     {
         // Arrange
         var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
@@ -76,18 +76,100 @@ public class UserDalTests
     }
 
     [Test]
-    public async Task Login_InvalidUser_ThrowsOutOfRangeException()
+    public async Task Login_NullUser_ThrowsOutOfRangeException()
     {
         // Arrange
-        var invalidUser = new User { Username = "", Password = "" };
-
         var httpClientMock = new Mock<IHttpClientWrapper>();
 
         var userDal = new UserDal(httpClientMock.Object);
 
         // Act, Assert
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await userDal.Login(invalidUser));
-        httpClientMock.Verify(x => x.PostAsJsonAsync("/Login", invalidUser), Times.Never);
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await userDal.Login(null));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task Login_NullUsername_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.Login(new User { Password = "test" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task Login_NullPassword_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.Login(new User { Username = "test" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task Login_EmptyUsername_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.Login(new User { Username = "", Password = "test" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task Login_EmptyPassword_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.Login(new User { Username = "test", Password = "" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task Login_BlankUsername_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.Login(new User { Username = "  ", Password = "test" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task Login_BlankPassword_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.Login(new User { Username = "test", Password = "  " }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
     }
 
     [Test]
@@ -119,7 +201,29 @@ public class UserDalTests
     }
 
     [Test]
-    public async Task CreateAccount_InvalidUser_ReturnsNull()
+    public async Task CreateAccount_InvalidUser_ThrowsException()
+    {
+        // Arrange
+        var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
+        var expectedUri = new Uri("https://localhost:7048");
+        var expectedResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.Conflict
+        };
+
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+        httpClientMock.Setup(x => x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x => x.PostAsJsonAsync("/Sign-up", user)).ReturnsAsync(expectedResponse);
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<Exception>(async () => await userDal.CreateAccount(user));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", user), Times.Once);
+    }
+
+    [Test]
+    public async Task CreateAccount_BadRequest_ThrowsException()
     {
         // Arrange
         var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
@@ -127,6 +231,28 @@ public class UserDalTests
         var expectedResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.BadRequest
+        };
+
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+        httpClientMock.Setup(x => x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x => x.PostAsJsonAsync("/Sign-up", user)).ReturnsAsync(expectedResponse);
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<Exception>(async () => await userDal.CreateAccount(user));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", user), Times.Once);
+    }
+
+    [Test]
+    public async Task CreateAccount_Invalid_ReturnsNull()
+    {
+        // Arrange
+        var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
+        var expectedUri = new Uri("https://localhost:7048");
+        var expectedResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.Unauthorized
         };
 
         var httpClientMock = new Mock<IHttpClientWrapper>();
@@ -152,38 +278,92 @@ public class UserDalTests
         var userDal = new UserDal(httpClientMock.Object);
 
         // Act, Assert
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await userDal.Login(null));
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await userDal.CreateAccount(null));
         httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
     }
 
     [Test]
-    public async Task CreateAccount_InvalidUsername_ThrowsOutOfRangeException()
+    public async Task CreateAccount_NullUsername_ThrowsOutOfRangeException()
     {
         // Arrange
-        var invalidUser = new User { Username = "", Password = "Password" };
-
         var httpClientMock = new Mock<IHttpClientWrapper>();
 
         var userDal = new UserDal(httpClientMock.Object);
 
         // Act, Assert
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await userDal.Login(invalidUser));
-        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", invalidUser), Times.Never);
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.CreateAccount(new User { Password = "test" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
     }
 
     [Test]
-    public async Task CreateAccount_InvalidPassword_ThrowsOutOfRangeException()
+    public async Task CreateAccount_NullPassword_ThrowsOutOfRangeException()
     {
         // Arrange
-        var invalidUser = new User { Username = "Username", Password = "" };
-
         var httpClientMock = new Mock<IHttpClientWrapper>();
 
         var userDal = new UserDal(httpClientMock.Object);
 
         // Act, Assert
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await userDal.Login(invalidUser));
-        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", invalidUser), Times.Never);
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.CreateAccount(new User { Username = "test" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task CreateAccount_EmptyUsername_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.CreateAccount(new User { Username = "", Password = "test" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task CreateAccount_EmptyPassword_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.CreateAccount(new User { Username = "test", Password = "" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task CreateAccount_BlankUsername_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.CreateAccount(new User { Username = "  ", Password = "test" }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
+    }
+
+    [Test]
+    public async Task CreateAccount_BlankPassword_ThrowsOutOfRangeException()
+    {
+        // Arrange
+        var httpClientMock = new Mock<IHttpClientWrapper>();
+
+        var userDal = new UserDal(httpClientMock.Object);
+
+        // Act, Assert
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await userDal.CreateAccount(new User { Username = "test", Password = "  " }));
+        httpClientMock.Verify(x => x.PostAsJsonAsync("/Sign-up", null), Times.Never);
     }
 
     #endregion

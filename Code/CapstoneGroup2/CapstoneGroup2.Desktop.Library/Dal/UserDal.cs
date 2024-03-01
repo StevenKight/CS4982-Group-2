@@ -63,8 +63,8 @@ namespace CapstoneGroup2.Desktop.Library.Dal
         public async Task<User> Login(User user)
         {
             if (user == null ||
-                string.IsNullOrEmpty(user.Username) ||
-                string.IsNullOrEmpty(user.Password))
+                string.IsNullOrWhiteSpace(user.Username) ||
+                string.IsNullOrWhiteSpace(user.Password))
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -87,8 +87,8 @@ namespace CapstoneGroup2.Desktop.Library.Dal
         public async Task<User> CreateAccount(User user)
         {
             if (user == null ||
-                string.IsNullOrEmpty(user.Username) ||
-                string.IsNullOrEmpty(user.Password))
+                string.IsNullOrWhiteSpace(user.Username) ||
+                string.IsNullOrWhiteSpace(user.Password))
             {
                 throw new ArgumentOutOfRangeException();
             }
