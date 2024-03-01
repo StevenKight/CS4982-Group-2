@@ -3,7 +3,7 @@ import SourcesGrid from "../components/SourcesGrid";
 
 import { Source, SourceType } from "../interfaces/Source";
 
-import "../styles/MyShared.css";
+import "./styles/MyShared.css";
 
 const dummySources: Source[] = [
     { sourceId: 1, name: "Source 1", description: "Description 1", isLink: true, link: "http://www.example.com", username: "StevenC", noteType: SourceType.Pdf, createdAt: new Date(), updatedAt: new Date()},
