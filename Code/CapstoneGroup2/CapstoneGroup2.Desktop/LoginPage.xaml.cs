@@ -56,6 +56,14 @@ namespace CapstoneGroup2.Desktop
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            this.usernameToolTip.Visibility = Visibility.Collapsed;
+            this.passwordToolTip.Visibility = Visibility.Collapsed;
+
+            if (!this.blankCheck())
+            {
+                return;
+            }
+
             await this._viewModel.Login(this.Username, this.Password);
 
             if (this._viewModel.ValidateAuthorization())
@@ -64,8 +72,29 @@ namespace CapstoneGroup2.Desktop
             }
             else
             {
-                this.errorTextBlock.Text = "Invalid username or password";
+                this.usernameToolTip.Visibility = Visibility.Visible;
+                this.usernameToolTip.Content = "Invalid username or password";
             }
+        }
+
+        private bool blankCheck()
+        {
+            var valid = true;
+            if (string.IsNullOrEmpty(this.Username))
+            {
+                this.usernameToolTip.Visibility = Visibility.Visible;
+                this.usernameToolTip.Content = "Username cannot be empty";
+                valid = false;
+            }
+
+            if (string.IsNullOrEmpty(this.Password))
+            {
+                this.passwordToolTip.Visibility = Visibility.Visible;
+                this.passwordToolTip.Content = "Password cannot be empty";
+                valid = false;
+            }
+
+            return valid;
         }
 
         private void createButton_Click(object sender, RoutedEventArgs e)
