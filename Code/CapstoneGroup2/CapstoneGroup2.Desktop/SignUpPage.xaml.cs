@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using CapstoneGroup2.Desktop.Library.Model;
@@ -117,11 +118,19 @@ namespace CapstoneGroup2.Desktop
                 valid = false;
             }
 
+            const string passwordRegex = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$";
             if (string.IsNullOrEmpty(this.Password))
             {
                 this.passwordToolTip.Visibility = Visibility.Visible;
                 this.passwordToolTip.Content = "Password cannot be empty";
                 valid = false;
+            }
+            else if (!Regex.IsMatch(this.Password, passwordRegex))
+            {
+                this.passwordToolTip.Visibility = Visibility.Visible;
+                this.passwordToolTip.Content =
+                    "Password must contain at least 8 characters, one letter, one number and one special character";
+                return false;
             }
 
             if (string.IsNullOrEmpty(this.ConfirmPassword))

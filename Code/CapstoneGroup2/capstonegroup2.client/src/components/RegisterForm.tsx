@@ -26,19 +26,23 @@ export default function RegisterForm() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const usernameError = !username || username.trim() === '' ? 'Please enter a valid username' : null;
-        const passwordError = !password || password.trim() === '' ? 'Please enter a valid password' : null;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
-        if (usernameError || passwordError) {
-            setError({ username: usernameError, password: passwordError, confirmPassword: passwordError });
+        const invalidUsernameError = !username || username.trim() === '' ? 'Please enter a valid username' : null;
+        const invalidPasswordError = !password || password.trim() === '' ? 'Please enter a valid password' : null;
+        const passwordStrengthError = !passwordRegex.test(password) ? 'Password must be at least 8 characters long, contain at least one letter, one number and one special character' : null;
+        const invalidConfirmPasswordError = !confirmPassword || confirmPassword.trim() === '' ? 'Please enter a valid password' : null;
+        const passwordConfirmedError = password !== confirmPassword ? 'Passwords do not match' : null;
+
+        if (invalidUsernameError || invalidPasswordError || passwordStrengthError ||
+            invalidConfirmPasswordError || passwordConfirmedError) {
+            
+            const passwordError = invalidPasswordError ? invalidPasswordError : passwordStrengthError;
+            const confirmPasswordError = passwordConfirmedError ? passwordConfirmedError : invalidConfirmPasswordError;
+
+            setError({ username: invalidUsernameError, password: passwordError, confirmPassword: confirmPasswordError });
             return;
         }
-
-        if (password !== confirmPassword) {
-            setError({ username: null, password: 'Passwords do not match', confirmPassword: 'Passwords do not match' });
-            return;
-        }
-
         const user = {
             username: username,
             password: password
