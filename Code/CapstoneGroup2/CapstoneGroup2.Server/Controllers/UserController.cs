@@ -80,6 +80,13 @@ public class UserController : ControllerBase
     [Route("/sign-up")]
     public IActionResult AddUser([FromBody] User user)
     {
+        var users = this.context.GetAll();
+
+        if (users.Any(u => u.Username == user.Username))
+        {
+            return Conflict();
+        }
+
         try
         {
             this.context.Add(user);

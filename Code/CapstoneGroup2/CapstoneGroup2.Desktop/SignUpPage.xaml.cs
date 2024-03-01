@@ -56,9 +56,17 @@ namespace CapstoneGroup2.Desktop
 
         private async void signUpButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!this.Password.Equals(this.ConfirmPassword))
+            this.usernameToolTip.Visibility = Visibility.Collapsed;
+            this.passwordToolTip.Visibility = Visibility.Collapsed;
+            this.confirmPasswordToolTip.Visibility = Visibility.Collapsed;
+
+            if (!this.blankCheck())
             {
-                Console.WriteLine("Passwords do not match");
+                return;
+            }
+
+            if (!this.CheckConfirmationPassword())
+            {
                 return;
             }
 
@@ -68,16 +76,62 @@ namespace CapstoneGroup2.Desktop
                 Password = this.Password
             };
 
-            await this._viewModel.CreateAccount(user);
+            try
+            {
+                await this._viewModel.CreateAccount(user);
+                this.usernameToolTip.Visibility = Visibility.Collapsed;
 
-            if (this._viewModel.ValidateAuthorization())
-            {
-                Frame.Navigate(typeof(MainPage));
+                if (this._viewModel.ValidateAuthorization())
+                {
+                    Frame.Navigate(typeof(MainPage));
+                }
             }
-            else
+            catch (Exception exception)
             {
-                this.errorTextBlock.Text = "Invalid username or password";
+                this.usernameToolTip.Visibility = Visibility.Visible;
+                this.usernameToolTip.Content = exception.Message;
             }
+        }
+
+        private bool CheckConfirmationPassword()
+        {
+            if (!this.Password.Equals(this.ConfirmPassword))
+            {
+                this.confirmPasswordToolTip.Visibility = Visibility.Visible;
+                this.passwordToolTip.Visibility = Visibility.Visible;
+
+                this.passwordToolTip.Content = "Passwords do not match";
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool blankCheck()
+        {
+            var valid = true;
+            if (string.IsNullOrEmpty(this.Username))
+            {
+                this.usernameToolTip.Visibility = Visibility.Visible;
+                this.usernameToolTip.Content = "Username cannot be empty";
+                valid = false;
+            }
+
+            if (string.IsNullOrEmpty(this.Password))
+            {
+                this.passwordToolTip.Visibility = Visibility.Visible;
+                this.passwordToolTip.Content = "Password cannot be empty";
+                valid = false;
+            }
+
+            if (string.IsNullOrEmpty(this.ConfirmPassword))
+            {
+                this.confirmPasswordToolTip.Visibility = Visibility.Visible;
+                this.confirmPasswordToolTip.Content = "Password cannot be empty";
+                valid = false;
+            }
+
+            return valid;
         }
 
         private void loginButton_Click(object sender, RoutedEventArgs e)

@@ -10,8 +10,6 @@
     Height="700">
 
     <Grid Margin="0,0,0,0">
-        <TextBlock Name="errorTextBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text=""
-                   VerticalAlignment="Center" FontSize="30" Visibility="Collapsed" />
         <TextBlock Name="brandingTextBlock" HorizontalAlignment="Center" TextWrapping="Wrap"
                    Text="Welcome to DocuNotes" TextAlignment="Center"
                    VerticalAlignment="Top" FontSize="40" Margin="0,50,0,0" Height="165"
@@ -19,12 +17,18 @@
         <TextBox Name="usernameTextBox" HorizontalAlignment="Center"
                  PlaceholderText="Username" VerticalAlignment="Top" Height="64" Width="317"
                  FontSize="30" Margin="0,225,0,0" />
+        <ToolTip x:Name="usernameToolTip" Content="ToolTip" Margin="375,225,0,0" 
+                 VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Collapsed" Foreground="#FFFF4D4F"/>
         <PasswordBox Name="passwordTextBox" HorizontalAlignment="Center"
                      PlaceholderText="Password" VerticalAlignment="Top" Height="64" Width="317"
-                     FontSize="30" Margin="0,300,0,0" />
+                     FontSize="30" Margin="0,300,0,0" IsPasswordRevealButtonEnabled="True" />
+        <ToolTip x:Name="passwordToolTip" Content="ToolTip" Margin="375,300,0,0" 
+                 VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Collapsed" Foreground="#FFFF4D4F"/>
         <PasswordBox x:Name="confirmPasswordTextBox" HorizontalAlignment="Center"
                      PlaceholderText="Confirm Password" VerticalAlignment="Top" Height="64" Width="317"
-                     FontSize="30" Margin="0,375,0,0" />
+                     FontSize="30" Margin="0,375,0,0" IsPasswordRevealButtonEnabled="True" />
+        <ToolTip x:Name="confirmPasswordToolTip" Content="Passwords do not match" Margin="375,375,0,0" 
+                 VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Collapsed" Foreground="#FFFF4D4F"/>
         <Button Name="signUpButton" Content="Sign-up" Margin="0,475,0,0" VerticalAlignment="Top"
                 Height="50" Width="175" FontSize="25" HorizontalAlignment="Center" Click="signUpButton_Click" />
         <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Or"
