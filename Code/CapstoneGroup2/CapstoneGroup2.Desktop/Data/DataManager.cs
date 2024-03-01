@@ -19,6 +19,23 @@ namespace CapstoneGroup2.Desktop.Data
             fileStream.Write(varBinaryData, 0, varBinaryData.Length);
         }
 
+        public static void SaveVarBinaryAsVideo(byte[] varBinaryData, string outputPath)
+        {
+            try
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                var filePath = Path.Combine(localFolder.Path, "currentVideo.mp4");
+                using var fileStream = new FileStream(filePath, FileMode.Create);
+                fileStream.Write(varBinaryData, 0, varBinaryData.Length);
+
+                Console.WriteLine("Video file saved successfully at: " + outputPath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error saving video file: " + ex.Message);
+            }
+        }
+
         public static async Task<byte[]> FileToBinary(StorageFile storageFile)
         {
             try
