@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Navigation;
 using CapstoneGroup2.Desktop.Data;
 using CapstoneGroup2.Desktop.Library.Model;
 using CapstoneGroup2.Desktop.ViewModel;
+using Windows.Media.Core;
+using Windows.Media;
 
 namespace CapstoneGroup2.Desktop
 {
@@ -39,6 +41,8 @@ namespace CapstoneGroup2.Desktop
             this._notesViewModel = new NotesViewModel();
             this._sourceViewModel = new SourceViewModel();
             this.InitializeComponent();
+            //var timelineController = this.MediaPlayerElement.TransportControls.;
+            //timelineController.PositionChanged += TimelineController_PositionChanged;
         }
 
         #endregion
@@ -71,7 +75,15 @@ namespace CapstoneGroup2.Desktop
                         await DataManager.FileToBinary(destinationFile);
                 }
 
-                DataManager.SaveVarBinaryAsPdf(this._sourceViewModel.currentSource.Content, "./currentSource.pdf");
+                if (this._sourceViewModel.currentSource.NoteType == SourceType.Pdf)
+                {
+                    DataManager.SaveVarBinaryAsPdf(this._sourceViewModel.currentSource.Content, "./currentSource.pdf");
+                }
+                else
+                {
+                    DataManager.SaveVarBinaryAsVideo(this._sourceViewModel.currentSource.Content,"./currentSource.mp4");
+                }
+               
 
                 this.setSource();
                 this.LoadNotes();
@@ -82,14 +94,45 @@ namespace CapstoneGroup2.Desktop
         {
             try
             {
-                var localFolder = ApplicationData.Current.LocalFolder;
-                var storageFile =
-                    await StorageFile.GetFileFromPathAsync(Path.Combine(localFolder.Path, "current.pdf"));
-                this.GatherDocument(storageFile);
+                if (this._sourceViewModel.currentSource.NoteType == SourceType.Pdf)
+                {
+                    this.ScrollViewer.Visibility = Visibility.Visible;
+                    this.MediaPlayerElement.Visibility = Visibility.Collapsed;
+                    var localFolder = ApplicationData.Current.LocalFolder;
+                    var storageFile =
+                        await StorageFile.GetFileFromPathAsync(Path.Combine(localFolder.Path, "current.pdf"));
+                    this.GatherDocument(storageFile);
+                }
+                else
+                {
+                    this.ScrollViewer.Visibility = Visibility.Collapsed;
+                    this.MediaPlayerElement.Visibility = Visibility.Visible;
+                    var localFolder = ApplicationData.Current.LocalFolder;
+                    var storageFile =
+                        await StorageFile.GetFileFromPathAsync(Path.Combine(localFolder.Path, "currentVideo.mp4"));
+                    this.SetMediaSourceFromFile(storageFile);
+                }
+               
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Source);
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void SetMediaSourceFromFile(StorageFile file)
+        {
+            try
+            {
+
+                MediaSource mediaSource = MediaSource.CreateFromStorageFile(file);
+
+                this.MediaPlayerElement.Source = mediaSource;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error setting media source: " + ex.Message);
             }
         }
 
@@ -112,6 +155,8 @@ namespace CapstoneGroup2.Desktop
             }
             catch (Exception ex)
             {
+
+                Console.WriteLine(ex.Source);
                 Console.WriteLine(ex.Message);
             }
         }
@@ -137,7 +182,8 @@ namespace CapstoneGroup2.Desktop
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine(("Broken:"));
+                    Console.WriteLine(ex.Message);
                 }
 
                 if (this.pdfDocument is { IsPasswordProtected: true })

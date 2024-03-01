@@ -1,10 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Source, SourceType } from '../interfaces/Source';
 import { Note } from '../interfaces/Note';
 
 import './styles/MySourceNotes.css';
+import VideoPlayer from '../components/VideoPlayer';
+import PdfViewer from '../components/PdfViewer';
 
 /**
  * MySourceNotes component displaying notes for a specific source.
@@ -166,6 +168,18 @@ export default function MySourceNotes() {
                     </button>
                 </div>
             </div>
+            <div className='my-source-notes-container'>
+            <div className='my-source-notes-content-source'>
+                    {
+                        source?.noteType === SourceType.Pdf || source?.noteType === SourceType.Vid ?
+                            source?.noteType === SourceType.Pdf ?
+                                <PdfViewer pdf={source} /> :
+                                <VideoPlayer video={source} /> :
+                            <h3>Source type not supported yet.</h3>
+
+
+                    }
+                </div>
             <div className='my-source-notes-content'>
                 <div className='my-source-notes-content-notes'>
                     <div className='my-source-notes-content-add-note-section'>
@@ -190,12 +204,6 @@ export default function MySourceNotes() {
                         }
                     </ul>
                 </div>
-                <div className='my-source-notes-content-source'>
-                    {
-                        source?.noteType === SourceType.Pdf ? 
-                            <PdfViewer pdf={source}/> : 
-                            <h3>Source type not supported yet.</h3>
-                    }
                 </div>
             </div>
         </div>
@@ -239,50 +247,5 @@ function NoteEditor({ note }: { note: Note }) {
                     </p>
             }
         </li>
-    );
-}
-
-/**
- * PdfViewer component for rendering PDF content.
- * 
- * @param {Object} props - The component properties.
- * @param {Source} props.pdf - The source containing PDF information.
- * @returns {JSX.Element} The rendered PdfViewer component.
- */
-function PdfViewer({ pdf }: { pdf: Source }) {
-
-    const loadPdf = () => {
-        let objectURL = '';
-        if (!pdf.isLink && pdf.content) {
-            const base64String = pdf.content;
-
-            // Decode the Base64 string to a Uint8Array
-            const binaryString = atob(base64String);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            const blob = new Blob([bytes], { type: 'application/pdf' });
-            objectURL = URL.createObjectURL(blob);
-        }
-        else if (pdf.isLink && pdf.link) {
-            objectURL = pdf.link;
-        }
-
-        return (
-            <iframe
-                src={objectURL}
-                height="100%"
-                width="100%"
-            />
-        );
-    }
-
-    return (
-        <div>
-            {
-                loadPdf()
-            }
-        </div>
     );
 }
