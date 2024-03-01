@@ -16,11 +16,11 @@ VALUES (N'StevenG', N'Kight'),
      (N'Jonathan', N'Corley');
 
 SET IDENTITY_INSERT [dbo].[Source] ON;
-INSERT INTO [dbo].[Source] (source_id, username, name, description, type, is_link, link)
-VALUES (1, N'StevenG', N'Placeholder PDF', N'Placeholder PDF for demo', N'PDF', 1, N'https://s2.q4cdn.com/175719177/files/doc_presentations/Placeholder-PDF.pdf'),
-	 (2, N'StevenC', N'Placeholder PDF', N'Placeholder PDF for demo', N'PDF', 1, N'https://s2.q4cdn.com/175719177/files/doc_presentations/Placeholder-PDF.pdf'),
-	 (3, N'Aaron', N'Placeholder PDF', N'Placeholder PDF for demo', N'PDF', 1, N'https://s2.q4cdn.com/175719177/files/doc_presentations/Placeholder-PDF.pdf'),
-	 (4, N'Jonathan', N'Placeholder PDF', N'Placeholder PDF for demo', N'PDF', 1, N'https://s2.q4cdn.com/175719177/files/doc_presentations/Placeholder-PDF.pdf');
+INSERT INTO [dbo].[Source] (source_id, username, name, description, type, is_link, link, content, created_at, updated_at, authors, publisher, accessed_at)
+VALUES (1, N'StevenG', N'Placeholder PDF', N'Placeholder PDF for demo', N'PDF', 1, N'https://s2.q4cdn.com/175719177/files/doc_presentations/Placeholder-PDF.pdf', NULL, GETDATE(), GETDATE(), NULL, NULL, NULL),
+       (2, N'StevenC', N'Placeholder PDF', N'Placeholder PDF for demo', N'PDF', 1, N'https://s2.q4cdn.com/175719177/files/doc_presentations/Placeholder-PDF.pdf', NULL, GETDATE(), GETDATE(), NULL, NULL, NULL),
+       (3, N'Aaron', N'Placeholder PDF', N'Placeholder PDF for demo', N'PDF', 1, N'https://s2.q4cdn.com/175719177/files/doc_presentations/Placeholder-PDF.pdf', NULL, GETDATE(), GETDATE(), N'JIM|Jill', NULL, NULL),
+       (4, N'Jonathan', N'Placeholder PDF', N'Placeholder PDF for demo', N'PDF', 1, N'https://s2.q4cdn.com/175719177/files/doc_presentations/Placeholder-PDF.pdf', NULL, GETDATE(), GETDATE(), N'JIM|Jill', NULL, NULL);
 SET IDENTITY_INSERT [dbo].[Source] OFF;
 
 INSERT INTO [dbo].[Note] (source_id, username, note_text, tags)

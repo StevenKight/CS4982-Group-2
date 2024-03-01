@@ -16,8 +16,10 @@
         <TextBox Name="sourceNameTextBox" HorizontalAlignment="Center" Margin="0,25,0,0" VerticalAlignment="Top" Width="300" Height="50" PlaceholderText="Source Name" />
         <TextBox Name="sourceDescriptionTextBox" HorizontalAlignment="Center" Margin="0,100,0,0" VerticalAlignment="Top" Width="300" Height="50" PlaceholderText="Source Description" />
 
-        <CheckBox Name="sourceIsLinkCheckBox" Content="Is Link" HorizontalAlignment="Center" Margin="0,165,0,0" VerticalAlignment="Top"
-                  Width="50" Height="25" Unchecked="sourceIsLinkCheckBox_Unchecked" Checked="sourceIsLinkCheckBox_Checked"/>
+        <CheckBox Name="sourceIsLinkCheckBox" Content="Is Link"  Margin="135,165,0,0" VerticalAlignment="Top"
+                  Width="30" Height="25" Unchecked="sourceIsLinkCheckBox_Unchecked" Checked="sourceIsLinkCheckBox_Checked"/>
+        <CheckBox Name="sourceIsVideoCheckBox" Content="Is Video" HorizontalAlignment="Center" Margin="0,165,165,0" VerticalAlignment="Top"
+                  Width="30" Height="25"/>
 
         <Grid Name="linkOptionsGrid" Visibility="Collapsed">
             <TextBox Name="sourceLinkTextBox" HorizontalAlignment="Center" Margin="0,205,0,0" VerticalAlignment="Top" Width="300" Height="50" PlaceholderText="Source Link" />

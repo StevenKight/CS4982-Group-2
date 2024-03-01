@@ -21,10 +21,14 @@
         <Button Name="nextPageButton" Click="NextPage_Click" Content="->" Margin="550,3,0,0" VerticalAlignment="Top"
                 Height="36" Width="45" Canvas.ZIndex="1" />
 
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto" HorizontalAlignment="Left"
+        <ScrollViewer Name="ScrollViewer" Visibility="Collapsed" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto" HorizontalAlignment="Left"
                       ZoomMode="Enabled" MinZoomFactor="0.5" Margin="25,50,0,0" VerticalAlignment="Center" Width="550" Height="650" MaxZoomFactor="0.6">
             <Image x:Name="objectRender" AutomationProperties.Name="PDF document content" Stretch="None" />
+
         </ScrollViewer>
+        <MediaPlayerElement Source="https://youtu.be/5aDfFImxoDY?si=ZT4wL9Cf60gv_msl" Name="MediaPlayerElement" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25,50,0,0" Width="550" Height="650" AreTransportControlsEnabled="True">
+
+        </MediaPlayerElement>
 
         <Button Click="AddNoteItem_Click" Content="Add Note" Margin="625,3,0,0"
                 VerticalAlignment="Top" Height="35" Width="100" Canvas.ZIndex="1" />
