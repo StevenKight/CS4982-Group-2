@@ -16,6 +16,8 @@ export default function RegisterForm() {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
 
+    const [error, setError] = useState<{ username: string | null, password: string | null, confirmPassword: string | null }>({ username: null, password: null, confirmPassword: null });
+
     /**
      * Handles the form submission for user registration.
      *
@@ -24,8 +26,16 @@ export default function RegisterForm() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        const usernameError = !username || username.trim() === '' ? 'Please enter a valid username' : null;
+        const passwordError = !password || password.trim() === '' ? 'Please enter a valid password' : null;
+
+        if (usernameError || passwordError) {
+            setError({ username: usernameError, password: passwordError, confirmPassword: passwordError });
+            return;
+        }
+
         if (password !== confirmPassword) {
-            alert('Passwords do not match.'); // FIXME: Use a better way to display error messages
+            setError({ username: null, password: 'Passwords do not match', confirmPassword: 'Passwords do not match' });
             return;
         }
 
@@ -43,19 +53,35 @@ export default function RegisterForm() {
         })
             .then(response => {
                 if (response.ok) {
+                    setError({ username: null, password: null, confirmPassword: null });
                     return response.json();
                 }
+                else if (response.status === 409) {
+                    setError({ username: 'Username already taken', password: null, confirmPassword: null });
+                }
                 else {
-                    throw new Error('Failed to register user.');
+                    setError({ username: 'An uknown error occurred', password: null, confirmPassword: null });
                 }
             })
             .then(data => {
-                localStorage.setItem('auth', 'true');
-                localStorage.setItem('username', username);
-                localStorage.setItem('token', data.token);
 
-                window.dispatchEvent(new Event("storage"));
-                navigate('/');
+                var dialog = document.getElementById('success-dialog') as HTMLDialogElement | null;
+                if (dialog) {
+                    dialog.showModal();
+                }
+
+                setTimeout(() => {
+                    if (dialog) {
+                        dialog.close();
+                    }
+
+                    localStorage.setItem('auth', 'true');
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('token', data.token);
+
+                    window.dispatchEvent(new Event("storage"));
+                    navigate('/');
+                }, 1500);
             })
             .catch(error => {
                 console.error(error);
@@ -64,18 +90,26 @@ export default function RegisterForm() {
 
     return (
         <form onSubmit={handleSubmit} className='authorize-form'>
+            <dialog id='success-dialog'>
+                <p>
+                    Registration successful! Logging in...
+                </p>
+            </dialog>
             <h1>Register</h1>
             <div className='authorize-form-input'>
                 <label htmlFor='username'>Username</label>
                 <input type='text' value={username} onChange={(e) => setUsername(e.target.value)} />
+                {error.username ? <span className='authorize-form-error'>{error.username}</span> : null}
             </div>
             <div className='authorize-form-input'>
                 <label htmlFor='password'>Password</label>
                 <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+                {error.password ? <span className='authorize-form-error'>{error.password}</span> : null}
             </div>
             <div className='authorize-form-input'>
                 <label htmlFor='confirmPassword'>Confirm Password</label>
                 <input type='password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                {error.confirmPassword ? <span className='authorize-form-error'>{error.confirmPassword}</span> : null}
             </div>
             <button type='submit'>Sign-up</button>
             <h3>or</h3>
