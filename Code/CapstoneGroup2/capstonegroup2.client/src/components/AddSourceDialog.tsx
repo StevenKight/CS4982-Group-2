@@ -36,11 +36,11 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
             dialog.close();
         }
 
-        var authorOptions = document.querySelector('.add-source-dialog-author-selector');
+        const authorOptions = document.querySelector('.add-source-dialog-author-selector');
 
         if (!authorOptions) return;
 
-        var selected = authorOptions.querySelector('.selected');
+        const selected = authorOptions.querySelector('.selected');
         if (selected) {
             selected.classList.remove('selected');
         }
@@ -163,12 +163,12 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
      */
     const handleAuthorClick = (e: React.MouseEvent<HTMLInputElement>) => {
         const author = e.currentTarget;
-
-        var authorOptions = document.querySelector('.add-source-dialog-author-selector');
+        
+        const authorOptions = document.querySelector('.add-source-dialog-author-selector');
 
         if (!authorOptions) return;
 
-        var selected = authorOptions.querySelector('.selected');
+        const selected = authorOptions.querySelector('.selected');
         if (selected) {
             selected.classList.remove('selected');
         }
@@ -187,16 +187,16 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         e.preventDefault();
 
         // Add an author
-        var authorOptions = document.querySelector('.add-source-dialog-author-selector');
+        const authorOptions = document.querySelector('.add-source-dialog-author-selector');
 
         if (!authorOptions) return;
 
-        var selected = authorOptions.querySelector('.selected');
+        const selected = authorOptions.querySelector('.selected');
         if (selected) {
             selected.classList.remove('selected');
         }
 
-        var authorName = prompt('Enter the author name');
+        const authorName = prompt('Enter the author name');
         if (!authorName) return;
 
         const updatedAuthors = authors.concat(authorName);

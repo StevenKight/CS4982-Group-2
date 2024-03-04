@@ -50,7 +50,7 @@ namespace CapstoneGroup2.Desktop
             var sourcesEnumerable = await this._sourceViewModel.GetSources(); // TODO: Add the shared sources
             this._sources = sourcesEnumerable.ToList();
 
-            this.sourcesListBox.ItemsSource = this._sources.Take(4); // TODO: Order by date
+            this.sourcesListBox.ItemsSource = this._sources; // TODO: Order by date
         }
 
         private void sharedSourcesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -53,19 +53,46 @@ namespace CapstoneGroup2.Desktop
                 !string.IsNullOrWhiteSpace(user.Username));
             var authorsNames = authorsObjects?.Select(x => ((User)x).Username).ToList();
 
-            var source = new Source
+            Source source;
+
+            switch (this.sourceIsVideoCheckBox.IsChecked)
             {
-                Type = SourceType.Pdf.ToString(), // TODO: Add type selection to UI for other types
-                Name = this.sourceNameTextBox.Text,
-                Description = this.sourceDescriptionTextBox.Text,
-                IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
-                AuthorsString = string.Join("|", authorsNames),
-                Publisher = this.sourcePublisherTextBox.Text,
-                AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
-            };
+                case null:
+                {
+                    return;
+                }
+                case false:
+                {
+                    source = new Source
+                    {
+                        Type = SourceType.Pdf.ToString(), // TODO: Add type selection to UI for other types
+                        Name = this.sourceNameTextBox.Text,
+                        Description = this.sourceDescriptionTextBox.Text,
+                        IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
+                        AuthorsString = string.Join("|", authorsNames),
+                        Publisher = this.sourcePublisherTextBox.Text,
+                        AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
+                    };
+                    break;
+                }
+                default:
+                {
+                    source = new Source
+                    {
+                        Type = SourceType.Vid.ToString(), // TODO: Add type selection to UI for other types
+                        Name = this.sourceNameTextBox.Text,
+                        Description = this.sourceDescriptionTextBox.Text,
+                        IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
+                        AuthorsString = string.Join("|", authorsNames),
+                        Publisher = this.sourcePublisherTextBox.Text,
+                        AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
+                    };
+                    break;
+                    }
+            }
 
             var isChecked = this.sourceIsLinkCheckBox.IsChecked;
-
+            
             switch (isChecked)
             {
                 case null:
@@ -73,6 +100,7 @@ namespace CapstoneGroup2.Desktop
                     return;
                 }
                 case false:
+                    source.Link = "";
                     source.Content = await DataManager.FileToBinary(this.storageFile);
                     break;
                 default:
@@ -98,6 +126,23 @@ namespace CapstoneGroup2.Desktop
         private async void sourceUploadButton_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
+            switch (this.sourceIsVideoCheckBox.IsChecked)
+            {
+                case null:
+                {
+                    return;
+                }
+                case false:
+                {
+                    picker.FileTypeFilter.Add(".pdf");
+                    break;
+                }
+                default:
+                {
+                    picker.FileTypeFilter.Add(".mp4");
+                    break;
+                }
+            }
             picker.FileTypeFilter.Add(".pdf");
             var file = await picker.PickSingleFileAsync();
 

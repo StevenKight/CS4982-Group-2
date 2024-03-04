@@ -16,7 +16,6 @@ public class UserDalTests
         new User { Username = "testUser2", Password = "testPassword2", Token = "testToken2" }
     ];
 
-    private DbContextOptions<DocunotesDbContext> _options;
     private DocunotesDbContext _context;
 
     #endregion
@@ -26,11 +25,11 @@ public class UserDalTests
     [OneTimeSetUp]
     public void Setup()
     {
-        this._options = new DbContextOptionsBuilder<DocunotesDbContext>()
+        var options = new DbContextOptionsBuilder<DocunotesDbContext>()
             .UseInMemoryDatabase("Docunotes")
             .EnableSensitiveDataLogging()
             .Options;
-        this._context = new DocunotesDbContext(this._options);
+        this._context = new DocunotesDbContext(options);
 
         this._context.Database.EnsureDeleted();
         this._context.Database.EnsureCreated();

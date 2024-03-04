@@ -74,13 +74,7 @@ namespace CapstoneGroup2.Desktop.Library.Dal
             var response = await this.client.PostAsync($"/Source/{user.Username}",
                 new StringContent(JsonSerializer.Serialize(newSource), Encoding.UTF8, "application/json"));
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            var content = await response.Content.ReadAsStringAsync();
-            return false;
+            return response.IsSuccessStatusCode;
         }
 
         #endregion

@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Source, SourceType } from '../interfaces/Source';
 import { Note } from '../interfaces/Note';
 
 import './styles/MySourceNotes.css';
+import VideoPlayer from '../components/VideoPlayer';
+import PdfViewer from '../components/PdfViewer';
 
 /**
  * MySourceNotes component displaying notes for a specific source.
@@ -66,8 +69,8 @@ export default function MySourceNotes() {
      * Function to save a new note.
      */
     const saveNote = () => {
-        var newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
-        var newNoteText = newNoteTextarea.value;
+        const newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
+        const newNoteText = newNoteTextarea.value;
 
         if (newNoteText.trim() === '') {
             setError('Note text cannot be empty, note will not be added');
@@ -112,7 +115,7 @@ export default function MySourceNotes() {
      * Function to cancel creating a new note.
      */
     const cancelNote = () => {
-        var newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
+        const newNoteTextarea = document.getElementById('new-note-text') as HTMLTextAreaElement;
         newNoteTextarea.value = '';
         setNewTagText('');
         setError(null);
@@ -165,6 +168,18 @@ export default function MySourceNotes() {
                     </button>
                 </div>
             </div>
+            <div className='my-source-notes-container'>
+            <div className='my-source-notes-content-source'>
+                    {
+                        source?.noteType === SourceType.Pdf || source?.noteType === SourceType.Vid ?
+                            source?.noteType === SourceType.Pdf ?
+                                <PdfViewer pdf={source} /> :
+                                <VideoPlayer video={source} /> :
+                            <h3>Source type not supported yet.</h3>
+
+
+                    }
+                </div>
             <div className='my-source-notes-content'>
                 <div className='my-source-notes-content-notes'>
                     <div className='my-source-notes-content-add-note-section'>
@@ -183,67 +198,54 @@ export default function MySourceNotes() {
                     <h2>Notes</h2>
                     <ul>
                         {
-                            notes.map((note) => (
-                                <li key={note.noteId}>
-                                    <p>{note.noteText}</p>
-                                </li>
+                            notes.map((note: Note) => (
+                                <NoteEditor key={note.noteId} note={note} />
                             ))
                         }
                     </ul>
                 </div>
-                <div className='my-source-notes-content-source'>
-                    {
-                        source?.noteType === SourceType.Pdf ? 
-                            <PdfViewer pdf={source}/> : 
-                            <h3>Source type not supported yet.</h3>
-                    }
                 </div>
             </div>
         </div>
     );
 }
 
-/**
- * PdfViewer component for rendering PDF content.
- * 
- * @param {Object} props - The component properties.
- * @param {Source} props.pdf - The source containing PDF information.
- * @returns {JSX.Element} The rendered PdfViewer component.
- */
-function PdfViewer({ pdf }: { pdf: Source }) {
+function NoteEditor({ note }: { note: Note }) {
 
-    const loadPdf = () => {
-        var objectURL = '';
-        if (!pdf.isLink && pdf.content) {
-            const base64String = pdf.content;
+    const [editMode, setEditMode] = useState<boolean>(false);
 
-            // Decode the Base64 string to a Uint8Array
-            const binaryString = atob(base64String);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            const blob = new Blob([bytes], { type: 'application/pdf' });
-            objectURL = URL.createObjectURL(blob);
-        }
-        else if (pdf.isLink && pdf.link) {
-            objectURL = pdf.link;
-        }
+    const [noteText, setNoteText] = useState<string>(note.noteText);
 
-        return (
-            <iframe
-                src={objectURL}
-                height="100%"
-                width="100%"
-            />
-        );
+    const saveNote = () => {
+        console.log('Save note');
+        console.log(noteText);
+        setEditMode(false);
     }
 
-    return (
-        <div>
-            {
-                loadPdf()
-            }
+    const cancelNote = () => {
+        setNoteText(note.noteText);
+        setEditMode(false);
+    }
+
+    const editModeHTML = (
+        <div style={{ display: 'flex' }}>
+            <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} />
+            <div>
+                <button onClick={saveNote}>Save</button>
+                <button onClick={cancelNote}>Cancel</button>
+            </div>
         </div>
+    );
+
+    return (
+        <li>
+            {
+                editMode ?
+                    editModeHTML :
+                    <p onClick={() => setEditMode(true)}>
+                        {noteText}
+                    </p>
+            }
+        </li>
     );
 }

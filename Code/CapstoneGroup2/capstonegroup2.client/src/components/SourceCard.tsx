@@ -43,7 +43,7 @@ export default function SourceCard({ source, showUser, showDate }:
                 <small>{source.type}</small>
             </div>
             <p>{source.description}</p>
-            {(showDate && !showUser && source.updatedAt) && <p>Updated on: {source.updatedAt.toDateString()}</p>}
+            {/*{(showDate && !showUser && source.updatedAt) && <p>Updated on: {source.updatedAt.toDateString()}</p>}*/}
             {/* FIXME: Instead of created at for shared, make it shared date */}
             {(showDate && showUser && source.createdAt) && <p>Shared on: {source.createdAt.toDateString()}</p>} 
             {showUser && <p>Shared by: {source.username}</p>}

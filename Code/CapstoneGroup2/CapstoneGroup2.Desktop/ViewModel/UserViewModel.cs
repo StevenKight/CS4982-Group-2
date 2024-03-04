@@ -73,6 +73,27 @@ namespace CapstoneGroup2.Desktop.ViewModel
         }
 
         /// <summary>
+        ///     Creates a new account using given user.
+        /// </summary>
+        /// <param name="user">The user to create.</param>
+        /// <returns>The new user that was created if successful, null otherwise</returns>
+        public async Task<User> CreateAccount(User user)
+        {
+            var validUser = await this._userDal.CreateAccount(user);
+
+            if (validUser != null)
+            {
+                this._applicationStorageHelper.Save("user", JsonConvert.SerializeObject(validUser));
+            }
+            else
+            {
+                this._applicationStorageHelper.Clear();
+            }
+
+            return validUser;
+        }
+
+        /// <summary>
         ///     Gets the saved user.
         /// </summary>
         /// <returns> The locally saved user</returns>
