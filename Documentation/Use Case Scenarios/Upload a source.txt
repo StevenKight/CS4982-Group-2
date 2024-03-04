@@ -1,0 +1,18 @@
+Upload a source
+
+Context:
+The user has created an account,is currently logged in, and is on the sources dashboard(home or
+my sources).
+
+Primary:
+	1. The user selects to upload a new source
+	2. The user selects to upload or link
+	3. The user selects what type of source (pdf or video)
+	2. The user enters metadata about file
+	4. The user can now view the source in dashboard and access it later.
+    Alternative:
+	User gives invalid file
+	    a3)The user is notified and a new file must be selected
+	    Return to 3
+	User gives invalid metadata
+	    a2)The user is notified and not allowed to continue until it is corrected

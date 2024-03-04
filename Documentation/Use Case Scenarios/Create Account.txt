@@ -1,0 +1,18 @@
+Create Account
+
+Context:
+The user is on the create account page.
+
+Primary:
+	1. The user enters a username and password
+	2. The username and password are valid
+	3. User is taken to login page to finish logging in
+    Alternative:
+	Invalid username
+	    a2) User enters invalid username
+	    a3) the user is notified something is wrong
+	    Return to step 1	
+	Invalid password
+	    a2) User enters invalid password
+	    a3) the user is notified something is wrong
+	    Return to step 1

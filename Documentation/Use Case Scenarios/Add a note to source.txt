@@ -1,0 +1,15 @@
+Add a note to source
+
+Context:
+The user has created an account and is currently logged in. The user also has selected a source
+and
+
+Primary:
+	1. The user selects the empty text box to the right of the source
+	2. The user enters a note
+	3. The note is presented to the user
+    Alternative:
+	User adds empty note
+	    a2) User enters empty note
+	    a3) The user is notified that the note is empty and it is not added
+	    Return to step 2

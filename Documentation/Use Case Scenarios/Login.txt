@@ -1,0 +1,15 @@
+Login
+
+Context:
+The user has created an account.
+
+Primary:
+	1. The user enter login credentials
+	2. The Credentials are valid
+	3. The user is logged in to the system
+	4. The user is viewing the dashboard
+    Alternative:
+	User enters empty note
+	    a2) The credentials are invalid
+	    a3) the user is notified
+	    Return to step 1
