@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Dal\UserDal.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Model;
+
+namespace CapstoneGroup2.Server.Dal;
+
+/// &lt;summary&gt;
+///     Class for accessing db for user logic
+/// &lt;/summary&gt;
+/// &lt;seealso cref=&quot;CapstoneGroup2.Server.Dal.IDbDal&amp;lt;CapstoneGroup2.Server.Model.User&amp;gt;&quot; /&gt;
+public class UserDal : IDbDal&lt;User&gt;
+{
+    #region Data members
+
+    /// &lt;summary&gt;
+    ///     The context
+    /// &lt;/summary&gt;
+    private readonly DocunotesDbContext context;
+
+    #endregion
+
+    #region Constructors
+
+    /// &lt;summary&gt;
+    ///     Initializes a new instance of the &lt;see cref=&quot;UserDal&quot; /&gt; class.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;context&quot;&gt;The context.&lt;/param&gt;
+    public UserDal(DocunotesDbContext context)
+    {
+        this.context = context;
+    }
+
+    #endregion
+
+    #region Methods
+
+    /// &lt;summary&gt;
+    ///     Gets the specified key values.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;keyValues&quot;&gt;The key values.&lt;/param&gt;
+    /// &lt;returns&gt;User object&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.InvalidCastException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.ArgumentOutOfRangeException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public User Get(params object?[]? keyValues)
+    {
+        if (keyValues is not { Length: 1 } ||
+            keyValues[0] == null || typeof(string) != keyValues[0]?.GetType())
+        {
+            throw new InvalidCastException();
+        }
+
+        var username = (string)keyValues[0]!;
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        return this.context.Users
+            .Find(username) ?? throw new InvalidOperationException();
+    }
+
+    /// &lt;summary&gt;
+    ///     Gets all.
+    /// &lt;/summary&gt;
+    /// &lt;returns&gt;Users&lt;/returns&gt;
+    public IEnumerable&lt;User&gt; GetAll()
+    {
+        return this.context.Users;
+    }
+
+    /// &lt;summary&gt;
+    ///     Adds the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;true if success, false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentNullException&quot;&gt;&lt;/exception&gt;
+    public bool Add(User entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        this.context.Users.Add(entity);
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    ///     Updates the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;true if success false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public bool Update(User entity)
+    {
+        throw new InvalidOperationException();
+    }
+
+    /// &lt;summary&gt;
+    ///     Deletes the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt; true if success, false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public bool Delete(User entity)
+    {
+        throw new InvalidOperationException();
+    }
+
+    /// &lt;summary&gt;
+    ///     Sets the user.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public void SetUser(string username)
+    {
+        throw new InvalidOperationException();
+    }
+
+    /// &lt;summary&gt;
+    ///     Sets the source identifier.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;sourceId&quot;&gt;The source identifier.&lt;/param&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public void SetSourceId(int sourceId)
+    {
+        throw new InvalidOperationException();
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[26,5,26,47,1],[27,5,27,6,1],[28,9,28,32,1],[29,5,29,6,1],[44,5,44,6,1],[45,9,46,79,1],[47,9,47,10,1],[48,13,48,46,1],[51,9,51,46,1],[52,9,52,49,1],[53,9,53,10,1],[54,13,54,53,1],[57,9,58,70,1],[59,5,59,6,1],[66,5,66,6,1],[67,9,67,35,1],[68,5,68,6,1],[77,5,77,6,1],[78,9,78,51,1],[80,9,80,40,1],[81,9,81,47,1],[82,5,82,6,1],[91,5,91,6,1],[92,9,92,47,1],[102,5,102,6,1],[103,9,103,47,1],[112,5,112,6,1],[113,9,113,47,1],[122,5,122,6,1],[123,9,123,47,1]]);
+    </script>
+  </body>
+</html>

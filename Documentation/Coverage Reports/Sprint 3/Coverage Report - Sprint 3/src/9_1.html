@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop.Tests\Model\NoteTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Desktop.Library.Model;
+
+namespace CapstoneGroup2.Desktop.Tests.Model;
+
+[TestFixture]
+public class NoteTests
+{
+    #region Methods
+
+    [Test]
+    public void NoteProperties_SetAndGetCorrectly()
+    {
+        // Arrange
+        var note = new Note();
+
+        // Act
+        note.NoteId = 1;
+        note.SourceId = 2;
+        note.Username = &quot;JohnDoe&quot;;
+        note.NoteText = &quot;Test note text&quot;;
+        note.TagsString = &quot;tag1,tag2,tag3&quot;;
+        note.NoteDate = DateTime.Now;
+
+        // Assert
+        Assert.AreEqual(1, note.NoteId);
+        Assert.AreEqual(2, note.SourceId);
+        Assert.AreEqual(&quot;JohnDoe&quot;, note.Username);
+        Assert.AreEqual(&quot;Test note text&quot;, note.NoteText);
+        Assert.AreEqual(&quot;tag1,tag2,tag3&quot;, note.TagsString);
+        Assert.AreEqual(DateTime.Now.Date, note.NoteDate.Date);
+    }
+
+    [Test]
+    public void Tags_ReturnsCorrectList()
+    {
+        // Arrange
+        var note = new Note { TagsString = &quot;tag1,tag2,tag3&quot; };
+
+        // Act
+        var tags = note.Tags;
+
+        // Assert
+        Assert.AreEqual(3, tags.Count);
+        Assert.Contains(&quot;tag1&quot;, tags);
+        Assert.Contains(&quot;tag2&quot;, tags);
+        Assert.Contains(&quot;tag3&quot;, tags);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,5,12,6,1],[14,9,14,31,1],[17,9,17,25,1],[18,9,18,27,1],[19,9,19,35,1],[20,9,20,42,1],[21,9,21,44,1],[22,9,22,38,1],[25,9,25,41,1],[26,9,26,43,1],[27,9,27,51,1],[28,9,28,58,1],[29,9,29,60,1],[30,9,30,64,1],[31,5,31,6,1],[35,5,35,6,1],[37,9,37,63,1],[40,9,40,30,1],[43,9,43,40,1],[44,9,44,39,1],[45,9,45,39,1],[46,9,46,39,1],[47,5,47,6,1]]);
+    </script>
+  </body>
+</html>
