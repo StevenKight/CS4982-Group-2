@@ -3,7 +3,7 @@
 namespace CapstoneGroup2.Server.Dal;
 
 /// <summary>
-/// Class for accessing db for user logic
+///     Class for accessing db for user logic
 /// </summary>
 /// <seealso cref="CapstoneGroup2.Server.Dal.IDbDal&lt;CapstoneGroup2.Server.Model.User&gt;" />
 public class UserDal : IDbDal<User>
@@ -11,7 +11,7 @@ public class UserDal : IDbDal<User>
     #region Data members
 
     /// <summary>
-    /// The context
+    ///     The context
     /// </summary>
     private readonly DocunotesDbContext context;
 
@@ -20,7 +20,7 @@ public class UserDal : IDbDal<User>
     #region Constructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserDal"/> class.
+    ///     Initializes a new instance of the <see cref="UserDal" /> class.
     /// </summary>
     /// <param name="context">The context.</param>
     public UserDal(DocunotesDbContext context)
@@ -33,7 +33,7 @@ public class UserDal : IDbDal<User>
     #region Methods
 
     /// <summary>
-    /// Gets the specified key values.
+    ///     Gets the specified key values.
     /// </summary>
     /// <param name="keyValues">The key values.</param>
     /// <returns>User object</returns>
@@ -59,7 +59,7 @@ public class UserDal : IDbDal<User>
     }
 
     /// <summary>
-    /// Gets all.
+    ///     Gets all.
     /// </summary>
     /// <returns>Users</returns>
     public IEnumerable<User> GetAll()
@@ -68,7 +68,7 @@ public class UserDal : IDbDal<User>
     }
 
     /// <summary>
-    /// Adds the specified entity.
+    ///     Adds the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns>true if success, false otherwise</returns>
@@ -82,7 +82,7 @@ public class UserDal : IDbDal<User>
     }
 
     /// <summary>
-    /// Updates the specified entity.
+    ///     Updates the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns>true if success false otherwise</returns>
@@ -93,7 +93,7 @@ public class UserDal : IDbDal<User>
     }
 
     /// <summary>
-    /// Deletes the specified entity.
+    ///     Deletes the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns> true if success, false otherwise</returns>
@@ -104,7 +104,7 @@ public class UserDal : IDbDal<User>
     }
 
     /// <summary>
-    /// Sets the user.
+    ///     Sets the user.
     /// </summary>
     /// <param name="username">The username.</param>
     /// <exception cref="System.InvalidOperationException"></exception>
@@ -114,7 +114,7 @@ public class UserDal : IDbDal<User>
     }
 
     /// <summary>
-    /// Sets the source identifier.
+    ///     Sets the source identifier.
     /// </summary>
     /// <param name="sourceId">The source identifier.</param>
     /// <exception cref="System.InvalidOperationException"></exception>

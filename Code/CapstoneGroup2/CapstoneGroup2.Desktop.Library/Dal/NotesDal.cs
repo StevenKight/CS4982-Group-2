@@ -105,12 +105,7 @@ namespace CapstoneGroup2.Desktop.Library.Dal
 
             var response = await this.client.PutAsync($"/Notes/{user.Username}", content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            return false;
+            return response.IsSuccessStatusCode;
         }
 
         /// <summary>
@@ -122,12 +117,7 @@ namespace CapstoneGroup2.Desktop.Library.Dal
         {
             var response = await this.client.DeleteAsync($"/Notes/{note.NoteId}");
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            return false;
+            return response.IsSuccessStatusCode;
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -62,10 +63,10 @@ namespace CapstoneGroup2.Desktop.Library.Dal
         public async Task<User> Login(User user)
         {
             if (user == null ||
-                string.IsNullOrEmpty(user.Username) ||
-                string.IsNullOrEmpty(user.Password))
+                string.IsNullOrWhiteSpace(user.Username) ||
+                string.IsNullOrWhiteSpace(user.Password))
             {
-                return null;
+                throw new ArgumentOutOfRangeException();
             }
 
             var response = await this.client.PostAsJsonAsync("/Login", user);
@@ -76,6 +77,36 @@ namespace CapstoneGroup2.Desktop.Library.Dal
             }
 
             return null;
+        }
+
+        /// <summary>
+        ///     Creates a new account using given user.
+        /// </summary>
+        /// <param name="user">The user to create.</param>
+        /// <returns>The new user that was created if successful, null otherwise</returns>
+        public async Task<User> CreateAccount(User user)
+        {
+            if (user == null ||
+                string.IsNullOrWhiteSpace(user.Username) ||
+                string.IsNullOrWhiteSpace(user.Password))
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            var response = await this.client.PostAsJsonAsync("/Sign-up", user);
+
+            if (response.IsSuccessStatusCode)
+            {
+                user = await response.Content.ReadFromJsonAsync<User>();
+                return user;
+            }
+
+            return response.StatusCode switch
+            {
+                HttpStatusCode.Conflict => throw new Exception("Username already exists"),
+                HttpStatusCode.BadRequest => throw new Exception("Invalid username or password"),
+                _ => null
+            };
         }
 
         #endregion

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Source, SourceType } from '../interfaces/Source';
 import { Note } from '../interfaces/Note';
@@ -197,10 +198,8 @@ export default function MySourceNotes() {
                     <h2>Notes</h2>
                     <ul>
                         {
-                            notes.map((note) => (
-                                <li key={note.noteId}>
-                                    <p>{note.noteText}</p>
-                                </li>
+                            notes.map((note: Note) => (
+                                <NoteEditor key={note.noteId} note={note} />
                             ))
                         }
                     </ul>
@@ -208,5 +207,45 @@ export default function MySourceNotes() {
                 </div>
             </div>
         </div>
+    );
+}
+
+function NoteEditor({ note }: { note: Note }) {
+
+    const [editMode, setEditMode] = useState<boolean>(false);
+
+    const [noteText, setNoteText] = useState<string>(note.noteText);
+
+    const saveNote = () => {
+        console.log('Save note');
+        console.log(noteText);
+        setEditMode(false);
+    }
+
+    const cancelNote = () => {
+        setNoteText(note.noteText);
+        setEditMode(false);
+    }
+
+    const editModeHTML = (
+        <div style={{ display: 'flex' }}>
+            <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} />
+            <div>
+                <button onClick={saveNote}>Save</button>
+                <button onClick={cancelNote}>Cancel</button>
+            </div>
+        </div>
+    );
+
+    return (
+        <li>
+            {
+                editMode ?
+                    editModeHTML :
+                    <p onClick={() => setEditMode(true)}>
+                        {noteText}
+                    </p>
+            }
+        </li>
     );
 }

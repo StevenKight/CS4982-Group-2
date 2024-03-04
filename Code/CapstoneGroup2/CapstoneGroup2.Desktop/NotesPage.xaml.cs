@@ -288,7 +288,32 @@ namespace CapstoneGroup2.Desktop
             var selectedItemTextBox = (Note)textBox.DataContext;
             selectedItemTextBox.NoteText = textBox.Text;
 
+            if (string.IsNullOrEmpty(selectedItemTextBox.NoteText))
+            {
+                selectedItemTextBox.NoteText = "Enter Note...";
+            }
+
             await this._notesViewModel.updateNote(selectedItemTextBox);
+
+            textBox.MaxHeight = 30;
+
+            var stackPanel = (Grid)textBox.Parent;
+            var textBlock = (TextBlock)stackPanel.Children[1];
+            textBlock.Visibility = Visibility.Visible;
+        }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            var selectedItemTextBox = (Note)textBox.DataContext;
+
+            this.notesListView.SelectedItem = selectedItemTextBox;
+
+            textBox.MaxHeight = 100;
+
+            var stackPanel = (Grid)textBox.Parent;
+            var textBlock = (TextBlock)stackPanel.Children[1];
+            textBlock.Visibility = Visibility.Collapsed;
         }
 
         #endregion

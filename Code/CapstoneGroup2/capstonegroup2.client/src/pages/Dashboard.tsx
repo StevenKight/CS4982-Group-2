@@ -73,17 +73,19 @@ export default function Dashboard() {
                 {/* TODO: Make this recent notes */}
                 <h3>User Notes</h3>
                 {
-                    sources.length !== 0 || !loading ?
-                    <div className='dashboard-notes-row'>
-                        {
-                            sources.map((source) => {
-                                return (
-                                    <SourceCard key={source.sourceId} source={source} showDate />
-                                );
-                            })
-                        }
-                    </div> :
-                    <p>Loading...</p>
+                    !loading && sources.length === 0 ?
+                        <p className='dashboard-no-data'>No notes found.</p> :
+                        !loading ?
+                            <div className='dashboard-notes-row'>
+                                {
+                                    sources.map((source) => {
+                                        return (
+                                            <SourceCard key={source.sourceId} source={source} showDate />
+                                        );
+                                    })
+                                }
+                            </div> :
+                            <p>Loading...</p>
                 }
             </div>
             <div>
