@@ -21,6 +21,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
     const [isLink, setIsLink] = useState(false);
 
     const [file, setFile] = useState(null as File | null);
+    const [fileBytes, setFileBytes] = useState(null as string | null);
 
     const [sourceType, setSourceType] = useState(SourceType.Pdf);
     const [authors, setAuthors] = useState([] as string[]);
@@ -93,12 +94,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
             source.link = data['link'];
         }
         else {
-            const arrayBuffer = await file?.arrayBuffer();
-            if (arrayBuffer) {
-                const bytes = new Uint8Array(arrayBuffer);
-                const base64String = btoa(String.fromCharCode(...bytes));
-                source.content = base64String;
-            }
+            source.content = fileBytes;
         }
 
         const username = localStorage.getItem('username');
@@ -134,12 +130,23 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
      *
      * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event.
      */
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
 
         const file = e.currentTarget.files?.item(0);
         if (file) {
             setFile(file);
+
+            const arrayBuffer = await file?.arrayBuffer();
+            if (arrayBuffer) {
+                const bytes = new Uint8Array(arrayBuffer);
+                const base64String = btoa(
+                    bytes.reduce((data, byte) => 
+                        data + String.fromCharCode(byte), ''
+                    )
+                  );
+                setFileBytes(base64String);
+            }
         }
     }
 
