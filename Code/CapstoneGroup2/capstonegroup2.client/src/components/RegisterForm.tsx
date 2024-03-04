@@ -62,9 +62,11 @@ export default function RegisterForm() {
                 }
                 else if (response.status === 409) {
                     setError({ username: 'Username already taken', password: null, confirmPassword: null });
+                    throw new Error('An unknown error occurred');
                 }
                 else {
                     setError({ username: 'An uknown error occurred', password: null, confirmPassword: null });
+                    throw new Error('An unknown error occurred');
                 }
             })
             .then(data => {

@@ -61,12 +61,9 @@ namespace CapstoneGroup2.Desktop
             this.passwordToolTip.Visibility = Visibility.Collapsed;
             this.confirmPasswordToolTip.Visibility = Visibility.Collapsed;
 
-            if (!this.blankCheck())
-            {
-                return;
-            }
+            var invalid = !this.blankCheck() | !this.CheckConfirmationPassword();
 
-            if (!this.CheckConfirmationPassword())
+            if (invalid)
             {
                 return;
             }
@@ -99,9 +96,18 @@ namespace CapstoneGroup2.Desktop
             if (!this.Password.Equals(this.ConfirmPassword))
             {
                 this.confirmPasswordToolTip.Visibility = Visibility.Visible;
-                this.passwordToolTip.Visibility = Visibility.Visible;
 
-                this.passwordToolTip.Content = "Passwords do not match";
+                // If the password tooltip is visible, move confirm password tooltip to down
+                if (this.passwordToolTip.Visibility == Visibility.Visible)
+                {
+                    this.confirmPasswordToolTip.Margin = new Thickness(375, 405, 0, 0);
+                }
+                else
+                {
+                    this.confirmPasswordToolTip.Margin = new Thickness(375, 375, 0, 0);
+                }
+
+                this.confirmPasswordToolTip.Content = "Passwords do not match";
                 return false;
             }
 
@@ -130,7 +136,7 @@ namespace CapstoneGroup2.Desktop
                 this.passwordToolTip.Visibility = Visibility.Visible;
                 this.passwordToolTip.Content =
                     "Password must contain at least 8 characters, one letter, one number and one special character";
-                return false;
+                valid = false;
             }
 
             if (string.IsNullOrEmpty(this.ConfirmPassword))
