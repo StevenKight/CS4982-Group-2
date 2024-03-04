@@ -82,3 +82,10 @@
     color: #646cff;
     text-decoration: underline;
 }
+
+.add-source-dialog-sourceType-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 1em;
+}
