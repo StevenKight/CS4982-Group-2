@@ -44,6 +44,7 @@ export default function LoginForm() {
                 }
                 else {
                     setError({ username: 'Invalid username or password', password: null });
+                    throw new Error('An unknown error occurred');
                 }
             }).then(data => {
 
