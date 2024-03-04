@@ -2,12 +2,12 @@ import { useState } from 'react';
 
 import './styles/AddSourceDialog.css';
 
-import { Source } from '../interfaces/Source';
+import { Source, SourceType, getSourceTypeName } from '../interfaces/Source';
 
-// const fileTypeMaps = [
-//     {type: SourceType.Vid, extensions: ['mp4', 'avi', 'mov']},
-//     {type: SourceType.Pdf, extensions: ['pdf']},
-// ]
+const fileTypeMaps = [
+    { type: SourceType.Vid, extensions: ['mp4', 'avi', 'mov'] },
+    { type: SourceType.Pdf, extensions: ['pdf'] },
+]
 
 /**
  * React component for adding a new source.
@@ -21,7 +21,9 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
     const [isLink, setIsLink] = useState(false);
 
     const [file, setFile] = useState(null as File | null);
+    const [fileBytes, setFileBytes] = useState(null as string | null);
 
+    const [sourceType, setSourceType] = useState(SourceType.Pdf);
     const [authors, setAuthors] = useState([] as string[]);
     const [selectedAuthor, setSelectedAuthor] = useState(null as string | null);
 
@@ -79,7 +81,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
         });
 
         const source = {
-            type: 'Pdf',
+            type: getSourceTypeName(sourceType),
             name: data['name'],
             description: data['description'],
             isLink: isLink,
@@ -92,12 +94,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
             source.link = data['link'];
         }
         else {
-            const arrayBuffer = await file?.arrayBuffer();
-            if (arrayBuffer) {
-                const bytes = new Uint8Array(arrayBuffer);
-                const base64String = btoa(String.fromCharCode(...bytes));
-                source.content = base64String;
-            }
+            source.content = fileBytes;
         }
 
         const username = localStorage.getItem('username');
@@ -105,12 +102,12 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
             source.username = username;
 
             fetch(`/source/${username}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(source),
-                })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(source),
+            })
                 .then(response => {
                     if (response.status === 200) {
                         setTimeout(() => {
@@ -133,13 +130,37 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
      *
      * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event.
      */
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        
+
         const file = e.currentTarget.files?.item(0);
         if (file) {
             setFile(file);
+
+            const arrayBuffer = await file?.arrayBuffer();
+            if (arrayBuffer) {
+                const bytes = new Uint8Array(arrayBuffer);
+                const base64String = btoa(
+                    bytes.reduce((data, byte) => 
+                        data + String.fromCharCode(byte), ''
+                    )
+                  );
+                setFileBytes(base64String);
+            }
         }
+    }
+
+    /**
+     * Determines the 'accept' attribute for the file input based on the selected source type.
+     *
+     * @returns {string} - The 'accept' attribute value containing MIME types or file extensions.
+     */
+    const getFileAcceptAttribute = () => {
+        const fileTypeMap = fileTypeMaps.find((map) => map.type == sourceType);
+        if (fileTypeMap) {
+            return fileTypeMap.extensions.map((ext) => `.${ext}`).join(',');
+        }
+        return '*/*';
     }
 
     /**
@@ -196,7 +217,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
      */
     const handleRemoveAuthor = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        
+
         // Remove an author
         const updatedAuthors = authors.filter(author => author !== selectedAuthor);
         setAuthors(updatedAuthors);
@@ -204,7 +225,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
 
     return (
         <dialog id={id} className='add-source-dialog'>
-            
+
             <form className='add-source-dialog-form' onSubmit={handleSubmit}>
                 <div className='add-source-dialog-heading'>
                     <h2>Add a source</h2>
@@ -212,7 +233,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                 </div>
 
                 <label htmlFor='name'>Name</label>
-                <input type='text' id='name' placeholder='Enter a name for the source...' required/>
+                <input type='text' id='name' placeholder='Enter a name for the source...' required />
 
                 <label htmlFor='description'>Description</label>
                 <input type='text' id='description' placeholder='Enter a description...' />
@@ -220,34 +241,51 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                 <div className='add-source-dialog-linkable-row'>
                     <div>
                         <label htmlFor='isLinkLink'>Link</label>
-                        <input type="radio" id="isLinkLink" name="isLink" value="Link" 
-                            required onClick={() => {setIsLink(true); setFile(null);}}/>
+                        <input type="radio" id="isLinkLink" name="isLink" value="Link"
+                            required onClick={() => { setIsLink(true); setFile(null); }} />
                     </div>
 
                     <div>
                         <label htmlFor='isLinkUpload'>Upload</label>
-                        <input type="radio" id="isLinkUpload" name="isLink" value="Upload" 
-                            onClick={() => setIsLink(false)} defaultChecked/>
+                        <input type="radio" id="isLinkUpload" name="isLink" value="Upload"
+                            onClick={() => setIsLink(false)} defaultChecked />
                     </div>
                 </div>
 
+                <div className='add-source-dialog-sourceType-row'>
+                    <div>
+                        <label htmlFor='isPdfPdf'>PDF</label>
+                        <input type="radio" id="isPdfPdf" name="isPdf" value="PDF"
+                            onClick={() => { setSourceType(SourceType.Pdf) }} defaultChecked />
+                    </div>
+
+                    <div>
+                        <label htmlFor='isPdfVideo'>Video</label>
+                        <input type="radio" id="isPdfVideo" name="isPdf" value="Video"
+                            required onClick={() => setSourceType(SourceType.Vid)} />
+                    </div>
+                </div>
                 {
-                    isLink ? 
+                    isLink ?
                         <>
                             <label htmlFor='link'>Link</label>
-                            <input type='text' id='link' placeholder='Enter a link...' required={isLink}/>
+                            <input type='text' id='link' placeholder='Enter a link...' required={isLink} />
                         </> :
                         <>
-                            {/* TODO: Add more file types based on source type selection */}
                             <label htmlFor='file'>File</label>
-                            <input type='file' id='file' accept='application/pdf'
-                                required={!isLink} onChange={(e) => handleFileChange(e)}/>
+                            <input
+                                type='file'
+                                id='file'
+                                accept={getFileAcceptAttribute()}
+                                required={!isLink}
+                                onChange={(e) => handleFileChange(e)}
+                            />
                         </>
                 }
 
                 <div className='add-source-dialog-author-heading'>
                     <label>Authors:</label>
-                    <div style={{display: 'flex'}}>
+                    <div style={{ display: 'flex' }}>
                         <button onClick={handleAddAuthor}>+</button>
                         <button onClick={handleRemoveAuthor} disabled={selectedAuthor === null}>-</button>
                     </div>
@@ -266,14 +304,14 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                 <input type='text' id='publisher' placeholder='Enter the publisher...' />
 
                 <label htmlFor='accessedAt'>Accessed At</label>
-                <input type='date' id='accessedAt'/>
+                <input type='date' id='accessedAt' />
 
                 <div className='add-source-dialog-finish-row'>
-                    <input type='submit' value='Add'/>
-                    <input type='reset' value='Cancel' onClick={closeDialog}/>
+                    <input type='submit' value='Add' />
+                    <input type='reset' value='Cancel' onClick={closeDialog} />
                 </div>
             </form>
-           
+
         </dialog>
     );
 }
