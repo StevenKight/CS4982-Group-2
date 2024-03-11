@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop.Tests\Dal\NotesDalTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Net;
+using System.Net.Http.Formatting;
+using CapstoneGroup2.Desktop.Library.Dal;
+using CapstoneGroup2.Desktop.Library.Mocks;
+using CapstoneGroup2.Desktop.Library.Model;
+using Moq;
+
+namespace CapstoneGroup2.Desktop.Tests.Dal;
+
+[TestFixture]
+public class NotesDalTests
+{
+    #region Methods
+
+    [Test]
+    public void ValidConstructor()
+    {
+        // Arrange, Act
+        var notesDal = new NotesDal();
+
+        // Assert
+        Assert.IsNotNull(notesDal);
+    }
+
+    [Test]
+    public async Task GetUserSourceNotes_ValidInput_ReturnsNotes()
+    {
+        // Arrange
+        var user = new User { Username = &quot;JohnDoe&quot;, Password = &quot;SecurePassword&quot; };
+        var source = new Source { SourceId = 1, Username = &quot;JohnDoe&quot;, Type = &quot;Pdf&quot; };
+
+        var expectedUri = new Uri(&quot;https://localhost:7048&quot;);
+        var expectedResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new ObjectContent&lt;IEnumerable&lt;Note&gt;&gt;(
+                new List&lt;Note&gt;
+                    { new() { NoteId = 1, Username = &quot;JohnDoe&quot;, NoteText = &quot;Test note&quot;, TagsString = &quot;test,test&quot; } },
+                new JsonMediaTypeFormatter())
+        };
+
+        var httpClientMock = new Mock&lt;IHttpClientWrapper&gt;();
+        httpClientMock.Setup(x =&gt; x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x =&gt; x.GetAsync($&quot;/Notes/{source.SourceId}-{user.Username}&quot;))
+            .ReturnsAsync(expectedResponse);
+
+        var notesDal = new NotesDal(httpClientMock.Object);
+
+        // Act
+        var result = await notesDal.GetUserSourceNotes(user, source);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.Count());
+        Assert.AreEqual(&quot;JohnDoe&quot;, result.First().Username);
+        Assert.AreEqual(&quot;Test note&quot;, result.First().NoteText);
+        httpClientMock.Verify(x =&gt; x.GetAsync($&quot;/Notes/{source.SourceId}-{user.Username}&quot;), Times.Once);
+    }
+
+    [Test]
+    public async Task GetUserSourceNotes_InvalidInput_ReturnsNull()
+    {
+        // Arrange
+        var user = new User { Username = &quot;&quot;, Password = &quot;&quot; };
+        var source = new Source { SourceId = 1, Username = &quot;&quot;, Type = &quot;&quot; };
+
+        var expectedUri = new Uri(&quot;https://localhost:7048&quot;);
+        var expectedResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.BadRequest
+        };
+
+        var httpClientMock = new Mock&lt;IHttpClientWrapper&gt;();
+        httpClientMock.Setup(x =&gt; x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x =&gt; x.GetAsync($&quot;/Notes/{source.SourceId}-{user.Username}&quot;))
+            .ReturnsAsync(expectedResponse);
+
+        var notesDal = new NotesDal(httpClientMock.Object);
+
+        // Act
+        var result = await notesDal.GetUserSourceNotes(user, source);
+
+        // Assert
+        Assert.IsNull(result);
+        httpClientMock.Verify(x =&gt; x.GetAsync($&quot;/Notes/{source.SourceId}-{user.Username}&quot;), Times.Once);
+    }
+
+    [Test]
+    public async Task createNewNote_ValidInput_ReturnsTrue()
+    {
+        // Arrange
+        var user = new User { Username = &quot;JohnDoe&quot;, Password = &quot;SecurePassword&quot; };
+        var note = new Note { NoteId = 1, NoteText = &quot;New test note&quot;, TagsString = &quot;test,test&quot; };
+
+        var expectedUri = new Uri(&quot;https://localhost:7048&quot;);
+        var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+
+        var httpClientMock = new Mock&lt;IHttpClientWrapper&gt;();
+        httpClientMock.Setup(x =&gt; x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x =&gt; x.PostAsync($&quot;/Notes/{user.Username}&quot;, It.IsAny&lt;StringContent&gt;()))
+            .ReturnsAsync(expectedResponse);
+
+        var notesDal = new NotesDal(httpClientMock.Object);
+
+        // Act
+        var result = await notesDal.createNewNote(user, note);
+
+        // Assert
+        Assert.IsTrue(result);
+        httpClientMock.Verify(x =&gt; x.PostAsync($&quot;/Notes/{user.Username}&quot;, It.IsAny&lt;StringContent&gt;()), Times.Once);
+    }
+
+    [Test]
+    public async Task UpdateNote_ValidInput_ReturnsTrue()
+    {
+        // Arrange
+        var user = new User { Username = &quot;JohnDoe&quot;, Password = &quot;SecurePassword&quot; };
+        var note = new Note { NoteId = 1, NoteText = &quot;Updated test note&quot;, TagsString = &quot;test,test&quot; };
+
+        var expectedUri = new Uri(&quot;https://localhost:7048&quot;);
+        var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+
+        var httpClientMock = new Mock&lt;IHttpClientWrapper&gt;();
+        httpClientMock.Setup(x =&gt; x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x =&gt; x.PutAsync($&quot;/Notes/{user.Username}&quot;, It.IsAny&lt;StringContent&gt;()))
+            .ReturnsAsync(expectedResponse);
+
+        var notesDal = new NotesDal(httpClientMock.Object);
+
+        // Act
+        var result = await notesDal.UpdateNote(note, user);
+
+        // Assert
+        Assert.IsTrue(result);
+        httpClientMock.Verify(x =&gt; x.PutAsync($&quot;/Notes/{user.Username}&quot;, It.IsAny&lt;StringContent&gt;()), Times.Once);
+    }
+
+    [Test]
+    public async Task DeleteNote_ValidInput_ReturnsTrue()
+    {
+        // Arrange
+        var note = new Note { NoteId = 1, NoteText = &quot;Test note to delete&quot; };
+
+        var expectedUri = new Uri(&quot;https://localhost:7048&quot;);
+        var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+
+        var httpClientMock = new Mock&lt;IHttpClientWrapper&gt;();
+        httpClientMock.Setup(x =&gt; x.BaseAddress).Returns(expectedUri);
+        httpClientMock.Setup(x =&gt; x.DeleteAsync($&quot;/Notes/{note.NoteId}&quot;)).ReturnsAsync(expectedResponse);
+
+        var notesDal = new NotesDal(httpClientMock.Object);
+
+        // Act
+        var result = await notesDal.DeleteNote(note);
+
+        // Assert
+        Assert.IsTrue(result);
+        httpClientMock.Verify(x =&gt; x.DeleteAsync($&quot;/Notes/{note.NoteId}&quot;), Times.Once);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,5,17,6,1],[19,9,19,39,1],[22,9,22,36,1],[23,5,23,6,1],[27,5,27,6,1],[29,9,29,83,1],[30,9,30,86,1],[32,9,32,61,1],[33,9,40,11,1],[42,9,42,61,1],[43,9,43,71,1],[44,9,45,45,1],[47,9,47,60,1],[50,9,50,70,1],[53,9,53,34,1],[54,9,54,44,1],[55,9,55,61,1],[56,9,56,63,1],[57,9,57,105,1],[58,5,58,6,1],[62,5,62,6,1],[64,9,64,62,1],[65,9,65,76,1],[67,9,67,61,1],[68,9,71,11,1],[73,9,73,61,1],[74,9,74,71,1],[75,9,76,45,1],[78,9,78,60,1],[81,9,81,70,1],[84,9,84,31,1],[85,9,85,105,1],[86,5,86,6,1],[90,5,90,6,1],[92,9,92,83,1],[93,9,93,98,1],[95,9,95,61,1],[96,9,96,91,1],[98,9,98,61,1],[99,9,99,71,1],[100,9,101,45,1],[103,9,103,60,1],[106,9,106,63,1],[109,9,109,31,1],[110,9,110,115,1],[111,5,111,6,1],[115,5,115,6,1],[117,9,117,83,1],[118,9,118,102,1],[120,9,120,61,1],[121,9,121,91,1],[123,9,123,61,1],[124,9,124,71,1],[125,9,126,45,1],[128,9,128,60,1],[131,9,131,60,1],[134,9,134,31,1],[135,9,135,114,1],[136,5,136,6,1],[140,5,140,6,1],[142,9,142,78,1],[144,9,144,61,1],[145,9,145,91,1],[147,9,147,61,1],[148,9,148,71,1],[149,9,149,106,1],[151,9,151,60,1],[154,9,154,54,1],[157,9,157,31,1],[158,9,158,88,1],[159,5,159,6,1]]);
+    </script>
+  </body>
+</html>

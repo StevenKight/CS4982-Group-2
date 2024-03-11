@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Dal\DocunotesDbContextTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.EntityFrameworkCore;
+
+namespace CapstoneGroup2.Server.UnitTests.Dal;
+
+/* dotcover disable */
+[TestFixture]
+public class DocunotesDbContextTests
+{
+    #region Data members
+
+    private DbContextOptions&lt;DocunotesDbContext&gt; _options;
+    private DocunotesDbContext _context;
+
+    #endregion
+
+    #region Methods
+
+    [SetUp]
+    public void Setup()
+    {
+        this._options = new DbContextOptionsBuilder&lt;DocunotesDbContext&gt;()
+            .UseInMemoryDatabase(&quot;Docunotes&quot;)
+            .Options;
+        this._context = new DocunotesDbContext(this._options);
+    }
+
+    [Test]
+    public void TestConstructor()
+    {
+        Assert.IsNotNull(this._context);
+    }
+
+    [Test]
+    public void TestCurrentUser()
+    {
+        Assert.IsNull(this._context.CurrentUser);
+        this._context.CurrentUser = new User();
+        Assert.IsNotNull(this._context.CurrentUser);
+    }
+
+    [Test]
+    public void TestNotes()
+    {
+        Assert.IsNotNull(this._context.Notes);
+    }
+
+    [Test]
+    public void TestSources()
+    {
+        Assert.IsNotNull(this._context.Sources);
+    }
+
+    [Test]
+    public void TestUsers()
+    {
+        Assert.IsNotNull(this._context.Users);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,5,22,6,1],[23,9,25,22,1],[26,9,26,63,1],[27,5,27,6,1],[31,5,31,6,1],[32,9,32,41,1],[33,5,33,6,1],[37,5,37,6,1],[38,9,38,50,1],[39,9,39,48,1],[40,9,40,53,1],[41,5,41,6,1],[45,5,45,6,1],[46,9,46,47,1],[47,5,47,6,1],[51,5,51,6,1],[52,9,52,49,1],[53,5,53,6,1],[57,5,57,6,1],[58,9,58,47,1],[59,5,59,6,1]]);
+    </script>
+  </body>
+</html>
