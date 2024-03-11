@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Model\User.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace CapstoneGroup2.Server.Model;
+
+/// &lt;summary&gt;
+///     User Model Class
+/// &lt;/summary&gt;
+public class User
+{
+    #region Properties
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the username.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The username.
+    /// &lt;/value&gt;
+    public string Username { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the password.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The password.
+    /// &lt;/value&gt;
+    public string? Password { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the token.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The token.
+    /// &lt;/value&gt;
+    [NotMapped]
+    public string? Token { get; set; }
+
+    #endregion
+}
+
+/// &lt;summary&gt;
+///     Class for configuring User
+/// &lt;/summary&gt;
+/// &lt;seealso cref=&quot;Microsoft.EntityFrameworkCore.IEntityTypeConfiguration&amp;lt;CapstoneGroup2.Server.Model.User&amp;gt;&quot; /&gt;
+public class UserConfiguration : IEntityTypeConfiguration&lt;User&gt;
+{
+    #region Methods
+
+    /// &lt;summary&gt;
+    ///     Configures the entity of type &lt;typeparamref name=&quot;TEntity&quot; /&gt;.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;builder&quot;&gt;The builder to be used to configure the entity type.&lt;/param&gt;
+    public void Configure(EntityTypeBuilder&lt;User&gt; builder)
+    {
+        builder.ToTable(&quot;User&quot;);
+        builder.HasKey(u =&gt; u.Username);
+        builder.Property(u =&gt; u.Username).HasColumnName(&quot;username&quot;);
+        builder.Property(u =&gt; u.Password).HasColumnName(&quot;password&quot;);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,30,20,34,1],[20,35,20,39,1],[28,31,28,35,1],[28,36,28,40,1],[37,28,37,32,1],[37,33,37,37,1],[55,5,55,6,1],[56,9,56,33,1],[57,9,57,41,1],[58,9,58,69,1],[59,9,59,69,1],[60,5,60,6,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop.Library\Model\Note.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CapstoneGroup2.Desktop.Library.Model
+{
+    /// &lt;summary&gt;
+    ///     The note model class
+    /// &lt;/summary&gt;
+    public class Note
+    {
+        #region Properties
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the note identifier.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The note identifier.
+        /// &lt;/value&gt;
+        public int NoteId { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the source identifier.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The source identifier.
+        /// &lt;/value&gt;
+        public int SourceId { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the username.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The username.
+        /// &lt;/value&gt;
+        public string Username { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the note text.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The note text.
+        /// &lt;/value&gt;
+        public string NoteText { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the tags string.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The tags string.
+        /// &lt;/value&gt;
+        public string TagsString { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets the tags.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The tags.
+        /// &lt;/value&gt;
+        public List&lt;string&gt; Tags =&gt; this.TagsString.Split(&#39;,&#39;).ToList();
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the note date.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The note date.
+        /// &lt;/value&gt;
+        public DateTime NoteDate { get; set; }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,29,20,33,1],[20,34,20,38,1],[28,31,28,35,1],[28,36,28,40,1],[36,34,36,38,1],[36,39,36,43,1],[44,34,44,38,1],[44,39,44,43,1],[52,36,52,40,1],[52,41,52,45,1],[60,37,60,72,1],[68,36,68,40,1],[68,41,68,45,1]]);
+    </script>
+  </body>
+</html>
