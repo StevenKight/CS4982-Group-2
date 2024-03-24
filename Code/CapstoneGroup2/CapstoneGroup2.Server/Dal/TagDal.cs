@@ -36,6 +36,8 @@ public class TagDal : IDbDal<Tag>
 
         var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
+        this.context.Add(entity);
+
         return this.context.SaveChanges() > 0;
     }
 
@@ -47,7 +49,26 @@ public class TagDal : IDbDal<Tag>
     /// <exception cref="System.NotImplementedException"></exception>
     public bool Delete(Tag entity)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        if (entity.TagID < 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        var notes = this.context.Notes_Tags.Where(x => x.TagID == entity.TagID);
+        foreach (var note in notes)
+        {
+            this.context.Notes_Tags.Remove(note);
+        }
+
+        var tag = this.context.Tags.Find(entity.TagID);
+        if (tag != null)
+        {
+            this.context.Tags.Remove(tag);
+        }
+
+        return this.context.SaveChanges() > 0;
     }
 
     /// <summary>
@@ -120,8 +141,6 @@ public class TagDal : IDbDal<Tag>
     /// <exception cref="System.UnauthorizedAccessException"></exception>
     public bool Update(Tag entity)
     {
-        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
-        this.context.Tags.Update(entity);
-        return this.context.SaveChanges() > 0;
+        throw new NotImplementedException();
     }
 }

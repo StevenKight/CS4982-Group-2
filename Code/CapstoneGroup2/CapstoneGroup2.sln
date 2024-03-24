@@ -16,9 +16,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapstoneGroup2.Server.UnitT
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CapstoneGroup2.Database", "CapstoneGroup2.Database\CapstoneGroup2.Database.sqlproj", "{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapstoneGroup2.Desktop.Library", "CapstoneGroup2.Desktop.Library\CapstoneGroup2.Desktop.Library.csproj", "{47EDB2D1-CF74-4633-82BF-1920723DD7EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapstoneGroup2.Desktop.Library", "CapstoneGroup2.Desktop.Library\CapstoneGroup2.Desktop.Library.csproj", "{47EDB2D1-CF74-4633-82BF-1920723DD7EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapstoneGroup2.Desktop.Tests", "CapstoneGroup2.Desktop.Tests\CapstoneGroup2.Desktop.Tests.csproj", "{51E17A61-D9B1-47A1-95AC-5E047317F60A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapstoneGroup2.Desktop.Tests", "CapstoneGroup2.Desktop.Tests\CapstoneGroup2.Desktop.Tests.csproj", "{51E17A61-D9B1-47A1-95AC-5E047317F60A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -134,8 +134,8 @@ Global
 		{BB9A951A-B6DE-4C44-B06C-974BA3ABCDAF}.Release|x64.Build.0 = Release|Any CPU
 		{BB9A951A-B6DE-4C44-B06C-974BA3ABCDAF}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB9A951A-B6DE-4C44-B06C-974BA3ABCDAF}.Release|x86.Build.0 = Release|Any CPU
-		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|Any CPU.Deploy.0 = Release|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM.Build.0 = Debug|Any CPU
 		{81BA5B3C-D288-44E9-86BE-DFE51CB2D726}.Debug|ARM.Deploy.0 = Debug|Any CPU
