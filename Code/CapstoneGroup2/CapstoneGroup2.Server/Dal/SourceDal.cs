@@ -169,5 +169,20 @@ public class SourceDal : IDbDal<Source>
         throw new InvalidOperationException();
     }
 
+    public IEnumerable<Source> getSourcesByTag( int tagID)
+    {
+        if (tagID <= 0)
+        {
+            throw new ArgumentException("Invalid tag ID provided.", nameof(tagID));
+        }
+        var sourcesWithNotes = from source in context.Sources
+            join note in context.Notes on source.SourceId equals note.SourceId
+            join noteTag in context.Notes_Tags on note.NoteId equals noteTag.NoteID
+            where noteTag.TagID == tagID
+            select source;
+
+        return sourcesWithNotes;
+    }
+
     #endregion
 }

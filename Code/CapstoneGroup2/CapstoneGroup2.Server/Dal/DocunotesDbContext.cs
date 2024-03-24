@@ -15,6 +15,10 @@ public class DocunotesDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
 
+    public DbSet<Tag> Tags { get; set; }
+
+    public DbSet<Note_Tag> Notes_Tags { get; set; }
+
     #endregion
 
     #region Constructors
@@ -32,7 +36,10 @@ public class DocunotesDbContext : DbContext
         modelBuilder
             .ApplyConfiguration(new NoteConfiguration())
             .ApplyConfiguration(new SourceConfiguration())
-            .ApplyConfiguration(new UserConfiguration());
+            .ApplyConfiguration(new UserConfiguration())
+            .ApplyConfiguration(new TagConfiguration())
+            .ApplyConfiguration(new NoteTagConfiguration());
+
     }
 
     #endregion

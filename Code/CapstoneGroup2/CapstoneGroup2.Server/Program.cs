@@ -20,7 +20,8 @@ builder.Services.AddDbContext<DocunotesDbContext>(options =>
 builder.Services
     .AddTransient<IDbDal<User>, UserDal>()
     .AddTransient<IDbDal<Source>, SourceDal>()
-    .AddTransient<IDbDal<Note>, NotesDal>();
+    .AddTransient<IDbDal<Note>, NotesDal>()
+    .AddTransient<IDbDal<Tag>, TagDal>();
 
 var app = builder.Build();
 
