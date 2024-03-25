@@ -3,19 +3,24 @@
 namespace CapstoneGroup2.Server.Dal;
 
 /// <summary>
-/// Class for accessing data for tags
+///     Class for accessing data for tags
 /// </summary>
 /// <seealso cref="CapstoneGroup2.Server.Dal.IDbDal&lt;CapstoneGroup2.Server.Model.Tag&gt;" />
 public class TagDal : IDbDal<Tag>
 {
+    #region Data members
 
     /// <summary>
-    /// The context
+    ///     The context
     /// </summary>
     private readonly DocunotesDbContext context;
 
+    #endregion
+
+    #region Constructors
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="SourceDal" /> class.
+    ///     Initializes a new instance of the <see cref="SourceDal" /> class.
     /// </summary>
     /// <param name="context">The context.</param>
     public TagDal(DocunotesDbContext context)
@@ -23,8 +28,12 @@ public class TagDal : IDbDal<Tag>
         this.context = context;
     }
 
+    #endregion
+
+    #region Methods
+
     /// <summary>
-    /// Adds the specified entity.
+    ///     Adds the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
@@ -42,7 +51,7 @@ public class TagDal : IDbDal<Tag>
     }
 
     /// <summary>
-    /// Deletes the specified entity.
+    ///     Deletes the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
@@ -72,7 +81,7 @@ public class TagDal : IDbDal<Tag>
     }
 
     /// <summary>
-    /// Gets the specified key values.
+    ///     Gets the specified key values.
     /// </summary>
     /// <param name="keyValues">The key values.</param>
     /// <returns></returns>
@@ -94,27 +103,23 @@ public class TagDal : IDbDal<Tag>
             throw new ArgumentOutOfRangeException();
         }
 
-        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
-
         var tag = this.context.Tags.Find(tagId) ?? throw new InvalidOperationException();
 
-        return  tag;
+        return tag;
     }
 
     /// <summary>
-    /// Gets all.
+    ///     Gets all.
     /// </summary>
     /// <returns></returns>
     /// <exception cref="System.UnauthorizedAccessException"></exception>
     public IEnumerable<Tag> GetAll()
     {
-        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
-
         return this.context.Tags;
     }
 
     /// <summary>
-    /// Sets the source identifier.
+    ///     Sets the source identifier.
     /// </summary>
     /// <param name="sourceId">The source identifier.</param>
     /// <exception cref="System.InvalidOperationException"></exception>
@@ -124,7 +129,7 @@ public class TagDal : IDbDal<Tag>
     }
 
     /// <summary>
-    /// Sets the user.
+    ///     Sets the user.
     /// </summary>
     /// <param name="username">The username.</param>
     public void SetUser(string username)
@@ -134,7 +139,7 @@ public class TagDal : IDbDal<Tag>
     }
 
     /// <summary>
-    /// Updates the specified entity.
+    ///     Updates the specified entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
@@ -143,4 +148,6 @@ public class TagDal : IDbDal<Tag>
     {
         throw new NotImplementedException();
     }
+
+    #endregion
 }

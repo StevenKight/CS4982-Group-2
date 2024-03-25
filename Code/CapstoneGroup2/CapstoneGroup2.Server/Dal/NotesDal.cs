@@ -62,6 +62,11 @@ public class NotesDal : IDbDal<Note>
         var note = this.context.Notes
             .Find(noteId) ?? throw new InvalidOperationException();
 
+        var tags = this.context.Notes_Tags
+            .Where(tag => tag.NoteID == noteId).Select(x => x.TagID).ToList();
+
+        note.Tags = this.context.Tags.Where(tag => tags.Contains(tag.TagID)).ToList();
+
         return note;
     }
 
@@ -81,7 +86,15 @@ public class NotesDal : IDbDal<Note>
         var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
 
         var notes = this.context.Notes
-            .Where(note => note.Username.Equals(username) && note.SourceId == this.sourceId);
+            .Where(note => note.Username.Equals(username) && note.SourceId == this.sourceId).ToList();
+
+        foreach (var note in notes)
+        {
+            var tags = this.context.Notes_Tags
+                .Where(tag => tag.NoteID == note.NoteId).Select(x => x.TagID).ToList();
+
+            note.Tags = this.context.Tags.Where(tag => tags.Contains(tag.TagID)).ToList();
+        }
 
         return notes;
     }
@@ -123,6 +136,8 @@ public class NotesDal : IDbDal<Note>
             throw new UnauthorizedAccessException();
         }
 
+        this.UpdateTags(entity);
+
         this.context.Notes.Update(entity);
         return this.context.SaveChanges() > 0;
     }
@@ -158,6 +173,37 @@ public class NotesDal : IDbDal<Note>
     public void SetSourceId(int sourceId)
     {
         this.sourceId = sourceId;
+    }
+
+    private void UpdateTags(Note entity)
+    {
+        if (entity.Tags == null)
+        {
+            return;
+        }
+
+        var tags = this.context.Notes_Tags
+            .Where(tag => tag.NoteID == entity.NoteId).ToList();
+
+        foreach (var tag in tags)
+        {
+            this.context.Notes_Tags.Remove(tag);
+        }
+
+        foreach (var entityTag in entity.Tags)
+        {
+            var tag = this.context.Tags.FirstOrDefault(x => x.TagName == entityTag.TagName);
+            if (tag == null)
+            {
+                tag = new Tag { TagName = entityTag.TagName };
+                this.context.Tags.Add(tag);
+                this.context.SaveChanges();
+                tag = this.context.Tags.FirstOrDefault(x => x.TagName == entityTag.TagName);
+            }
+
+            var noteTag = new Note_Tag { NoteID = entity.NoteId, TagID = tag.TagID };
+            this.context.Notes_Tags.Add(noteTag);
+        }
     }
 
     #endregion

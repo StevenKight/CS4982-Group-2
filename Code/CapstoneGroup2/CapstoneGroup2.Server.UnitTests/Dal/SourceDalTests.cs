@@ -333,7 +333,6 @@ public class SourceDalTests
             SourceId = 1,
             Username = "testUser",
             NoteText = "testNote",
-            TagsString = "testTag1,testTag2",
             NoteDate = new DateTime(2021, 1, 1)
         };
 

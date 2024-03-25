@@ -1,3 +1,8 @@
+.selected {
+    text-decoration: underline;
+    color: #646cff;
+}
+
 #my-source-notes-heading {
     width: 100%;
     display: flex;
@@ -63,4 +68,33 @@
     margin-right: auto;
     display: flex;
     flex-direction: row;
+}
+
+.notes-display {
+    display: flex;
+    justify-content: space-between;
+}
+
+.notes-display p, .notes-display li {
+    transition: all 0.2s ease-in-out;
+}
+
+.note-display {
+    width: 50%;
+    min-width: 3em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.note-display textarea {
+    width: 75%;
+    height: 10vh;
+}
+
+.note-tags-options {
+    margin-top: 1em;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
 }
