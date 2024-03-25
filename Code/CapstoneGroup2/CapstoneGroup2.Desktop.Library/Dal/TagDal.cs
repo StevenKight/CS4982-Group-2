@@ -62,7 +62,7 @@ namespace CapstoneGroup2.Desktop.Library.Dal
 
         public async Task<IEnumerable<Note>> GetTagsById(User user, Tag tag)
         {
-            var response = await this.client.GetAsync($"/Notes/{tag.TagID}-{user.Username}");
+            var response = await this.client.GetAsync($"/Tag/{tag.TagID}-{user.Username}");
             if (response.IsSuccessStatusCode)
             {
                 var notes = await response.Content.ReadFromJsonAsync<IEnumerable<Note>>();
@@ -72,13 +72,13 @@ namespace CapstoneGroup2.Desktop.Library.Dal
             return null;
         }
 
-        public async Task<bool> createNewNote(User user, Tag tag)
+        public async Task<bool> CreateNewTag(User user, Tag tag)
         {
             var jsonData = JsonConvert.SerializeObject(tag);
 
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-            var response = await this.client.PostAsync($"/Notes/{user.Username}", content);
+            var response = await this.client.PostAsync($"/Tag/{user.Username}", content);
 
             return response.IsSuccessStatusCode;
         }

@@ -34,5 +34,8 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <ComboBox Name="TagsComboBox" Margin="100,85,0,0" VerticalAlignment="Top" Width="346" Height="31" SelectionChanged="TagsComboBox_SelectionChanged"/>
+        <Button Name="SearchButton" Width="72" Height="31" Margin="452,85,0,0" VerticalAlignment="Top" Click="SearchButton_Click">Search</Button>
+        <Button x:Name="ClearButton" Width="72" Height="31" Margin="525,85,0,0" VerticalAlignment="Top" Content="Clear" Click="ClearButton_Click"/>
     </Grid>
 </Page>
