@@ -35,7 +35,7 @@ public class NotesDalTests
             StatusCode = HttpStatusCode.OK,
             Content = new ObjectContent<IEnumerable<Note>>(
                 new List<Note>
-                    { new() { NoteId = 1, Username = "JohnDoe", NoteText = "Test note", TagsString = "test,test" } },
+                    { new() { NoteId = 1, Username = "JohnDoe", NoteText = "Test note" } },
                 new JsonMediaTypeFormatter())
         };
 
@@ -90,7 +90,7 @@ public class NotesDalTests
     {
         // Arrange
         var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
-        var note = new Note { NoteId = 1, NoteText = "New test note", TagsString = "test,test" };
+        var note = new Note { NoteId = 1, NoteText = "New test note" };
 
         var expectedUri = new Uri("https://localhost:7048");
         var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
@@ -115,7 +115,7 @@ public class NotesDalTests
     {
         // Arrange
         var user = new User { Username = "JohnDoe", Password = "SecurePassword" };
-        var note = new Note { NoteId = 1, NoteText = "Updated test note", TagsString = "test,test" };
+        var note = new Note { NoteId = 1, NoteText = "Updated test note" };
 
         var expectedUri = new Uri("https://localhost:7048");
         var expectedResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };

@@ -18,7 +18,6 @@ public class NotesDalTests
             SourceId = 1,
             Username = "testUser",
             NoteText = "testNote",
-            TagsString = "testTag1,testTag2",
             NoteDate = new DateTime(2021, 1, 1)
         },
 
@@ -28,7 +27,6 @@ public class NotesDalTests
             SourceId = 1,
             Username = "testUser",
             NoteText = "testNote2",
-            TagsString = "testTag3,testTag4",
             NoteDate = new DateTime(2021, 1, 1)
         }
     ];
@@ -86,7 +84,6 @@ public class NotesDalTests
         Assert.AreEqual(1, result.SourceId);
         Assert.AreEqual("testUser", result.Username);
         Assert.AreEqual("testNote", result.NoteText);
-        Assert.AreEqual("testTag1,testTag2", result.TagsString);
     }
 
     [Test]
@@ -174,7 +171,6 @@ public class NotesDalTests
             Assert.AreEqual(note.SourceId, actual.SourceId);
             Assert.AreEqual(note.Username, actual.Username);
             Assert.AreEqual(note.NoteText, actual.NoteText);
-            Assert.AreEqual(note.TagsString, actual.TagsString);
         }
     }
 
@@ -204,7 +200,6 @@ public class NotesDalTests
             SourceId = 3,
             Username = "testUser",
             NoteText = "testNote3",
-            TagsString = "testTag5,testTag6",
             NoteDate = new DateTime(2021, 1, 1)
         };
 
@@ -233,7 +228,6 @@ public class NotesDalTests
             SourceId = 3,
             Username = "testUser",
             NoteText = "testNote4",
-            TagsString = "testTag5,testTag6",
             NoteDate = new DateTime(2021, 1, 1)
         };
 
@@ -249,7 +243,6 @@ public class NotesDalTests
         Assert.AreEqual(note.SourceId, actual.SourceId);
         Assert.AreEqual(note.Username, actual.Username);
         Assert.AreEqual(note.NoteText, actual.NoteText);
-        Assert.AreEqual(note.TagsString, actual.TagsString);
     }
 
     [Test]
@@ -265,7 +258,6 @@ public class NotesDalTests
             SourceId = 3,
             Username = "testUser",
             NoteText = "testNote4",
-            TagsString = "testTag5,testTag6",
             NoteDate = new DateTime(2021, 1, 1)
         };
 
@@ -285,7 +277,6 @@ public class NotesDalTests
             SourceId = 3,
             Username = "testUser",
             NoteText = "testNote4",
-            TagsString = "testTag5,testTag6",
             NoteDate = new DateTime(2021, 1, 1)
         };
 

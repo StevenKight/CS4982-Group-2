@@ -80,7 +80,6 @@ namespace CapstoneGroup2.Desktop.Library.Dal
         public async Task<bool> createNewNote(User user, Note note)
         {
             note.NoteDate = DateTime.Now;
-            note.TagsString = "";
             note.Username = user.Username;
             var jsonData = JsonConvert.SerializeObject(note);
 

@@ -11,7 +11,7 @@
 
     <Grid>
         <NavigationView x:Name="navigationView" SelectionChanged="navigationView_SelectionChanged"
-                        IsBackButtonVisible="Collapsed">
+                        IsBackButtonVisible="Collapsed" OpenPaneLength="175">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Dashboard" Tag="home">
                     <NavigationViewItem.Icon>

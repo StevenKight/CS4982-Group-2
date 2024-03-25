@@ -2,11 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Source, SourceType } from '../interfaces/Source';
-import { Note } from '../interfaces/Note';
+import { Note, Tag } from '../interfaces/Note';
 
 import './styles/MySourceNotes.css';
 import VideoPlayer from '../components/VideoPlayer';
 import PdfViewer from '../components/PdfViewer';
+
+const useForceUpdate = () => useState()[1] as () => void;
 
 /**
  * MySourceNotes component displaying notes for a specific source.
@@ -195,14 +197,7 @@ export default function MySourceNotes() {
                             </div>
                         </div>
                     </div>
-                    <h2>Notes</h2>
-                    <ul>
-                        {
-                            notes.map((note: Note) => (
-                                <NoteEditor key={note.noteId} note={note} />
-                            ))
-                        }
-                    </ul>
+                    <NotesDisplay notes={notes} />
                 </div>
                 </div>
             </div>
@@ -210,42 +205,207 @@ export default function MySourceNotes() {
     );
 }
 
-function NoteEditor({ note }: { note: Note }) {
+function NotesDisplay({ notes }: { notes: Note[] }) {
+    
+    const forceUpdate = useForceUpdate();
 
-    const [editMode, setEditMode] = useState<boolean>(false);
+    const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
-    const [noteText, setNoteText] = useState<string>(note.noteText);
+    function selectedNoteHandler() {
+        notes.forEach((note) => {
+            if (note.noteId === selectedNote?.noteId) {
+                note.noteText = selectedNote?.noteText || '';
+                note.tags = selectedNote?.tags || [];
+            }
+        });
 
-    const saveNote = () => {
-        console.log('Save note');
-        console.log(noteText);
-        setEditMode(false);
+        forceUpdate();
     }
 
-    const cancelNote = () => {
-        setNoteText(note.noteText);
-        setEditMode(false);
-    }
-
-    const editModeHTML = (
-        <div style={{ display: 'flex' }}>
-            <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} />
-            <div>
-                <button onClick={saveNote}>Save</button>
-                <button onClick={cancelNote}>Cancel</button>
+    return (
+        <div>
+            <h2>Notes</h2>
+            <div className='notes-display'>
+                <NotesList notes={notes} setSelectedNote={setSelectedNote} />
+                <NoteDisplay selectedNote={selectedNote} onChange={selectedNoteHandler}/>
             </div>
         </div>
     );
+}
+
+function NotesList({ notes, setSelectedNote }: { notes: Note[], setSelectedNote: (note: Note) => void }) {
+
+    function selectNote(event: React.MouseEvent<HTMLParagraphElement>, note: Note) {
+        setSelectedNote(note);
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const selected = document.getElementsByClassName('selected');
+        for (let i = 0; i < selected.length; i++) {
+            if (selected[i].nodeName === 'P') {
+                selected[i].classList.remove('selected');
+            }
+        }
+
+        event.currentTarget.classList.add('selected');
+    }
 
     return (
-        <li>
-            {
-                editMode ?
-                    editModeHTML :
-                    <p onClick={() => setEditMode(true)}>
-                        {noteText}
-                    </p>
+        <div>
+            <ul>
+                {
+                    notes.map((note: Note) => (
+                        <p key={note.noteId} onClick={(e) => selectNote(e, note)}>
+                            {note.noteText}
+                        </p>
+                    ))
+                }
+            </ul>
+        </div>
+    );
+}
+
+function NoteDisplay({ selectedNote, onChange }: { selectedNote: Note | null, onChange: () => void}) {
+
+    const forceUpdate = useForceUpdate();
+
+    const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
+    const [noteText, setNoteText] = useState(selectedNote?.noteText || 'Please select a note to view its content.');
+
+    useEffect(() => {
+        setNoteText(selectedNote?.noteText || 'Please select a note to view its content.');
+    }, [selectedNote]);
+
+    function checkSelectedTag() {
+        const selectedElements = document.getElementsByClassName('selected');
+        let selectedTag = null;
+        for (let i = 0; i < selectedElements.length; i++) {
+            if (selectedElements[i].nodeName === 'LI') {
+                selectedTag = selectedElements[i].textContent;
             }
-        </li>
+        }
+        return selectedTag !== null;
+    }
+
+
+    function addTag() {
+        if (!selectedNote) {
+            alert('Please select a note to add a tag');
+            return;
+        }
+
+        var tagName = prompt('Enter tag name');
+        
+        if (tagName === null || tagName === '') {
+            alert('Tag name cannot be empty');
+            return;
+        }
+
+        if (selectedNote.tags.find(tag => tag.tagName === tagName)) {
+            alert('Tag already exists');
+            return;
+        }
+
+        selectedNote.tags.push({
+            tagId: Math.floor(Math.random() * 1000),
+            tagName: tagName
+        });
+
+        updateNote();
+    }
+
+    function deleteTag() {
+        if (!selectedNote) {
+            alert('Please select a note to delete a tag');
+            return;
+        }
+
+        if (!checkSelectedTag()) {
+            alert('Please select a tag to delete');
+            setSelectedTag(null);
+            return;
+        }
+
+        selectedNote.tags = selectedNote?.tags.filter(tag => tag.tagName !== selectedTag?.tagName) || [];
+
+        updateNote();
+    }
+
+    function updateNote() {
+        const username = localStorage.getItem('username');
+
+        if (!selectedNote || !username) {
+            alert('Error updating note');
+            return;
+        }
+
+        selectedNote.noteText = noteText;
+
+        fetch(`/notes/${username}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(selectedNote),
+            })
+            .then((response) => {
+                if (response.ok) {
+                    setSelectedTag(null);
+                    forceUpdate();
+                    onChange();
+                } else {
+                    alert('Error updating note');
+                }
+            })
+            .catch(() => {
+                alert('Error updating note');
+            });
+    }
+
+    function selectTag(event: React.MouseEvent<HTMLLIElement>, tag: Tag) {
+        setSelectedTag(tag);
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const selected = document.getElementsByClassName('selected');
+        for (let i = 0; i < selected.length; i++) {
+            if (selected[i].nodeName === 'LI') {
+                selected[i].classList.remove('selected');
+            }
+        }
+
+        event.currentTarget.classList.add('selected');
+    }
+
+    return (
+        <div className='note-display'>
+            <textarea value={
+                    selectedNote ? noteText : 'Please select a note to view its content.'
+                } readOnly={!selectedNote} onChange={(e) => setNoteText(e.target.value)} 
+                onBlur={updateNote}/>
+
+            <div className='note-tags-options'>
+                <button disabled={!selectedNote}
+                    onClick={addTag}>
+                    Add Tag
+                </button>
+                <button disabled={!selectedNote || !selectedTag}
+                    
+                    onClick={deleteTag}>
+                    Delete Tag
+                </button>
+            </div>
+            <ul>
+                {
+                    selectedNote ? selectedNote.tags.map((tag: Tag) => (
+                        <li key={tag.tagId} onClick={(e) => selectTag(e, tag)}>
+                            {tag.tagName}
+                        </li>
+                    )) : null
+                }
+            </ul>
+        </div>
     );
 }

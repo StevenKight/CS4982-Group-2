@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Windows.Data.Pdf;
+using Windows.Media.Core;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -14,8 +15,6 @@ using Windows.UI.Xaml.Navigation;
 using CapstoneGroup2.Desktop.Data;
 using CapstoneGroup2.Desktop.Library.Model;
 using CapstoneGroup2.Desktop.ViewModel;
-using Windows.Media.Core;
-using Windows.Media;
 
 namespace CapstoneGroup2.Desktop
 {
@@ -81,9 +80,12 @@ namespace CapstoneGroup2.Desktop
                 }
                 else
                 {
-                    DataManager.SaveVarBinaryAsVideo(this._sourceViewModel.currentSource.Content,"./currentSource.mp4");
+                    DataManager.SaveVarBinaryAsVideo(this._sourceViewModel.currentSource.Content,
+                        "./currentSource.mp4");
                 }
-               
+
+                this.addTag.IsEnabled = false;
+                this.removeTag.IsEnabled = false;
 
                 this.setSource();
                 this.LoadNotes();
@@ -112,7 +114,6 @@ namespace CapstoneGroup2.Desktop
                         await StorageFile.GetFileFromPathAsync(Path.Combine(localFolder.Path, "currentVideo.mp4"));
                     this.SetMediaSourceFromFile(storageFile);
                 }
-               
             }
             catch (Exception ex)
             {
@@ -125,8 +126,7 @@ namespace CapstoneGroup2.Desktop
         {
             try
             {
-
-                MediaSource mediaSource = MediaSource.CreateFromStorageFile(file);
+                var mediaSource = MediaSource.CreateFromStorageFile(file);
 
                 this.MediaPlayerElement.Source = mediaSource;
             }
@@ -155,7 +155,6 @@ namespace CapstoneGroup2.Desktop
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine(ex.Source);
                 Console.WriteLine(ex.Message);
             }
@@ -182,7 +181,7 @@ namespace CapstoneGroup2.Desktop
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(("Broken:"));
+                    Console.WriteLine("Broken:");
                     Console.WriteLine(ex.Message);
                 }
 
@@ -254,6 +253,8 @@ namespace CapstoneGroup2.Desktop
             await this._notesViewModel.AddNewNote(note);
 
             this.LoadNotes();
+
+            this.notesListView.SelectedIndex = this.notesListView.Items.Count - 1;
         }
 
         private async void RemoveNoteItem_Click(object sender, RoutedEventArgs e)
@@ -284,36 +285,130 @@ namespace CapstoneGroup2.Desktop
 
         private async void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            var textBox = (TextBox)sender;
-            var selectedItemTextBox = (Note)textBox.DataContext;
-            selectedItemTextBox.NoteText = textBox.Text;
-
-            if (string.IsNullOrEmpty(selectedItemTextBox.NoteText))
+            if (sender == null)
             {
-                selectedItemTextBox.NoteText = "Enter Note...";
+                return;
             }
 
-            await this._notesViewModel.updateNote(selectedItemTextBox);
+            var note = (Note)this.notesListView.SelectedItem;
 
-            textBox.MaxHeight = 30;
+            if (note == null)
+            {
+                var flyout = new Flyout
+                {
+                    Content = new TextBlock
+                    {
+                        Text = "Please select a note to edit"
+                    }
+                };
 
-            var stackPanel = (Grid)textBox.Parent;
-            var textBlock = (TextBlock)stackPanel.Children[1];
-            textBlock.Visibility = Visibility.Visible;
+                flyout.ShowAt(this.notesListView);
+            }
+
+            var textBlock = (TextBox)sender;
+            note.NoteText = textBlock.Text;
+
+            if (string.IsNullOrEmpty(note.NoteText))
+            {
+                note.NoteText = "Enter Note...";
+            }
+
+            await this._notesViewModel.updateNote(note);
         }
 
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void notesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var textBox = (TextBox)sender;
-            var selectedItemTextBox = (Note)textBox.DataContext;
+            var note = (Note)(this.notesListView.SelectedItem ?? new Note());
 
-            this.notesListView.SelectedItem = selectedItemTextBox;
+            this.addTag.IsEnabled = true;
+            this.removeTag.IsEnabled = true;
 
-            textBox.MaxHeight = 100;
+            this.selectedItemTextBox.Text = note.NoteText ?? "Enter a new note...";
 
-            var stackPanel = (Grid)textBox.Parent;
-            var textBlock = (TextBlock)stackPanel.Children[1];
-            textBlock.Visibility = Visibility.Collapsed;
+            this.tagsListView.Items?.Clear();
+            foreach (var tag in note.Tags ?? new List<Tag>())
+            {
+                this.tagsListView.Items?.Add(tag);
+            }
+        }
+
+        private async void AddTagItem_Click(object sender, RoutedEventArgs e)
+        {
+            var note = (Note)this.notesListView.SelectedItem;
+
+            if (note == null)
+            {
+                var flyout = new Flyout
+                {
+                    Content = new TextBlock
+                    {
+                        Text = "Please select a note to add a tag to"
+                    }
+                };
+
+                flyout.ShowAt(this.notesListView);
+            }
+
+            // Prompt user for tag name using dialog
+            var dialog = new ContentDialog
+            {
+                Title = "Add Tag",
+                Content = new TextBox(),
+                PrimaryButtonText = "Add",
+                CloseButtonText = "Cancel"
+            };
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                var tag = new Tag
+                {
+                    TagName = ((TextBox)dialog.Content).Text
+                };
+
+                note.Tags.Add(tag);
+                this.tagsListView.Items?.Add(tag);
+
+                await this._notesViewModel.updateNote(note);
+            }
+        }
+
+        private async void RemoveTagItem_Click(object sender, RoutedEventArgs e)
+        {
+            var note = (Note)this.notesListView.SelectedItem;
+
+            if (note == null)
+            {
+                var flyout = new Flyout
+                {
+                    Content = new TextBlock
+                    {
+                        Text = "Please select a note to remove a tag"
+                    }
+                };
+
+                flyout.ShowAt(this.notesListView);
+            }
+
+            var selectedItem = (Tag)this.tagsListView.SelectedItem;
+
+            if (selectedItem == null)
+            {
+                var flyout = new Flyout
+                {
+                    Content = new TextBlock
+                    {
+                        Text = "Please select a tag to delete"
+                    }
+                };
+
+                flyout.ShowAt(this.tagsListView);
+            }
+
+            note.Tags.Remove(selectedItem);
+            this.tagsListView.Items?.Remove(selectedItem);
+
+            await this._notesViewModel.updateNote(note);
         }
 
         #endregion

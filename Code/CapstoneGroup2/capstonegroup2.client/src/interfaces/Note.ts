@@ -1,8 +1,15 @@
-export type Note = {
+type Note = {
     noteId: number;
     sourceId: number;
     username: string;
     noteText: string;
-    tagsString: string;
     noteDate: Date;
+    tags: Tag[];
 }
+
+type Tag = {
+    tagId: number;
+    tagName: string;
+}
+
+export type { Note, Tag };

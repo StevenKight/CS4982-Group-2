@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CapstoneGroup2.Desktop.Library.Model
 {
@@ -44,20 +43,12 @@ namespace CapstoneGroup2.Desktop.Library.Model
         public string NoteText { get; set; }
 
         /// <summary>
-        ///     Gets or sets the tags string.
-        /// </summary>
-        /// <value>
-        ///     The tags string.
-        /// </value>
-        public string TagsString { get; set; }
-
-        /// <summary>
         ///     Gets the tags.
         /// </summary>
         /// <value>
         ///     The tags.
         /// </value>
-        public List<string> Tags => this.TagsString.Split(',').ToList();
+        public List<Tag> Tags { get; set; }
 
         /// <summary>
         ///     Gets or sets the note date.
