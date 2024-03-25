@@ -177,6 +177,11 @@ public class NotesDal : IDbDal<Note>
 
     private void UpdateTags(Note entity)
     {
+        if (entity.Tags == null)
+        {
+            return;
+        }
+
         var tags = this.context.Notes_Tags
             .Where(tag => tag.NoteID == entity.NoteId).ToList();
 
