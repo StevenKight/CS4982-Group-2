@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Dal\TagDal.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Model;
+
+namespace CapstoneGroup2.Server.Dal;
+
+/// &lt;summary&gt;
+/// Class for accessing data for tags
+/// &lt;/summary&gt;
+/// &lt;seealso cref=&quot;CapstoneGroup2.Server.Dal.IDbDal&amp;lt;CapstoneGroup2.Server.Model.Tag&amp;gt;&quot; /&gt;
+public class TagDal : IDbDal&lt;Tag&gt;
+{
+
+    /// &lt;summary&gt;
+    /// The context
+    /// &lt;/summary&gt;
+    private readonly DocunotesDbContext context;
+
+    /// &lt;summary&gt;
+    /// Initializes a new instance of the &lt;see cref=&quot;SourceDal&quot; /&gt; class.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;context&quot;&gt;The context.&lt;/param&gt;
+    public TagDal(DocunotesDbContext context)
+    {
+        this.context = context;
+    }
+
+    /// &lt;summary&gt;
+    /// Adds the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentNullException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public bool Add(Tag entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        this.context.Add(entity);
+
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    /// Deletes the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.NotImplementedException&quot;&gt;&lt;/exception&gt;
+    public bool Delete(Tag entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        if (entity.TagID &lt; 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        var notes = this.context.Notes_Tags.Where(x =&gt; x.TagID == entity.TagID);
+        foreach (var note in notes)
+        {
+            this.context.Notes_Tags.Remove(note);
+        }
+
+        var tag = this.context.Tags.Find(entity.TagID);
+        if (tag != null)
+        {
+            this.context.Tags.Remove(tag);
+        }
+
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    /// Gets the specified key values.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;keyValues&quot;&gt;The key values.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.InvalidCastException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.ArgumentOutOfRangeException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public Tag Get(params object?[]? keyValues)
+    {
+        if (keyValues is not { Length: 1 } ||
+            keyValues[0] == null || typeof(int) != keyValues[0]?.GetType())
+        {
+            throw new InvalidCastException();
+        }
+
+        var tagId = (int)keyValues[0]!;
+        if (tagId &lt; 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        var tag = this.context.Tags.Find(tagId) ?? throw new InvalidOperationException();
+
+        return  tag;
+    }
+
+    /// &lt;summary&gt;
+    /// Gets all.
+    /// &lt;/summary&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public IEnumerable&lt;Tag&gt; GetAll()
+    {
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        return this.context.Tags;
+    }
+
+    /// &lt;summary&gt;
+    /// Sets the source identifier.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;sourceId&quot;&gt;The source identifier.&lt;/param&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public void SetSourceId(int sourceId)
+    {
+        throw new InvalidOperationException();
+    }
+
+    /// &lt;summary&gt;
+    /// Sets the user.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+    public void SetUser(string username)
+    {
+        var user = new User { Username = username };
+        this.context.CurrentUser = user;
+    }
+
+    /// &lt;summary&gt;
+    /// Updates the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public bool Update(Tag entity)
+    {
+        throw new NotImplementedException();
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[26,5,26,46,1],[27,5,27,6,1],[28,9,28,32,1],[29,5,29,6,1],[43,5,43,6,1],[44,9,44,51,1],[46,9,46,102,1],[48,9,48,34,1],[50,9,50,47,1],[51,5,51,6,1],[60,5,60,6,1],[61,9,61,51,1],[63,9,63,30,1],[64,9,64,10,1],[65,13,65,53,1],[68,9,68,81,1],[69,9,69,16,1],[69,18,69,26,0],[69,27,69,29,1],[69,30,69,35,1],[70,9,70,10,0],[71,13,71,50,0],[72,9,72,10,0],[74,9,74,56,1],[75,9,75,25,1],[76,9,76,10,1],[77,13,77,43,1],[78,9,78,10,1],[80,9,80,47,1],[81,5,81,6,1],[93,5,93,6,1],[94,9,95,76,1],[96,9,96,10,1],[97,13,97,46,1],[100,9,100,40,1],[101,9,101,23,1],[102,9,102,10,1],[103,13,103,53,1],[106,9,106,90,1],[108,9,108,20,1],[109,5,109,6,1],[117,5,117,6,1],[118,9,118,34,1],[119,5,119,6,1],[127,5,127,6,1],[128,9,128,47,1],[136,5,136,6,1],[137,9,137,53,1],[138,9,138,41,1],[139,5,139,6,1],[148,5,148,6,1],[149,9,149,45,1]]);
+    </script>
+  </body>
+</html>

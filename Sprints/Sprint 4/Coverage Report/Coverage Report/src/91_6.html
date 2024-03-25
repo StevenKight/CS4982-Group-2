@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Dal\TagDalTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+
+namespace CapstoneGroup2.Server.UnitTests.Dal;
+
+[TestFixture]
+public class TagDalTests
+{
+    private List&lt;Tag&gt; _tags =
+    [
+        new Tag { TagID = 1, TagName = &quot;Tag1&quot; },
+        new Tag { TagID = 2, TagName = &quot;Tag2&quot; },
+        new Tag { TagID = 3, TagName = &quot;Tag3&quot; }
+    ];
+    private DbContextOptions&lt;DocunotesDbContext&gt; _options;
+    private DocunotesDbContext _context;
+
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        this._options = new DbContextOptionsBuilder&lt;DocunotesDbContext&gt;()
+            .UseInMemoryDatabase(&quot;Docunotes&quot;)
+            .EnableSensitiveDataLogging()
+            .Options;
+        this._context = new DocunotesDbContext(this._options);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+        this._context.Tags.AddRange(this._tags);
+        this._context.SaveChanges();
+    }
+    [Test]
+    public void Get_ValidTagId_ReturnsTag()
+    {
+        var tagDal = new TagDal(this._context);
+
+        // Act
+        var result = tagDal.Get(3);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(_tags[2]));
+    }
+
+    [Test]
+    public void GetAll_ReturnsAllTags()
+    {
+
+        var tagDal = new TagDal(this._context);
+
+        // Act
+        var result = tagDal.GetAll();
+
+        // Assert
+        Assert.That(result.Count(), Is.EqualTo(3));
+    }
+    [Test]
+    public void Add_ValidTag_ReturnsTrue()
+    {
+        // Arrange
+        var tag = new Tag { TagID = 4, TagName = &quot;TestTag&quot; };
+        var tagDal = new TagDal(this._context);
+
+        // Act
+        var result = tagDal.Add(tag);
+
+        // Assert
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void Delete_ValidID_ReturnsTrue()
+    {
+        // Arrange
+        var tagDal = new TagDal(this._context); // Mock DbContext not needed for this test
+
+        var result = tagDal.Delete(this._tags[0]);
+        Assert.True(result);
+    }
+
+    [Test]
+    public void SetSourceId_NotImplemented_ThrowsException()
+    {
+        // Arrange
+        var tagDal = new TagDal(null); // Mock DbContext not needed for this test
+
+        // Act &amp; Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; tagDal.SetSourceId(1));
+    }
+
+    [Test]
+    public void SetUser_SetsCurrentUser()
+    {
+        // Arrange
+        var username = &quot;testUser&quot;;
+        var tagDal = new TagDal(this._context);
+
+        // Act
+        tagDal.SetUser(username);
+
+        // Assert
+        Assert.That(&quot;testUser&quot;, Is.EqualTo(username));
+    }
+
+    [Test]
+    public void Update_ValidTag_ReturnsTrue()
+    {
+        var tagDal = new TagDal(null); // Mock DbContext not needed for this test
+
+        // Act &amp; Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; tagDal.SetSourceId(1));
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,5,17,7,1],[28,5,28,6,1],[29,9,32,22,1],[33,9,33,63,1],[34,9,34,99,1],[35,9,35,49,1],[36,9,36,37,1],[37,5,37,6,1],[41,5,41,6,1],[42,9,42,48,1],[45,9,45,36,1],[48,9,48,56,1],[49,5,49,6,1],[53,5,53,6,1],[54,9,54,48,1],[57,9,57,51,1],[57,51,57,67,1],[57,67,57,69,1],[58,5,58,6,1],[62,5,62,6,1],[63,9,63,48,1],[66,9,66,51,1],[66,51,66,67,1],[66,67,66,69,1],[67,5,67,6,1],[71,5,71,6,1],[72,9,72,48,1],[75,9,75,58,1],[75,58,75,72,1],[75,72,75,74,1],[76,5,76,6,1],[80,5,80,6,1],[81,9,81,48,1],[84,9,84,38,1],[87,9,87,52,1],[88,5,88,6,1],[92,5,92,6,1],[94,9,94,62,1],[95,9,95,48,1],[98,9,98,38,1],[101,9,101,31,1],[102,5,102,6,1],[106,5,106,6,1],[108,9,108,48,1],[110,9,110,51,1],[111,9,111,29,1],[112,5,112,6,1],[116,5,116,6,1],[118,9,118,48,1],[119,9,119,73,1],[122,9,122,58,1],[122,58,122,83,1],[122,83,122,85,1],[123,5,123,6,1],[127,5,127,6,1],[129,9,129,39,1],[132,9,132,56,1],[132,56,132,77,1],[132,77,132,79,1],[133,5,133,6,1],[137,5,137,6,1],[139,9,139,35,1],[140,9,140,48,1],[143,9,143,34,1],[146,9,146,55,1],[147,5,147,6,1],[151,5,151,6,1],[152,9,152,39,1],[155,9,155,56,1],[155,56,155,77,1],[155,77,155,79,1],[156,5,156,6,1],[160,5,160,6,1],[162,9,162,39,1],[165,9,165,54,1],[165,54,165,78,1],[165,78,165,80,1],[166,5,166,6,1]]);
+    </script>
+  </body>
+</html>

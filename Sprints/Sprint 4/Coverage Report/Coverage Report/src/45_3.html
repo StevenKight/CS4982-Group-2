@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop.Library\Dal\NotesDal.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text;
+using System.Threading.Tasks;
+using CapstoneGroup2.Desktop.Library.Mocks;
+using CapstoneGroup2.Desktop.Library.Model;
+using Newtonsoft.Json;
+
+namespace CapstoneGroup2.Desktop.Library.Dal
+{
+    /// &lt;summary&gt;
+    /// &lt;/summary&gt;
+    public class NotesDal
+    {
+        #region Data members
+
+        /// &lt;summary&gt;
+        ///     The base URL
+        /// &lt;/summary&gt;
+        private static readonly string BaseUrl = &quot;https://localhost:7048&quot;;
+
+        /// &lt;summary&gt;
+        ///     The client
+        /// &lt;/summary&gt;
+        private readonly IHttpClientWrapper client;
+
+        #endregion
+
+        #region Constructors
+
+        /// &lt;summary&gt;
+        ///     Initializes a new instance of the &lt;see cref=&quot;NotesDal&quot; /&gt; class.
+        /// &lt;/summary&gt;
+        public NotesDal()
+        {
+            this.client = new HttpClientWrapper(new HttpClient());
+            this.client.BaseAddress = new Uri(BaseUrl);
+        }
+
+        /// &lt;summary&gt;
+        ///     Initializes a new instance of the &lt;see cref=&quot;NotesDal&quot; /&gt; class.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;client&quot;&gt;The client.&lt;/param&gt;
+        public NotesDal(IHttpClientWrapper client)
+        {
+            this.client = client;
+            this.client.BaseAddress = new Uri(BaseUrl);
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// &lt;summary&gt;
+        ///     Gets the user source notes.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;user&quot;&gt;The user.&lt;/param&gt;
+        /// &lt;param name=&quot;source&quot;&gt;The source.&lt;/param&gt;
+        /// &lt;returns&gt;Enumerable of notes in db or null if none&lt;/returns&gt;
+        public async Task&lt;IEnumerable&lt;Note&gt;&gt; GetUserSourceNotes(User user, Source source)
+        {
+            var response = await this.client.GetAsync($&quot;/Notes/{source.SourceId}-{user.Username}&quot;);
+            if (response.IsSuccessStatusCode)
+            {
+                var notes = await response.Content.ReadFromJsonAsync&lt;IEnumerable&lt;Note&gt;&gt;();
+                return notes;
+            }
+
+            return null;
+        }
+
+        /// &lt;summary&gt;
+        ///     Creates the new note.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;user&quot;&gt;The user.&lt;/param&gt;
+        /// &lt;param name=&quot;note&quot;&gt;The note.&lt;/param&gt;
+        /// &lt;returns&gt;true if successful, false otherwise&lt;/returns&gt;
+        public async Task&lt;bool&gt; createNewNote(User user, Note note)
+        {
+            note.NoteDate = DateTime.Now;
+            note.TagsString = &quot;&quot;;
+            note.Username = user.Username;
+            var jsonData = JsonConvert.SerializeObject(note);
+
+            var content = new StringContent(jsonData, Encoding.UTF8, &quot;application/json&quot;);
+
+            var response = await this.client.PostAsync($&quot;/Notes/{user.Username}&quot;, content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        /// &lt;summary&gt;
+        ///     Updates the note.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;note&quot;&gt;The note.&lt;/param&gt;
+        /// &lt;param name=&quot;user&quot;&gt;The user.&lt;/param&gt;
+        /// &lt;returns&gt;true if successful, false otherwise&lt;/returns&gt;
+        public async Task&lt;bool&gt; UpdateNote(Note note, User user)
+        {
+            var jsonData = JsonConvert.SerializeObject(note);
+
+            var content = new StringContent(jsonData, Encoding.UTF8, &quot;application/json&quot;);
+
+            var response = await this.client.PutAsync($&quot;/Notes/{user.Username}&quot;, content);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        /// &lt;summary&gt;
+        ///     Deletes the note.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;note&quot;&gt;The note.&lt;/param&gt;
+        /// &lt;returns&gt;true if successful, false otherwise&lt;/returns&gt;
+        public async Task&lt;bool&gt; DeleteNote(Note note)
+        {
+            var response = await this.client.DeleteAsync($&quot;/Notes/{note.NoteId}&quot;);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,22,75,1],[36,9,36,26,1],[37,9,37,10,1],[38,13,38,67,1],[39,13,39,56,1],[40,9,40,10,1],[46,9,46,51,1],[47,9,47,10,1],[48,13,48,34,1],[49,13,49,56,1],[50,9,50,10,1],[63,9,63,10,1],[64,13,64,100,1],[65,13,65,46,1],[66,13,66,14,1],[67,17,67,91,1],[68,17,68,30,1],[71,13,71,25,1],[72,9,72,10,1],[81,9,81,10,1],[82,13,82,42,1],[83,13,83,43,1],[84,13,84,62,1],[86,13,86,90,1],[88,13,88,92,1],[90,13,90,49,1],[91,9,91,10,1],[100,9,100,10,1],[101,13,101,62,1],[103,13,103,90,1],[105,13,105,91,1],[107,13,107,49,1],[108,9,108,10,1],[116,9,116,10,1],[117,13,117,83,1],[119,13,119,49,1],[120,9,120,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Dal\SourceDalTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.EntityFrameworkCore;
+
+namespace CapstoneGroup2.Server.UnitTests.Dal;
+
+/* dotcover disable */
+[TestFixture]
+public class SourceDalTests
+{
+    #region Data members
+
+    private readonly List&lt;Source&gt; _sources =
+    [
+        new Source
+        {
+            SourceId = 1,
+            Name = &quot;testSource&quot;,
+            Description = &quot;testDescription&quot;,
+            IsLink = true,
+            Link = &quot;testUrl&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        },
+
+        new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource2&quot;,
+            Description = &quot;testDescription2&quot;,
+            IsLink = true,
+            Link = &quot;testUrl2&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        }
+    ];
+
+    private DbContextOptions&lt;DocunotesDbContext&gt; _options;
+    private DocunotesDbContext _context;
+
+    #endregion
+
+    #region Methods
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        this._options = new DbContextOptionsBuilder&lt;DocunotesDbContext&gt;()
+            .UseInMemoryDatabase(&quot;Docunotes&quot;)
+            .EnableSensitiveDataLogging()
+            .Options;
+        this._context = new DocunotesDbContext(this._options);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        this._context.Sources.AddRange(this._sources);
+        this._context.SaveChanges();
+    }
+
+    [SetUp]
+    public void SetupEach()
+    {
+        this._context.ChangeTracker.Clear();
+    }
+
+    [Test]
+    [Order(1)]
+    public void ConstructorTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+
+        // Assert
+        Assert.IsNotNull(sourceDal);
+    }
+
+    [Test]
+    [Order(2)]
+    public void GetSourceByIdTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+
+        // Act
+        var result = sourceDal.Get(1);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(1, result.SourceId);
+        Assert.AreEqual(&quot;testSource&quot;, result.Name);
+    }
+
+    [Test]
+    [Order(3)]
+    public void InvalidNumberOfKeysGetNoteByIdTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; sourceDal.Get(1, &quot;test&quot;));
+    }
+
+    [Test]
+    [Order(4)]
+    public void InvalidNullKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; sourceDal.Get(null));
+    }
+
+    [Test]
+    [Order(5)]
+    public void InvalidNonIntKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidCastException&gt;(() =&gt; sourceDal.Get(&quot;test&quot;));
+    }
+
+    [Test]
+    [Order(6)]
+    public void InvalidZeroKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;ArgumentOutOfRangeException&gt;(() =&gt; sourceDal.Get(0));
+    }
+
+    [Test]
+    [Order(7)]
+    public void InvalidNonExistentKeyGetNoteByIdTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; sourceDal.Get(10));
+    }
+
+    [Test]
+    [Order(8)]
+    public void GetAllSourceTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+
+        // Act
+        var result = sourceDal.GetAll();
+
+        var expected = this._sources.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(expected, result.Count());
+
+        for (var i = 0; i &lt; expected; i++)
+        {
+            var source = this._sources[i];
+            var actual = result.ElementAt(i);
+            Assert.AreEqual(source.SourceId, actual.SourceId);
+            Assert.AreEqual(source.Username, actual.Username);
+            Assert.AreEqual(source.Type, actual.Type);
+            Assert.AreEqual(source.NoteType, actual.NoteType);
+            Assert.AreEqual(source.Name, actual.Name);
+            Assert.AreEqual(source.IsLink, actual.IsLink);
+            Assert.AreEqual(source.Link, actual.Link);
+        }
+    }
+
+    [Test]
+    [Order(9)]
+    public void AddSourceTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        var source = new Source
+        {
+            SourceId = 3,
+            Name = &quot;testSource3&quot;,
+            Description = &quot;testDescription3&quot;,
+            IsLink = true,
+            Link = &quot;testUrl3&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        };
+
+        // Act
+        var result = sourceDal.Add(source);
+
+        this._sources.Add(source);
+        var expected = this._sources.Count();
+
+        // Assert
+        Assert.IsTrue(result);
+        Assert.AreEqual(expected, this._context.Sources.Count());
+        Assert.Contains(source, this._context.Sources.ToList());
+    }
+
+    [Test]
+    [Order(10)]
+    public void UpdateSourceTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        var source = new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource4&quot;,
+            Description = &quot;testDescription4&quot;,
+            IsLink = true,
+            Link = &quot;testUrl4&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        };
+
+        // Act
+        var result = sourceDal.Update(source);
+
+        this._sources.Add(source);
+        this._sources.Remove(this._sources[1]);
+
+        // Assert
+        var actual = this._context.Sources.Find(2);
+        Assert.IsTrue(result);
+        Assert.AreEqual(source.Name, actual.Name);
+        Assert.AreEqual(source.Description, actual.Description);
+        Assert.AreEqual(source.Link, actual.Link);
+        Assert.AreEqual(source.Type, actual.Type);
+        Assert.AreEqual(source.Username, actual.Username);
+    }
+
+    [Test]
+    [Order(11)]
+    public void InvalidUserInvalidUpdateNoteTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        this._context.CurrentUser = new User { Username = &quot;testUser2&quot;, Password = &quot;testPassword&quot; };
+        var source = new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource4&quot;,
+            Description = &quot;testDescription4&quot;,
+            IsLink = true,
+            Link = &quot;testUrl4&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        };
+
+        // Act, Assert
+        Assert.Throws&lt;UnauthorizedAccessException&gt;(() =&gt; sourceDal.Update(source));
+    }
+
+    [Test]
+    [Order(12)]
+    public void NoUserInvalidUpdateNoteTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        var source = new Source
+        {
+            SourceId = 2,
+            Name = &quot;testSource4&quot;,
+            Description = &quot;testDescription4&quot;,
+            IsLink = true,
+            Link = &quot;testUrl4&quot;,
+            Type = &quot;pdf&quot;,
+            Username = &quot;testUser&quot;,
+            CreatedAt = new DateTime(2021, 1, 1),
+            UpdatedAt = new DateTime(2021, 1, 2)
+        };
+
+        // Act, Assert
+        Assert.Throws&lt;UnauthorizedAccessException&gt;(() =&gt; sourceDal.Update(source));
+    }
+
+    [Test]
+    [Order(13)]
+    public void DeleteSourceTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+
+        // Act
+        var result = sourceDal.Delete(this._sources[0]);
+
+        this._sources.Remove(this._sources[0]);
+        var expected = this._sources.Count();
+
+        // Assert
+        Assert.IsTrue(result);
+        Assert.AreEqual(expected, this._context.Sources.Count());
+
+        var sources = this._context.Sources.ToList();
+        for (var i = 0; i &lt; expected; i++)
+        {
+            Assert.IsTrue(this._sources.Exists(x =&gt; sources.ElementAt(i).Name.Equals(x.Name)));
+        }
+    }
+
+    [Test]
+    [Order(14)]
+    public void DeleteSourceCascadeTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+        var noteDal = new NotesDal(this._context);
+        var note = new Note
+        {
+            NoteId = 1,
+            SourceId = 1,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote&quot;,
+            TagsString = &quot;testTag1,testTag2&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = sourceDal.Delete(this._sources[0]);
+
+        this._sources.Remove(this._sources[0]);
+        var expected = this._sources.Count();
+
+        // Assert
+        Assert.IsTrue(result);
+        Assert.AreEqual(expected, this._context.Sources.Count());
+        Assert.AreEqual(0, this._context.Notes.Count());
+    }
+
+    [Test]
+    [Order(15)]
+    public void InvalidSourceIdDeleteTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+
+        // Act, Assert
+        Assert.Throws&lt;ArgumentOutOfRangeException&gt;(() =&gt; sourceDal.Delete(new Source { SourceId = 0 }));
+    }
+
+    [Test]
+    [Order(16)]
+    public void SetUserTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+
+        // Act
+        sourceDal.SetUser(&quot;testUser&quot;);
+
+        // Assert
+        Assert.AreEqual(&quot;testUser&quot;, this._context.CurrentUser?.Username);
+    }
+
+    [Test]
+    [Order(17)]
+    public void InvalidSetSourceIdTest()
+    {
+        // Arrange
+        var sourceDal = new SourceDal(this._context);
+
+        // Act, Assert
+        Assert.Throws&lt;InvalidOperationException&gt;(() =&gt; sourceDal.SetSourceId(1));
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,5,40,7,1],[51,5,51,6,1],[52,9,55,22,1],[56,9,56,63,1],[57,9,57,99,1],[59,9,59,55,1],[60,9,60,37,1],[61,5,61,6,1],[65,5,65,6,1],[66,9,66,45,1],[67,5,67,6,1],[72,5,72,6,1],[74,9,74,54,1],[77,9,77,37,1],[78,5,78,6,1],[83,5,83,6,1],[85,9,85,54,1],[88,9,88,39,1],[91,9,91,34,1],[92,9,92,45,1],[93,9,93,52,1],[94,5,94,6,1],[99,5,99,6,1],[101,9,101,54,1],[102,9,102,99,1],[105,9,105,51,1],[105,51,105,75,1],[105,75,105,77,1],[106,5,106,6,1],[111,5,111,6,1],[113,9,113,54,1],[114,9,114,99,1],[117,9,117,51,1],[117,51,117,70,1],[117,70,117,72,1],[118,5,118,6,1],[123,5,123,6,1],[125,9,125,54,1],[126,9,126,99,1],[129,9,129,51,1],[129,51,129,72,1],[129,72,129,74,1],[130,5,130,6,1],[135,5,135,6,1],[137,9,137,54,1],[138,9,138,99,1],[141,9,141,58,1],[141,58,141,74,1],[141,74,141,76,1],[142,5,142,6,1],[147,5,147,6,1],[149,9,149,54,1],[150,9,150,99,1],[153,9,153,56,1],[153,56,153,73,1],[153,73,153,75,1],[154,5,154,6,1],[159,5,159,6,1],[161,9,161,54,1],[164,9,164,41,1],[166,9,166,46,1],[169,9,169,34,1],[170,9,170,51,1],[172,14,172,23,1],[172,25,172,37,1],[172,39,172,42,1],[173,9,173,10,1],[174,13,174,43,1],[175,13,175,46,1],[176,13,176,63,1],[177,13,177,63,1],[178,13,178,55,1],[179,13,179,63,1],[180,13,180,55,1],[181,13,181,59,1],[182,13,182,55,1],[183,9,183,10,1],[184,5,184,6,1],[189,5,189,6,1],[191,9,191,54,1],[192,9,203,11,1],[206,9,206,44,1],[208,9,208,35,1],[209,9,209,46,1],[212,9,212,31,1],[213,9,213,66,1],[214,9,214,65,1],[215,5,215,6,1],[220,5,220,6,1],[222,9,222,54,1],[223,9,234,11,1],[237,9,237,47,1],[239,9,239,35,1],[240,9,240,48,1],[243,9,243,52,1],[244,9,244,31,1],[245,9,245,51,1],[246,9,246,65,1],[247,9,247,51,1],[248,9,248,51,1],[249,9,249,59,1],[250,5,250,6,1],[255,5,255,6,1],[257,9,257,54,1],[258,9,258,100,1],[259,9,270,11,1],[273,9,273,58,1],[273,58,273,82,1],[273,82,273,84,1],[274,5,274,6,1],[279,5,279,6,1],[281,9,281,54,1],[282,9,293,11,1],[296,9,296,58,1],[296,58,296,82,1],[296,82,296,84,1],[297,5,297,6,1],[302,5,302,6,1],[304,9,304,54,1],[307,9,307,57,1],[309,9,309,48,1],[310,9,310,46,1],[313,9,313,31,1],[314,9,314,66,1],[316,9,316,54,1],[317,14,317,23,1],[317,25,317,37,1],[317,39,317,42,1],[318,9,318,10,1],[319,13,319,53,1],[319,53,319,93,1],[319,93,319,96,1],[320,9,320,10,1],[321,5,321,6,1],[326,5,326,6,1],[328,9,328,54,1],[329,9,329,51,1],[330,9,337,11,1],[340,9,340,57,1],[342,9,342,48,1],[343,9,343,46,1],[346,9,346,31,1],[347,9,347,66,1],[348,9,348,57,1],[349,5,349,6,1],[354,5,354,6,1],[356,9,356,54,1],[359,9,359,58,1],[359,58,359,103,1],[359,103,359,105,1],[360,5,360,6,1],[365,5,365,6,1],[367,9,367,54,1],[370,9,370,39,1],[373,9,373,74,1],[374,5,374,6,1],[379,5,379,6,1],[381,9,381,54,1],[384,9,384,56,1],[384,56,384,80,1],[384,80,384,82,1],[385,5,385,6,1]]);
+    </script>
+  </body>
+</html>

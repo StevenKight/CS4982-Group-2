@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Model\Source.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace CapstoneGroup2.Server.Model;
+
+/// &lt;summary&gt;
+///     Source Type enums
+/// &lt;/summary&gt;
+public enum SourceType
+{
+    #region Enum members
+
+    /// &lt;summary&gt;
+    ///     The PDF
+    /// &lt;/summary&gt;
+    Pdf = 1,
+
+    /// &lt;summary&gt;
+    ///     The vid
+    /// &lt;/summary&gt;
+    Vid = 2
+
+    #endregion
+}
+
+/// &lt;summary&gt;
+///     Source Model class
+/// &lt;/summary&gt;
+public class Source
+{
+    #region Properties
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the source identifier.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The source identifier.
+    /// &lt;/value&gt;
+    public int SourceId { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the username.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The username.
+    /// &lt;/value&gt;
+    public string Username { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the type.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The type.
+    /// &lt;/value&gt;
+    public string Type { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets the type of the note.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The type of the note.
+    /// &lt;/value&gt;
+    public SourceType NoteType =&gt; (SourceType)Enum.Parse(typeof(SourceType), this.Type, true);
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the name.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The name.
+    /// &lt;/value&gt;
+    public string Name { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the description.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The description.
+    /// &lt;/value&gt;
+    public string Description { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets a value indicating whether this instance is link.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     &lt;c&gt;true&lt;/c&gt; if this instance is link; otherwise, &lt;c&gt;false&lt;/c&gt;.
+    /// &lt;/value&gt;
+    public bool IsLink { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the link.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The link.
+    /// &lt;/value&gt;
+    public string? Link { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the content.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The content.
+    /// &lt;/value&gt;
+    public byte[]? Content { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the created at.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The created at.
+    /// &lt;/value&gt;
+    public DateTime CreatedAt { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the updated at.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The updated at.
+    /// &lt;/value&gt;
+    public DateTime? UpdatedAt { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the authors string.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The authors string.
+    /// &lt;/value&gt;
+    public string? AuthorsString { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets the authors.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The authors.
+    /// &lt;/value&gt;
+    public List&lt;string&gt;? Authors =&gt;
+        string.IsNullOrEmpty(this.AuthorsString) ? null : this.AuthorsString.Split(&quot;|&quot;).ToList();
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the publisher.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The publisher.
+    /// &lt;/value&gt;
+    public string? Publisher { get; set; }
+
+    /// &lt;summary&gt;
+    ///     Gets or sets the accessed at.
+    /// &lt;/summary&gt;
+    /// &lt;value&gt;
+    ///     The accessed at.
+    /// &lt;/value&gt;
+    public DateTime? AccessedAt { get; set; }
+
+    #endregion
+}
+
+/// &lt;summary&gt;
+/// &lt;/summary&gt;
+/// &lt;seealso cref=&quot;Source&quot; /&gt;
+public class SourceConfiguration : IEntityTypeConfiguration&lt;Source&gt;
+{
+    #region Methods
+
+    /// &lt;summary&gt;
+    ///     Configures the entity of type &lt;typeparamref name=&quot;TEntity&quot; /&gt;.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;builder&quot;&gt;The builder to be used to configure the entity type.&lt;/param&gt;
+    public void Configure(EntityTypeBuilder&lt;Source&gt; builder)
+    {
+        builder.ToTable(&quot;Source&quot;);
+        builder.HasKey(s =&gt; s.SourceId);
+        builder.Property(s =&gt; s.SourceId).HasColumnName(&quot;source_id&quot;);
+        builder.Property(s =&gt; s.Username).HasColumnName(&quot;username&quot;);
+        builder.Property(s =&gt; s.Name).HasColumnName(&quot;name&quot;);
+        builder.Property(s =&gt; s.Description).HasColumnName(&quot;description&quot;);
+        builder.Property(s =&gt; s.Type).HasColumnName(&quot;type&quot;);
+        builder.Property(s =&gt; s.IsLink).HasColumnName(&quot;is_link&quot;);
+        builder.Property(s =&gt; s.Link).HasColumnName(&quot;link&quot;);
+        builder.Property(s =&gt; s.CreatedAt).HasColumnName(&quot;created_at&quot;);
+        builder.Property(s =&gt; s.UpdatedAt).HasColumnName(&quot;updated_at&quot;);
+        builder.Property(s =&gt; s.Content).HasColumnName(&quot;content&quot;);
+        builder.Property(s =&gt; s.AuthorsString).HasColumnName(&quot;authors&quot;);
+        builder.Property(s =&gt; s.Publisher).HasColumnName(&quot;publisher&quot;);
+        builder.Property(s =&gt; s.AccessedAt).HasColumnName(&quot;accessed_at&quot;);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[39,27,39,31,1],[39,32,39,36,1],[47,30,47,34,1],[47,35,47,39,1],[55,26,55,30,1],[55,31,55,35,1],[63,35,63,94,1],[71,26,71,30,1],[71,31,71,35,1],[79,33,79,37,1],[79,38,79,42,1],[87,26,87,30,1],[87,31,87,35,1],[95,27,95,31,1],[95,32,95,36,1],[103,30,103,34,1],[103,35,103,39,1],[111,33,111,37,1],[111,38,111,42,1],[119,34,119,38,1],[119,39,119,43,1],[127,36,127,40,1],[127,41,127,45,1],[136,9,136,97,1],[144,32,144,36,1],[144,37,144,41,1],[152,35,152,39,1],[152,40,152,44,1],[169,5,169,6,1],[170,9,170,35,1],[171,9,171,41,1],[172,9,172,70,1],[173,9,173,69,1],[174,9,174,61,1],[175,9,175,75,1],[176,9,176,61,1],[177,9,177,66,1],[178,9,178,61,1],[179,9,179,72,1],[180,9,180,72,1],[181,9,181,67,1],[182,9,182,73,1],[183,9,183,71,1],[184,9,184,74,1],[185,5,185,6,1]]);
+    </script>
+  </body>
+</html>

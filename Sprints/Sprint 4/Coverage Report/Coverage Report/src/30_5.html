@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop\ViewModel\UserViewModel.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Windows.Storage;
+using CapstoneGroup2.Desktop.Library.Dal;
+using CapstoneGroup2.Desktop.Library.Model;
+using Microsoft.Toolkit.Uwp.Helpers;
+using Newtonsoft.Json;
+
+namespace CapstoneGroup2.Desktop.ViewModel
+{
+    /// &lt;summary&gt;
+    ///     Viewmodel for interactions is Users
+    /// &lt;/summary&gt;
+    public class UserViewModel
+    {
+        #region Data members
+
+        /// &lt;summary&gt;
+        ///     The application storage helper
+        /// &lt;/summary&gt;
+        private readonly ApplicationDataStorageHelper _applicationStorageHelper;
+
+        /// &lt;summary&gt;
+        ///     The user dal
+        /// &lt;/summary&gt;
+        private readonly UserDal _userDal;
+
+        #endregion
+
+        #region Constructors
+
+        /// &lt;summary&gt;
+        ///     Initializes a new instance of the &lt;see cref=&quot;UserViewModel&quot; /&gt; class.
+        /// &lt;/summary&gt;
+        public UserViewModel()
+        {
+            this._userDal = new UserDal();
+            this._applicationStorageHelper = new ApplicationDataStorageHelper(ApplicationData.Current);
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// &lt;summary&gt;
+        ///     Logins the specified username.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+        /// &lt;param name=&quot;password&quot;&gt;The password.&lt;/param&gt;
+        /// &lt;returns&gt;&lt;/returns&gt;
+        public async Task&lt;User&gt; Login(string username, string password)
+        {
+            var user = new User
+            {
+                Username = username,
+                Password = password
+            };
+
+            var validUser = await this._userDal.Login(user);
+
+            if (validUser != null)
+            {
+                this._applicationStorageHelper.Save(&quot;user&quot;, JsonConvert.SerializeObject(validUser));
+            }
+            else
+            {
+                this._applicationStorageHelper.Clear();
+            }
+
+            return validUser;
+        }
+
+        /// &lt;summary&gt;
+        ///     Creates a new account using given user.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;user&quot;&gt;The user to create.&lt;/param&gt;
+        /// &lt;returns&gt;The new user that was created if successful, null otherwise&lt;/returns&gt;
+        public async Task&lt;User&gt; CreateAccount(User user)
+        {
+            var validUser = await this._userDal.CreateAccount(user);
+
+            if (validUser != null)
+            {
+                this._applicationStorageHelper.Save(&quot;user&quot;, JsonConvert.SerializeObject(validUser));
+            }
+            else
+            {
+                this._applicationStorageHelper.Clear();
+            }
+
+            return validUser;
+        }
+
+        /// &lt;summary&gt;
+        ///     Gets the saved user.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt; The locally saved user&lt;/returns&gt;
+        public User getSavedUser()
+        {
+            var userSerialized = this._applicationStorageHelper.Read&lt;string&gt;(&quot;user&quot;);
+            var user = JsonConvert.DeserializeObject&lt;User&gt;(userSerialized);
+
+            return user;
+        }
+
+        /// &lt;summary&gt;
+        ///     Validates the authorization.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;True if authorized, false otherwise&lt;/returns&gt;
+        public bool ValidateAuthorization()
+        {
+            var userSerialized = this._applicationStorageHelper.Read&lt;string&gt;(&quot;user&quot;);
+
+            return userSerialized != null;
+        }
+
+        /// &lt;summary&gt;
+        ///     Hashes the password.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;password&quot;&gt;The password.&lt;/param&gt;
+        /// &lt;returns&gt;hashed password&lt;/returns&gt;
+        private static string hashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashedBytes).Replace(&quot;-&quot;, &quot;&quot;).ToLower();
+            }
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[37,9,37,31,0],[38,9,38,10,0],[39,13,39,43,0],[40,13,40,104,0],[41,9,41,10,0],[54,9,54,10,0],[55,13,59,15,0],[61,13,61,61,0],[63,13,63,35,0],[64,13,64,14,0],[65,17,65,101,0],[66,13,66,14,0],[68,13,68,14,0],[69,17,69,56,0],[70,13,70,14,0],[72,13,72,30,0],[73,9,73,10,0],[81,9,81,10,0],[82,13,82,69,0],[84,13,84,35,0],[85,13,85,14,0],[86,17,86,101,0],[87,13,87,14,0],[89,13,89,14,0],[90,17,90,56,0],[91,13,91,14,0],[93,13,93,30,0],[94,9,94,10,0],[101,9,101,10,0],[102,13,102,86,0],[103,13,103,76,0],[105,13,105,25,0],[106,9,106,10,0],[113,9,113,10,0],[114,13,114,86,0],[116,13,116,43,0],[117,9,117,10,0],[125,9,125,10,0],[126,20,126,48,0],[127,13,127,14,0],[128,17,128,88,0],[129,17,129,86,0],[131,9,131,10,0]]);
+    </script>
+  </body>
+</html>

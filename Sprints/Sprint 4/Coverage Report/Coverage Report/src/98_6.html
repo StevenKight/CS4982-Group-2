@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Controllers\NotesControllerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Controllers;
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace CapstoneGroup2.Server.UnitTests.Controllers;
+
+/* dotcover disable */
+[TestFixture]
+public class NotesControllerTests
+{
+    #region Data members
+
+    private readonly List&lt;Note&gt; _notes =
+    [
+        new Note
+        {
+            NoteId = 1,
+            SourceId = 1,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote&quot;,
+            TagsString = &quot;testTag1,testTag2&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        },
+
+        new Note
+        {
+            NoteId = 2,
+            SourceId = 1,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote2&quot;,
+            TagsString = &quot;testTag3,testTag4&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        }
+    ];
+
+    private DbContextOptions&lt;DocunotesDbContext&gt; _options;
+    private DocunotesDbContext _context;
+
+    private NotesDal _notesDal;
+
+    #endregion
+
+    #region Methods
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        this._options = new DbContextOptionsBuilder&lt;DocunotesDbContext&gt;()
+            .UseInMemoryDatabase(&quot;Docunotes&quot;)
+            .EnableSensitiveDataLogging()
+            .Options;
+        this._context = new DocunotesDbContext(this._options);
+        this._context.CurrentUser = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        this._context.Database.EnsureDeleted();
+        this._context.Database.EnsureCreated();
+
+        this._context.Notes.AddRange(this._notes);
+        this._context.SaveChanges();
+
+        this._notesDal = new NotesDal(this._context);
+    }
+
+    [SetUp]
+    public void SetupEach()
+    {
+        this._context.ChangeTracker.Clear();
+    }
+
+    [Test]
+    [Order(1)]
+    public void ConstructorTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Assert
+        Assert.IsNotNull(notesController);
+    }
+
+    [Test]
+    [Order(2)]
+    public void GetAllTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetAll(1, &quot;testUser&quot;) as OkObjectResult;
+        var resultList = result.Value as IEnumerable&lt;Note&gt;;
+
+        var expected = this._notes.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkObjectResult&gt;(result);
+        Assert.IsNotNull(resultList);
+        Assert.AreEqual(expected, resultList.Count());
+
+        for (var i = 0; i &lt; expected; i++)
+        {
+            var note = this._notes[i];
+            var actual = resultList.ElementAt(i);
+            Assert.AreEqual(note.SourceId, actual.SourceId);
+            Assert.AreEqual(note.Username, actual.Username);
+            Assert.AreEqual(note.NoteText, actual.NoteText);
+            Assert.AreEqual(note.TagsString, actual.TagsString);
+        }
+    }
+
+    [Test]
+    [Order(3)]
+    public void NullUsernameGetAllTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetAll(1, null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(4)]
+    public void EmptyUsernameGetAllTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetAll(1, &quot;&quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(5)]
+    public void WhitespaceUsernameGetAllTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetAll(1, &quot;    &quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(6)]
+    public void InvalidSourceIdGetAllTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.GetAll(0, &quot;testUser&quot;);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    [Order(7)]
+    public void CreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote3&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create(&quot;testUser&quot;, note);
+
+        this._notes.Add(note);
+        var expected = this._notes.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkResult&gt;(result);
+        Assert.AreEqual(expected, this._context.Notes.Count());
+        Assert.Contains(note, this._context.Notes.ToList());
+    }
+
+    [Test]
+    [Order(8)]
+    public void NullUsernameCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote3&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create(null, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(9)]
+    public void EmptyUsernameCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote3&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create(&quot;&quot;, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(10)]
+    public void WhitespaceUsernameCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote3&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create(&quot;    &quot;, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(11)]
+    public void NullNoteCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.Create(&quot;testUser&quot;, null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    [Order(12)]
+    public void DuplicateNoteCreateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 1,
+            SourceId = 1,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote&quot;,
+            TagsString = &quot;testTag1,testTag2&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Create(&quot;testUser&quot;, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    [Order(13)]
+    public void UpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 2,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote4&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Update(&quot;testUser&quot;, note);
+
+        this._notes.Add(note);
+        this._notes.Remove(this._notes[1]);
+
+        // Assert
+        var actual = this._context.Notes.Find(2);
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkResult&gt;(result);
+        Assert.AreEqual(note.SourceId, actual.SourceId);
+        Assert.AreEqual(note.Username, actual.Username);
+        Assert.AreEqual(note.NoteText, actual.NoteText);
+        Assert.AreEqual(note.TagsString, actual.TagsString);
+    }
+
+    [Test]
+    [Order(13)]
+    public void NullUsernameUpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote3&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Update(null, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(14)]
+    public void EmptyUsernameUpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote3&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Update(&quot;&quot;, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(15)]
+    public void WhitespaceUsernameUpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+        var note = new Note
+        {
+            NoteId = 3,
+            SourceId = 3,
+            Username = &quot;testUser&quot;,
+            NoteText = &quot;testNote3&quot;,
+            TagsString = &quot;testTag5,testTag6&quot;,
+            NoteDate = new DateTime(2021, 1, 1)
+        };
+
+        // Act
+        var result = notesController.Update(&quot;    &quot;, note);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedObjectResult&gt;(result);
+    }
+
+    [Test]
+    [Order(16)]
+    public void NullNoteUpdateTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.Update(&quot;testUser&quot;, null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    [Order(17)]
+    public void DeleteTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.Delete(this._notes[0].NoteId);
+
+        this._notes.Remove(this._notes[0]);
+        var expected = this._notes.Count();
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkResult&gt;(result);
+        Assert.AreEqual(expected, this._context.Notes.Count());
+
+        var notes = this._context.Notes.ToList();
+        for (var i = 0; i &lt; expected; i++)
+        {
+            Assert.IsTrue(this._notes.Exists(
+                x =&gt; notes.ElementAt(i).SourceId == x.SourceId &amp;&amp; notes.ElementAt(i).Username.Equals(x.Username)));
+        }
+    }
+
+    [Test]
+    [Order(18)]
+    public void InvalidNoteIdDeleteTest()
+    {
+        // Arrange
+        var notesController = new NotesController(this._notesDal);
+
+        // Act
+        var result = notesController.Delete(0);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,5,34,7,1],[47,5,47,6,1],[48,9,51,22,1],[52,9,52,63,1],[53,9,53,99,1],[55,9,55,48,1],[56,9,56,48,1],[58,9,58,51,1],[59,9,59,37,1],[61,9,61,54,1],[62,5,62,6,1],[66,5,66,6,1],[67,9,67,45,1],[68,5,68,6,1],[73,5,73,6,1],[75,9,75,67,1],[78,9,78,43,1],[79,5,79,6,1],[84,5,84,6,1],[86,9,86,67,1],[89,9,89,78,1],[90,9,90,60,1],[92,9,92,44,1],[95,9,95,34,1],[96,9,96,53,1],[97,9,97,38,1],[98,9,98,55,1],[100,14,100,23,1],[100,25,100,37,1],[100,39,100,42,1],[101,9,101,10,1],[102,13,102,39,1],[103,13,103,50,1],[104,13,104,61,1],[105,13,105,61,1],[106,13,106,61,1],[107,9,107,10,1],[108,5,108,6,1],[113,5,113,6,1],[115,9,115,67,1],[118,9,118,54,1],[121,9,121,34,1],[122,9,122,63,1],[123,5,123,6,1],[128,5,128,6,1],[130,9,130,67,1],[133,9,133,52,1],[136,9,136,34,1],[137,9,137,63,1],[138,5,138,6,1],[143,5,143,6,1],[145,9,145,67,1],[148,9,148,56,1],[151,9,151,34,1],[152,9,152,63,1],[153,5,153,6,1],[158,5,158,6,1],[160,9,160,67,1],[163,9,163,60,1],[166,9,166,34,1],[167,9,167,55,1],[168,5,168,6,1],[173,5,173,6,1],[175,9,175,67,1],[176,9,183,11,1],[186,9,186,63,1],[188,9,188,31,1],[189,9,189,44,1],[192,9,192,34,1],[193,9,193,47,1],[194,9,194,64,1],[195,9,195,61,1],[196,5,196,6,1],[201,5,201,6,1],[203,9,203,67,1],[204,9,211,11,1],[214,9,214,57,1],[217,9,217,34,1],[218,9,218,63,1],[219,5,219,6,1],[224,5,224,6,1],[226,9,226,67,1],[227,9,234,11,1],[237,9,237,55,1],[240,9,240,34,1],[241,9,241,63,1],[242,5,242,6,1],[247,5,247,6,1],[249,9,249,67,1],[250,9,257,11,1],[260,9,260,59,1],[263,9,263,34,1],[264,9,264,63,1],[265,5,265,6,1],[270,5,270,6,1],[272,9,272,67,1],[275,9,275,63,1],[278,9,278,34,1],[279,9,279,55,1],[280,5,280,6,1],[285,5,285,6,1],[287,9,287,67,1],[288,9,295,11,1],[298,9,298,63,1],[301,9,301,34,1],[302,9,302,55,1],[303,5,303,6,1],[308,5,308,6,1],[310,9,310,67,1],[311,9,318,11,1],[321,9,321,63,1],[323,9,323,31,1],[324,9,324,44,1],[327,9,327,50,1],[328,9,328,34,1],[329,9,329,47,1],[330,9,330,57,1],[331,9,331,57,1],[332,9,332,57,1],[333,5,333,6,1],[338,5,338,6,1],[340,9,340,67,1],[341,9,348,11,1],[351,9,351,57,1],[354,9,354,34,1],[355,9,355,63,1],[356,5,356,6,1],[361,5,361,6,1],[363,9,363,67,1],[364,9,371,11,1],[374,9,374,55,1],[377,9,377,34,1],[378,9,378,63,1],[379,5,379,6,1],[384,5,384,6,1],[386,9,386,67,1],[387,9,394,11,1],[397,9,397,59,1],[400,9,400,34,1],[401,9,401,63,1],[402,5,402,6,1],[407,5,407,6,1],[409,9,409,67,1],[412,9,412,63,1],[415,9,415,34,1],[416,9,416,55,1],[417,5,417,6,1],[422,5,422,6,1],[424,9,424,67,1],[427,9,427,68,1],[429,9,429,44,1],[430,9,430,44,1],[433,9,433,34,1],[434,9,434,47,1],[435,9,435,64,1],[437,9,437,50,1],[438,14,438,23,1],[438,25,438,37,1],[438,39,438,42,1],[439,9,439,10,1],[440,13,441,22,1],[441,22,441,113,1],[441,113,441,116,1],[442,9,442,10,1],[443,5,443,6,1],[448,5,448,6,1],[450,9,450,67,1],[453,9,453,48,1],[456,9,456,34,1],[457,9,457,55,1],[458,5,458,6,1]]);
+    </script>
+  </body>
+</html>

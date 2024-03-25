@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop.Library\Dal\SourceDal.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using CapstoneGroup2.Desktop.Library.Mocks;
+using CapstoneGroup2.Desktop.Library.Model;
+
+namespace CapstoneGroup2.Desktop.Library.Dal
+{
+    /// &lt;summary&gt;
+    ///     DAL class for Sources
+    /// &lt;/summary&gt;
+    public class SourceDal
+    {
+        #region Data members
+
+        private const string BaseUrl = &quot;https://localhost:7048&quot;;
+        private readonly IHttpClientWrapper client;
+
+        #endregion
+
+        #region Constructors
+
+        /// &lt;summary&gt;Initializes a new instance of the &lt;see cref=&quot;SourceDal&quot; /&gt; class.&lt;/summary&gt;
+        public SourceDal()
+        {
+            this.client = new HttpClientWrapper(new HttpClient
+            {
+                BaseAddress = new Uri(BaseUrl)
+            });
+        }
+
+        /// &lt;summary&gt;Initializes a new instance of the &lt;see cref=&quot;SourceDal&quot; /&gt; class.&lt;/summary&gt;
+        public SourceDal(IHttpClientWrapper client)
+        {
+            this.client = client;
+            this.client.BaseAddress = new Uri(BaseUrl);
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// &lt;summary&gt;Gets the sources for user.&lt;/summary&gt;
+        /// &lt;param name=&quot;user&quot;&gt;The user.&lt;/param&gt;
+        /// &lt;returns&gt;
+        ///     The sources from db or null if none
+        /// &lt;/returns&gt;
+        public async Task&lt;IEnumerable&lt;Source&gt;&gt; GetSourcesForUser(User user)
+        {
+            var response = await this.client.GetAsync($&quot;/Source/{user.Username}&quot;);
+            if (response.IsSuccessStatusCode)
+            {
+                var sources = await response.Content.ReadFromJsonAsync&lt;IEnumerable&lt;Source&gt;&gt;();
+                return sources;
+            }
+
+            return null;
+        }
+
+        /// &lt;summary&gt;Adds the source for user.&lt;/summary&gt;
+        /// &lt;param name=&quot;user&quot;&gt;The user.&lt;/param&gt;
+        /// &lt;param name=&quot;newSource&quot;&gt;The new source to add.&lt;/param&gt;
+        /// &lt;returns&gt;
+        ///     True if success, false otherwise
+        /// &lt;/returns&gt;
+        public async Task&lt;bool&gt; AddSourceForUser(User user, Source newSource)
+        {
+            newSource.Username = user.Username;
+
+            var response = await this.client.PostAsync($&quot;/Source/{user.Username}&quot;,
+                new StringContent(JsonSerializer.Serialize(newSource), Encoding.UTF8, &quot;application/json&quot;));
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task&lt;IEnumerable&lt;Source&gt;&gt; GetSourcesForTags(User user, Tag[] tags)
+        {
+            var sources = new List&lt;Source&gt;();
+            foreach (var tag in tags)
+            {
+                var response = await this.client.GetAsync($&quot;/Source/{tag}-{user.Username}&quot;);
+                if (response.IsSuccessStatusCode)
+                {
+                    var sourcesForTag = await response.Content.ReadFromJsonAsync&lt;IEnumerable&lt;Source&gt;&gt;();
+                    foreach (var source in sourcesForTag)
+                    {
+                        sources.Add(source);
+                    }
+                    return sources;
+                }
+            }
+            
+            return null;
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[29,9,29,27,1],[30,9,30,10,1],[31,13,34,16,1],[35,9,35,10,1],[38,9,38,52,1],[39,9,39,10,1],[40,13,40,34,1],[41,13,41,56,1],[42,9,42,10,1],[54,9,54,10,1],[55,13,55,83,1],[56,13,56,46,1],[57,13,57,14,1],[58,17,58,95,1],[59,17,59,32,1],[62,13,62,25,1],[63,9,63,10,1],[72,9,72,10,1],[73,13,73,48,1],[75,13,76,108,1],[78,13,78,49,1],[79,9,79,10,1]]);
+    </script>
+  </body>
+</html>
