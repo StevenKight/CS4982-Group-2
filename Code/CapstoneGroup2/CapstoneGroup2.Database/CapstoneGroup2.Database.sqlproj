@@ -61,6 +61,8 @@
     <Build Include="User.sql" />
     <Build Include="Source.sql" />
     <Build Include="Note.sql" />
+    <Build Include="Tag.sql" />
+    <Build Include="Note_Tag.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="DummyData.PostDeployment.sql" />

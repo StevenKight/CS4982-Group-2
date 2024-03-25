@@ -12,15 +12,15 @@ public class SourceController : ControllerBase
 {
     #region Data members
 
-    private readonly IDbDal<Source> context;
+    private readonly IDbDal<Source> dal;
 
     #endregion
 
     #region Constructors
 
-    public SourceController(IDbDal<Source> context)
+    public SourceController(IDbDal<Source> dal)
     {
-        this.context = context;
+        this.dal = dal;
     }
 
     #endregion
@@ -36,9 +36,9 @@ public class SourceController : ControllerBase
             return Unauthorized("Invalid username");
         }
 
-        this.context.SetUser(username);
+        this.dal.SetUser(username);
 
-        return Ok(this.context.GetAll());
+        return Ok(this.dal.GetAll());
     }
 
     // GET <SourceController>/5-username
@@ -50,11 +50,11 @@ public class SourceController : ControllerBase
             return Unauthorized("Invalid username");
         }
 
-        this.context.SetUser(username);
+        this.dal.SetUser(username);
 
         try
         {
-            return Ok(this.context.Get(sourceId));
+            return Ok(this.dal.Get(sourceId));
         }
         catch (Exception e)
         {
@@ -71,11 +71,11 @@ public class SourceController : ControllerBase
             return Unauthorized("Invalid username");
         }
 
-        this.context.SetUser(username);
+        this.dal.SetUser(username);
 
         try
         {
-            return Ok(this.context.Add(newSource));
+            return Ok(this.dal.Add(newSource));
         }
         catch (Exception e)
         {
@@ -92,11 +92,11 @@ public class SourceController : ControllerBase
             return Unauthorized("Invalid username");
         }
 
-        this.context.SetUser(username);
+        this.dal.SetUser(username);
 
         try
         {
-            this.context.Update(shared);
+            this.dal.Update(shared);
             return Ok();
         }
         catch (Exception e)
@@ -112,7 +112,7 @@ public class SourceController : ControllerBase
         try
         {
             var shared = new Source { SourceId = sourceId };
-            return Ok(this.context.Delete(shared));
+            return Ok(this.dal.Delete(shared));
         }
         catch (Exception e)
         {
@@ -120,5 +120,25 @@ public class SourceController : ControllerBase
         }
     }
 
+    // GET <SourceController>/5-username
+    [HttpGet("Tag/{tagId}-{username}")]
+    public IActionResult GetByTagId(int tagId, string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized("Invalid username");
+        }
+
+        this.dal.SetUser(username);
+
+        try
+        {
+            return Ok((this.dal as SourceDal).getSourcesByTag(tagId));
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
     #endregion
 }

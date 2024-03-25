@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -75,6 +76,26 @@ namespace CapstoneGroup2.Desktop.Library.Dal
                 new StringContent(JsonSerializer.Serialize(newSource), Encoding.UTF8, "application/json"));
 
             return response.IsSuccessStatusCode;
+        }
+
+        public async Task<IEnumerable<Source>> GetSourcesForTags(User user, Tag[] tags)
+        {
+            var sources = new List<Source>();
+            foreach (var tag in tags)
+            {
+                var response = await this.client.GetAsync($"/Source/{tag}-{user.Username}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var sourcesForTag = await response.Content.ReadFromJsonAsync<IEnumerable<Source>>();
+                    foreach (var source in sourcesForTag)
+                    {
+                        sources.Add(source);
+                    }
+                    return sources;
+                }
+            }
+            
+            return null;
         }
 
         #endregion
