@@ -100,9 +100,11 @@ namespace CapstoneGroup2.Desktop
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            this.TagsComboBox.SelectedValue = null;
+            this.TagsComboBox.SelectedIndex = -1;
             this.sourcesListBox.ItemsSource = this._sources;
             this.ClearButton.Visibility = Visibility.Collapsed;
+            this.SearchButton.Visibility = Visibility.Collapsed;
         }
         private void TagsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -114,6 +116,11 @@ namespace CapstoneGroup2.Desktop
             {
                 this.SearchButton.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void TagsCombo(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
