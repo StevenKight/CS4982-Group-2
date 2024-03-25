@@ -8,35 +8,36 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Height="732"
-    Width="880">
+    Width="1025">
 
-    <Grid Height="700" VerticalAlignment="Center" Width="880" Margin="0,0,0,0">
+    <Grid Height="700" VerticalAlignment="Center" Margin="0,0,0,0">
         <ProgressRing x:Name="progressControl" Height="50" Width="50" IsActive="True" Visibility="Visible"
                       Margin="-17,302,0,0" VerticalAlignment="Top" />
 
         <TextBlock Name="sourceHeading" Margin="25,0,0,0" Width="450" Height="50" VerticalAlignment="Top"
                    HorizontalAlignment="Left" Padding="0,5,0,0" Text="SOURCE TITLE" FontSize="32" />
 
-        <Button Name="previousPageButton" Click="PreviousPage_Click" Content="&lt;-" Margin="500,3,0,0"
+        <Button Name="previousPageButton" Click="PreviousPage_Click" Content="&lt;-" Margin="400,10,0,0"
                 VerticalAlignment="Top" Height="36" Width="45" Canvas.ZIndex="1" />
-        <Button Name="nextPageButton" Click="NextPage_Click" Content="->" Margin="550,3,0,0" VerticalAlignment="Top"
+        <Button Name="nextPageButton" Click="NextPage_Click" Content="->" Margin="450,10,0,0" VerticalAlignment="Top"
                 Height="36" Width="45" Canvas.ZIndex="1" />
-
         <ScrollViewer Name="ScrollViewer" Visibility="Collapsed" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="auto" HorizontalAlignment="Left"
-                      ZoomMode="Enabled" MinZoomFactor="0.5" Margin="25,50,0,0" VerticalAlignment="Center" Width="550" Height="650" MaxZoomFactor="0.6">
+                      ZoomMode="Enabled" MinZoomFactor="0.5" Margin="25,50,0,0" VerticalAlignment="Center" Width="500" Height="650" MaxZoomFactor="0.6">
             <Image x:Name="objectRender" AutomationProperties.Name="PDF document content" Stretch="None" />
 
         </ScrollViewer>
-        <MediaPlayerElement Source="https://youtu.be/5aDfFImxoDY?si=ZT4wL9Cf60gv_msl" Name="MediaPlayerElement" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25,50,0,0" Width="550" Height="650" AreTransportControlsEnabled="True">
+        <MediaPlayerElement Source="https://youtu.be/5aDfFImxoDY?si=ZT4wL9Cf60gv_msl" 
+                            Name="MediaPlayerElement" Visibility="Visible" VerticalAlignment="Center" 
+                            HorizontalAlignment="Left" Margin="25,50,0,0" Width="500" 
+                            Height="650" AreTransportControlsEnabled="True" />
 
-        </MediaPlayerElement>
-
-        <Button Click="AddNoteItem_Click" Content="Add Note" Margin="625,3,0,0"
-                VerticalAlignment="Top" Height="35" Width="100" Canvas.ZIndex="1" />
-        <Button Click="RemoveNoteItem_Click" Content="Remove Note" Margin="725,3,0,0"
-                VerticalAlignment="Top" Height="35" Width="125" Canvas.ZIndex="1" />
-        <ListView x:Name="notesListView" Margin="600,50,0,0" Padding="0,0,0,25" VerticalAlignment="Top" Width="275"
-                  Height="650" RightTapped="notesListBox_RightTapped">
+        <Button Click="AddNoteItem_Click" Content="Add Note" Margin="540,10,0,0"
+            VerticalAlignment="Top" Height="35" Width="100" Canvas.ZIndex="1" />
+        <Button Click="RemoveNoteItem_Click" Content="Remove Note" Margin="640,10,0,0"
+                VerticalAlignment="Top" Height="35" Width="110" Canvas.ZIndex="1" />
+        <ListView x:Name="notesListView" Margin="550,50,0,0" Padding="0,0,0,25" 
+                  VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"
+                  Height="650" RightTapped="notesListBox_RightTapped" SelectionChanged="notesListView_SelectionChanged">
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem Text="Add Note" Click="AddNoteItem_Click" />
@@ -46,11 +47,29 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="model:Note">
                     <Grid>
-                        <TextBox Text="{Binding NoteText}" FontWeight="Bold" LostFocus="TextBox_LostFocus"
-                                 GotFocus="TextBox_GotFocus"
-                                 AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="30" Width="275" Margin="-5,0,0,0"
-                                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                        <TextBlock Text=". . ." Margin="0,5,5,0" HorizontalAlignment="Right" FontWeight="Bold" />
+                        <TextBlock Text="{Binding NoteText}" FontWeight="Bold"
+                                   MaxHeight="30" Margin="-5,0,0,0"
+                                   ScrollViewer.VerticalScrollBarVisibility="Auto" TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <TextBox x:Name="selectedItemTextBox" Margin="775,50,0,0" VerticalAlignment="Top" 
+                 HorizontalAlignment="Left" Width="225" Height="300" TextWrapping="Wrap" 
+                 AcceptsReturn="True" LostFocus="TextBox_LostFocus" PlaceholderText="Please Select a note..."/>
+
+        <Button x:Name="addTag" Click="AddTagItem_Click" Content="Add Tag" Height="35" Width="100" Margin="775,50,0,0" />
+        <Button x:Name="removeTag" Click="RemoveTagItem_Click" Content="Remove Tag" Height="35" Width="100" Margin="900,50,0,0" />
+
+        <ListView x:Name="tagsListView" Margin="775,400,0,0" VerticalAlignment="Top" 
+                  HorizontalAlignment="Left" Width="225" Height="275">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:Tag">
+                    <Grid>
+                        <TextBlock Text="{Binding TagName}" FontWeight="Bold"
+                                   MaxHeight="30" Margin="-5,0,0,0"
+                                   ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

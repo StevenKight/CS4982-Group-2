@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CapstoneGroup2.Server.Model;
@@ -43,20 +44,13 @@ public class Note
     public string NoteText { get; set; }
 
     /// <summary>
-    ///     Gets or sets the tags string.
-    /// </summary>
-    /// <value>
-    ///     The tags string.
-    /// </value>
-    public string TagsString { get; set; }
-
-    /// <summary>
     ///     Gets the tags.
     /// </summary>
     /// <value>
     ///     The tags.
     /// </value>
-    public List<string> Tags => this.TagsString.Split(",").ToList();
+    [NotMapped]
+    public List<Tag> Tags { get; set; }
 
     /// <summary>
     ///     Gets or sets the note date.
@@ -71,7 +65,7 @@ public class Note
 
 /// <summary>
 /// </summary>
-/// <seealso cref="Microsoft.EntityFrameworkCore.IEntityTypeConfiguration&lt;CapstoneGroup2.Server.Model.Note&gt;" />
+/// <seealso cref="Note" />
 public class NoteConfiguration : IEntityTypeConfiguration<Note>
 {
     #region Methods
@@ -88,7 +82,6 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.Property(n => n.SourceId).HasColumnName("source_id");
         builder.Property(n => n.Username).HasColumnName("username");
         builder.Property(n => n.NoteText).HasColumnName("note_text");
-        builder.Property(n => n.TagsString).HasColumnName("tags");
         builder.Property(n => n.NoteDate).HasColumnName("note_date");
     }
 
