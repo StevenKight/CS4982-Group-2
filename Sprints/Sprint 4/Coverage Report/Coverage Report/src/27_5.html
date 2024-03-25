@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop\MySourcesPage.xaml.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
+using CapstoneGroup2.Desktop.Library.Model;
+using CapstoneGroup2.Desktop.ViewModel;
+
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+
+namespace CapstoneGroup2.Desktop
+{
+    /// &lt;summary&gt;
+    ///     An empty page that can be used on its own or navigated to within a Frame.
+    /// &lt;/summary&gt;
+    public sealed partial class MySourcesPage : Page
+    {
+        #region Data members
+
+        private List&lt;Source&gt; _sources;
+
+        private readonly SourceViewModel _sourceViewModel;
+
+        #endregion
+
+        #region Constructors
+
+        public MySourcesPage()
+        {
+            this.InitializeComponent();
+
+            this._sourceViewModel = new SourceViewModel();
+        }
+
+        #endregion
+
+        #region Methods
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            await this.loadSources();
+        }
+
+        private async Task loadSources()
+        {
+            var sourcesEnumerable = await this._sourceViewModel.GetSources(); // TODO: Add the shared sources
+            this._sources = sourcesEnumerable.ToList();
+
+            this.sourcesListBox.ItemsSource = this._sources; // TODO: Order by date
+        }
+
+        private void sharedSourcesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Frame.Navigate(typeof(NotesPage), this._sources[this.sourcesListBox.SelectedIndex]);
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new AddSourceDialog();
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                var source = dialog.NewSource;
+                await this._sourceViewModel.addNewSource(source);
+
+                await this.loadSources();
+            }
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[30,9,30,31,0],[31,9,31,10,0],[32,13,32,40,0],[34,13,34,59,0],[35,9,35,10,0],[42,9,42,10,0],[43,13,43,35,0],[45,13,45,38,0],[46,9,46,10,0],[49,9,49,10,0],[50,13,50,78,0],[51,13,51,56,0],[53,13,53,61,0],[54,9,54,10,0],[57,9,57,10,0],[58,13,58,97,0],[59,9,59,10,0],[62,9,62,10,0],[63,13,63,48,0],[64,13,64,51,0],[66,13,66,55,0],[67,13,67,14,0],[68,17,68,47,0],[69,17,69,66,0],[71,17,71,42,0],[72,13,72,14,0],[73,9,73,10,0]]);
+    </script>
+  </body>
+</html>

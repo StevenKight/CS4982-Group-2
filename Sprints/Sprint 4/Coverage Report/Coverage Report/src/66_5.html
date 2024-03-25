@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop\AddSourceDialog.xaml.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Linq;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.UI.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using CapstoneGroup2.Desktop.Data;
+using CapstoneGroup2.Desktop.Library.Model;
+
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+
+namespace CapstoneGroup2.Desktop
+{
+    /// &lt;summary&gt;
+    ///     An empty page that can be used on its own or navigated to within a Frame.
+    /// &lt;/summary&gt;
+    public sealed partial class AddSourceDialog : ContentDialog
+    {
+        #region Data members
+
+        private StorageFile storageFile;
+
+        #endregion
+
+        #region Properties
+
+        public Source NewSource { get; set; }
+
+        #endregion
+
+        #region Constructors
+
+        public AddSourceDialog()
+        {
+            this.InitializeComponent();
+
+            this.sourceIsLinkCheckBox.IsChecked = true;
+        }
+
+        #endregion
+
+        #region Methods
+
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender,
+            ContentDialogButtonClickEventArgs args)
+        {
+            var authorsCollection = this.sourceAuthorsListView.Items.ToList();
+            var authorsObjects = authorsCollection?.Where(x =&gt;
+                x is User user &amp;&amp; !user.Username.Equals(&quot;Click to edit&quot;) &amp;&amp;
+                !string.IsNullOrWhiteSpace(user.Username));
+            var authorsNames = authorsObjects?.Select(x =&gt; ((User)x).Username).ToList();
+
+            Source source;
+
+            switch (this.sourceIsVideoCheckBox.IsChecked)
+            {
+                case null:
+                {
+                    return;
+                }
+                case false:
+                {
+                    source = new Source
+                    {
+                        Type = SourceType.Pdf.ToString(), // TODO: Add type selection to UI for other types
+                        Name = this.sourceNameTextBox.Text,
+                        Description = this.sourceDescriptionTextBox.Text,
+                        IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
+                        AuthorsString = string.Join(&quot;|&quot;, authorsNames),
+                        Publisher = this.sourcePublisherTextBox.Text,
+                        AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
+                    };
+                    break;
+                }
+                default:
+                {
+                    source = new Source
+                    {
+                        Type = SourceType.Vid.ToString(), // TODO: Add type selection to UI for other types
+                        Name = this.sourceNameTextBox.Text,
+                        Description = this.sourceDescriptionTextBox.Text,
+                        IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
+                        AuthorsString = string.Join(&quot;|&quot;, authorsNames),
+                        Publisher = this.sourcePublisherTextBox.Text,
+                        AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
+                    };
+                    break;
+                    }
+            }
+
+            var isChecked = this.sourceIsLinkCheckBox.IsChecked;
+            
+            switch (isChecked)
+            {
+                case null:
+                {
+                    return;
+                }
+                case false:
+                    source.Link = &quot;&quot;;
+                    source.Content = await DataManager.FileToBinary(this.storageFile);
+                    break;
+                default:
+                    source.Link = this.sourceLinkTextBox.Text;
+                    break;
+            }
+
+            this.NewSource = source;
+        }
+
+        private void sourceIsLinkCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.linkOptionsGrid.Visibility = Visibility.Collapsed;
+            this.uploadOptionsGrid.Visibility = Visibility.Visible;
+        }
+
+        private void sourceIsLinkCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            this.linkOptionsGrid.Visibility = Visibility.Visible;
+            this.uploadOptionsGrid.Visibility = Visibility.Collapsed;
+        }
+
+        private async void sourceUploadButton_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new FileOpenPicker();
+            switch (this.sourceIsVideoCheckBox.IsChecked)
+            {
+                case null:
+                {
+                    return;
+                }
+                case false:
+                {
+                    picker.FileTypeFilter.Add(&quot;.pdf&quot;);
+                    break;
+                }
+                default:
+                {
+                    picker.FileTypeFilter.Add(&quot;.mp4&quot;);
+                    break;
+                }
+            }
+            picker.FileTypeFilter.Add(&quot;.pdf&quot;);
+            var file = await picker.PickSingleFileAsync();
+
+            if (file != null)
+            {
+                this.storageFile = file;
+                this.sourceUploadButton.Content = &quot;Uploading: &quot; + file.Name;
+            }
+        }
+
+        private void AddAuthor_Click(object sender, RoutedEventArgs e)
+        {
+            var newAuthor = new User
+            {
+                Username = &quot;Click to edit&quot;
+            };
+            this.sourceAuthorsListView.Items?.Add(newAuthor);
+        }
+
+        private async void RemoveAuthor_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedItemIndex = this.sourceAuthorsListView.SelectedIndex;
+            if (selectedItemIndex != -1)
+            {
+                this.sourceAuthorsListView.Items?.RemoveAt(selectedItemIndex);
+            }
+            else
+            {
+                var messageDialog = new MessageDialog(&quot;Please select an author to remove.&quot;);
+                await messageDialog.ShowAsync();
+            }
+        }
+
+        private void sourceAuthorsListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout((ListView)sender);
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            var selectedItemTextBox = (User)textBox.DataContext;
+            selectedItemTextBox.Username = textBox.Text;
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[30,35,30,39,0],[30,40,30,44,0],[36,9,36,33,0],[37,9,37,10,0],[38,13,38,40,0],[40,13,40,56,0],[41,9,41,10,0],[49,9,49,10,0],[50,13,50,79,0],[51,13,52,17,0],[52,17,53,58,0],[53,58,53,60,0],[54,13,54,60,0],[54,60,54,78,0],[54,78,54,89,0],[58,13,58,58,0],[61,17,61,18,0],[62,21,62,28,0],[65,17,65,18,0],[66,21,75,23,0],[76,21,76,27,0],[79,17,79,18,0],[80,21,89,23,0],[90,21,90,27,0],[94,13,94,65,0],[96,13,96,31,0],[99,17,99,18,0],[100,21,100,28,0],[103,21,103,38,0],[104,21,104,87,0],[105,21,105,27,0],[107,21,107,63,0],[108,21,108,27,0],[111,13,111,37,0],[112,9,112,10,0],[115,9,115,10,0],[116,13,116,68,0],[117,13,117,68,0],[118,9,118,10,0],[121,9,121,10,0],[122,13,122,66,0],[123,13,123,70,0],[124,9,124,10,0],[127,9,127,10,0],[128,13,128,47,0],[129,13,129,58,0],[132,17,132,18,0],[133,21,133,28,0],[136,17,136,18,0],[137,21,137,55,0],[138,21,138,27,0],[141,17,141,18,0],[142,21,142,55,0],[143,21,143,27,0],[146,13,146,47,0],[147,13,147,59,0],[149,13,149,30,0],[150,13,150,14,0],[151,17,151,41,0],[152,17,152,77,0],[153,13,153,14,0],[154,9,154,10,0],[157,9,157,10,0],[158,13,161,15,0],[162,13,162,62,0],[163,9,163,10,0],[166,9,166,10,0],[167,13,167,78,0],[168,13,168,41,0],[169,13,169,14,0],[170,17,170,79,0],[171,13,171,14,0],[173,13,173,14,0],[174,17,174,93,0],[175,17,175,49,0],[176,13,176,14,0],[177,9,177,10,0],[180,9,180,10,0],[181,13,181,61,0],[182,9,182,10,0],[185,9,185,10,0],[186,13,186,43,0],[187,13,187,65,0],[188,13,188,57,0],[189,9,189,10,0]]);
+    </script>
+  </body>
+</html>

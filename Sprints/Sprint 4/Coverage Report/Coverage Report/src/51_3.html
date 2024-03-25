@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop.Library\Model\Source.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CapstoneGroup2.Desktop.Library.Model
+{
+    /// &lt;summary&gt;
+    ///     Source type enums
+    /// &lt;/summary&gt;
+    public enum SourceType
+    {
+        #region Enum members
+
+        /// &lt;summary&gt;
+        ///     The PDF
+        /// &lt;/summary&gt;
+        Pdf = 1,
+
+        /// &lt;summary&gt;
+        ///     The vid
+        /// &lt;/summary&gt;
+        Vid = 2
+
+        #endregion
+    }
+
+    /// &lt;summary&gt;
+    ///     The Source Model class
+    /// &lt;/summary&gt;
+    public class Source
+    {
+        #region Properties
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the source identifier.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The source identifier.
+        /// &lt;/value&gt;
+        public int SourceId { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the username.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The username.
+        /// &lt;/value&gt;
+        public string Username { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the type.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The type.
+        /// &lt;/value&gt;
+        public string Type { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets the type of the note.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The type of the note.
+        /// &lt;/value&gt;
+        public SourceType NoteType =&gt; (SourceType)Enum.Parse(typeof(SourceType), this.Type, true);
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the name.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The name.
+        /// &lt;/value&gt;
+        public string Name { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the description.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The description.
+        /// &lt;/value&gt;
+        public string Description { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets a value indicating whether this instance is link.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     &lt;c&gt;true&lt;/c&gt; if this instance is link; otherwise, &lt;c&gt;false&lt;/c&gt;.
+        /// &lt;/value&gt;
+        public bool IsLink { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the link.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The link.
+        /// &lt;/value&gt;
+        public string Link { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the content.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The content.
+        /// &lt;/value&gt;
+        public byte[] Content { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the created at.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The created at.
+        /// &lt;/value&gt;
+        public DateTime CreatedAt { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the updated at.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The updated at.
+        /// &lt;/value&gt;
+        public DateTime? UpdatedAt { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the authors string.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The authors string.
+        /// &lt;/value&gt;
+        public string? AuthorsString { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets the authors.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The authors.
+        /// &lt;/value&gt;
+        public List&lt;string&gt; Authors
+        {
+            get
+            {
+                var authorsString = this.AuthorsString;
+                if (authorsString != null)
+                {
+                    return authorsString.Split(&#39;|&#39;).ToList();
+                }
+
+                return null;
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the publisher.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The publisher.
+        /// &lt;/value&gt;
+        public string? Publisher { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Gets or sets the accessed at.
+        /// &lt;/summary&gt;
+        /// &lt;value&gt;
+        ///     The accessed at.
+        /// &lt;/value&gt;
+        public DateTime? AccessedAt { get; set; }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[40,31,40,35,1],[40,36,40,40,1],[48,34,48,38,1],[48,39,48,43,1],[56,30,56,34,1],[56,35,56,39,1],[64,39,64,98,1],[72,30,72,34,1],[72,35,72,39,1],[80,37,80,41,1],[80,42,80,46,1],[88,30,88,34,1],[88,35,88,39,1],[96,30,96,34,1],[96,35,96,39,1],[104,33,104,37,1],[104,38,104,42,1],[112,37,112,41,1],[112,42,112,46,1],[120,38,120,42,1],[120,43,120,47,1],[128,40,128,44,1],[128,45,128,49,1],[139,13,139,14,1],[140,17,140,56,1],[141,17,141,43,1],[142,17,142,18,1],[143,21,143,62,1],[146,17,146,29,1],[147,13,147,14,1],[156,36,156,40,1],[156,41,156,45,1],[164,39,164,43,1],[164,44,164,48,1]]);
+    </script>
+  </body>
+</html>

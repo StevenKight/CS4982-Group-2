@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Dal\SourceDal.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Model;
+
+namespace CapstoneGroup2.Server.Dal;
+
+/// &lt;summary&gt;
+///     Class for accessing db for Source logic
+/// &lt;/summary&gt;
+/// &lt;seealso cref=&quot;CapstoneGroup2.Server.Dal.IDbDal&amp;lt;CapstoneGroup2.Server.Model.Source&amp;gt;&quot; /&gt;
+public class SourceDal : IDbDal&lt;Source&gt;
+{
+    #region Data members
+
+    /// &lt;summary&gt;
+    ///     The context
+    /// &lt;/summary&gt;
+    private readonly DocunotesDbContext context;
+
+    #endregion
+
+    #region Constructors
+
+    /// &lt;summary&gt;
+    ///     Initializes a new instance of the &lt;see cref=&quot;SourceDal&quot; /&gt; class.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;context&quot;&gt;The context.&lt;/param&gt;
+    public SourceDal(DocunotesDbContext context)
+    {
+        this.context = context;
+    }
+
+    #endregion
+
+    #region Methods
+
+    /// &lt;summary&gt;
+    ///     Gets the specified key values.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;keyValues&quot;&gt;The key values.&lt;/param&gt;
+    /// &lt;returns&gt;Source for with given key values&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.InvalidCastException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.ArgumentOutOfRangeException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public Source Get(params object?[]? keyValues)
+    {
+        if (keyValues is not { Length: 1 } ||
+            keyValues[0] == null || typeof(int) != keyValues[0]?.GetType())
+        {
+            throw new InvalidCastException();
+        }
+
+        var sourceId = (int)keyValues[0]!;
+        if (sourceId &lt; 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        var source = this.context.Sources.Find(sourceId) ?? throw new InvalidOperationException();
+
+        return username.Equals(source.Username) ? source : throw new UnauthorizedAccessException();
+    }
+
+    /// &lt;summary&gt;
+    ///     Gets all.
+    /// &lt;/summary&gt;
+    /// &lt;returns&gt;Sources&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public IEnumerable&lt;Source&gt; GetAll()
+    {
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        return this.context.Sources.Where(x =&gt; x.Username.Equals(username));
+    }
+
+    /// &lt;summary&gt;
+    ///     Adds the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;true if success, false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentNullException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public bool Add(Source entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        entity.Username = username;
+
+        entity.CreatedAt = DateTime.Now;
+
+        this.context.Sources.Add(entity);
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    ///     Updates the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;true if success, false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentNullException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.UnauthorizedAccessException&quot;&gt;&lt;/exception&gt;
+    public bool Update(Source entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var username = this.context.CurrentUser?.Username ?? throw new UnauthorizedAccessException();
+
+        if (entity.Username != username)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        this.context.Sources.Update(entity);
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    ///     Deletes the specified entity.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;entity&quot;&gt;The entity.&lt;/param&gt;
+    /// &lt;returns&gt;true if success, false otherwise&lt;/returns&gt;
+    /// &lt;exception cref=&quot;System.ArgumentNullException&quot;&gt;&lt;/exception&gt;
+    /// &lt;exception cref=&quot;System.ArgumentOutOfRangeException&quot;&gt;&lt;/exception&gt;
+    public bool Delete(Source entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        if (entity.SourceId &lt; 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        // TODO: Cascade delete instead of manual delete
+        var notes = this.context.Notes.Where(x =&gt; x.SourceId == entity.SourceId);
+        foreach (var note in notes)
+        {
+            this.context.Notes.Remove(note);
+        }
+
+        var source = this.context.Sources.Find(entity.SourceId);
+        if (source != null)
+        {
+            this.context.Sources.Remove(source);
+        }
+
+        return this.context.SaveChanges() &gt; 0;
+    }
+
+    /// &lt;summary&gt;
+    ///     Sets the user.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+    public void SetUser(string username)
+    {
+        var user = new User { Username = username };
+        this.context.CurrentUser = user;
+    }
+
+    /// &lt;summary&gt;
+    ///     Sets the source identifier.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;sourceId&quot;&gt;The source identifier.&lt;/param&gt;
+    /// &lt;exception cref=&quot;System.InvalidOperationException&quot;&gt;&lt;/exception&gt;
+    public void SetSourceId(int sourceId)
+    {
+        throw new InvalidOperationException();
+    }
+
+    public IEnumerable&lt;Source&gt; getSourcesByTag( int tagID)
+    {
+        if (tagID &lt;= 0)
+        {
+            throw new ArgumentException(&quot;Invalid tag ID provided.&quot;, nameof(tagID));
+        }
+        var sourcesWithNotes = from source in context.Sources
+            join note in context.Notes on source.SourceId equals note.SourceId
+            join noteTag in context.Notes_Tags on note.NoteId equals noteTag.NoteID
+            where noteTag.TagID == tagID
+            select source;
+
+        return sourcesWithNotes;
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[26,5,26,49,1],[27,5,27,6,1],[28,9,28,32,1],[29,5,29,6,1],[45,5,45,6,1],[46,9,47,76,1],[48,9,48,10,1],[49,13,49,46,1],[52,9,52,43,1],[53,9,53,26,1],[54,9,54,10,1],[55,13,55,53,1],[58,9,58,102,1],[60,9,60,99,1],[62,9,62,100,1],[63,5,63,6,1],[71,5,71,6,1],[72,9,72,102,1],[74,9,74,77,1],[75,5,75,6,1],[85,5,85,6,1],[86,9,86,51,1],[88,9,88,102,1],[90,9,90,36,1],[92,9,92,41,1],[94,9,94,42,1],[95,9,95,47,1],[96,5,96,6,1],[106,5,106,6,1],[107,9,107,51,1],[109,9,109,102,1],[111,9,111,41,1],[112,9,112,10,1],[113,13,113,53,1],[116,9,116,45,1],[117,9,117,47,1],[118,5,118,6,1],[128,5,128,6,1],[129,9,129,51,1],[131,9,131,33,1],[132,9,132,10,1],[133,13,133,53,1],[137,9,137,82,1],[138,9,138,16,1],[138,18,138,26,1],[138,27,138,29,1],[138,30,138,35,1],[139,9,139,10,1],[140,13,140,45,1],[141,9,141,10,1],[143,9,143,65,1],[144,9,144,28,1],[145,9,145,10,1],[146,13,146,49,1],[147,9,147,10,1],[149,9,149,47,1],[150,5,150,6,1],[157,5,157,6,1],[158,9,158,53,1],[159,9,159,41,1],[160,5,160,6,1],[168,5,168,6,1],[169,9,169,47,1],[173,5,173,6,0],[174,9,174,24,0],[175,9,175,10,0],[176,13,176,84,0],[178,9,182,27,0],[184,9,184,33,0],[185,5,185,6,0]]);
+    </script>
+  </body>
+</html>

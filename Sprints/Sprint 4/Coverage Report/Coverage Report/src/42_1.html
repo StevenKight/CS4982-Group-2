@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Controllers\TagController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CapstoneGroup2.Server.Controllers;
+/// &lt;summary&gt;
+/// Class for controlling tag logic
+/// &lt;/summary&gt;
+/// &lt;seealso cref=&quot;Microsoft.AspNetCore.Mvc.ControllerBase&quot; /&gt;
+[Route(&quot;[controller]&quot;)] // tag/
+[ApiController]
+public class TagController: ControllerBase
+{
+    /// &lt;summary&gt;
+    /// The dal
+    /// &lt;/summary&gt;
+    private readonly IDbDal&lt;Tag&gt; dal;
+
+
+    #region Constructors
+
+    /// &lt;summary&gt;
+    /// Initializes a new instance of the &lt;see cref=&quot;TagController&quot;/&gt; class.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;dal&quot;&gt;The dal.&lt;/param&gt;
+    public TagController(IDbDal&lt;Tag&gt; dal)
+    {
+        this.dal = dal;
+    }
+
+    #endregion
+
+    #region Methods
+
+    // GET: &lt;TagController&gt;/username
+    /// &lt;summary&gt;
+    /// Gets all.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    [HttpGet(&quot;{username}&quot;)]
+    public IActionResult GetAll(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized(&quot;Invalid username&quot;);
+        }
+
+        this.dal.SetUser(username);
+
+        return Ok(this.dal.GetAll());
+    }
+
+    // GET &lt;TagController&gt;/5-username
+    /// &lt;summary&gt;
+    /// Gets the by identifier.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;sourceId&quot;&gt;The source identifier.&lt;/param&gt;
+    /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    [HttpGet(&quot;{tagId}-{username}&quot;)]
+    public IActionResult GetById(int tagId, string username)
+    {
+        if (tagId &lt; 0)
+        {
+            return BadRequest(&quot;Invalid Tag Id&quot;);
+        }
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized(&quot;Invalid username&quot;);
+        }
+
+        this.dal.SetUser(username);
+
+        try
+        {
+            return Ok(this.dal.Get(tagId));
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+    // POST &lt;TagController&gt;/username
+    /// &lt;summary&gt;
+    /// Creates the specified username.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+    /// &lt;param name=&quot;newTag&quot;&gt;The new tag.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    [HttpPost(&quot;{username}&quot;)]
+    public IActionResult Create(string username, [FromBody] Tag newTag)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized(&quot;Invalid username&quot;);
+        }
+
+        this.dal.SetUser(username);
+
+        try
+        {
+            return Ok(this.dal.Add(newTag));
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+    // PUT &lt;TagController&gt;/username
+    /// &lt;summary&gt;
+    /// Updates the specified username.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;username&quot;&gt;The username.&lt;/param&gt;
+    /// &lt;param name=&quot;shared&quot;&gt;The shared.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    [HttpPut(&quot;{username}&quot;)]
+    public IActionResult Update(string username, [FromBody] Tag shared)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return Unauthorized(&quot;Invalid username&quot;);
+        }
+
+        this.dal.SetUser(username);
+
+        try
+        {
+            this.dal.Update(shared);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+    // DELETE &lt;TagController&gt;/5
+    /// &lt;summary&gt;
+    /// Deletes the specified tag identifier.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;tagId&quot;&gt;The tag identifier.&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    [HttpDelete(&quot;{tagId}&quot;)]
+    public IActionResult Delete(int tagId)
+    {
+        if (tagId &lt; 0)
+        {
+            return BadRequest(&quot;Invalid TagId&quot;);
+        }
+        try
+        {
+            var shared = new Tag { TagID = tagId };
+            return Ok(this.dal.Delete(shared));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(&quot;Invalid delete: &quot; + e.Message);
+        }
+    }
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[26,5,26,42,1],[27,5,27,6,1],[28,9,28,24,1],[29,5,29,6,1],[43,5,43,6,1],[44,9,44,49,1],[45,9,45,10,1],[46,13,46,53,1],[49,9,49,36,1],[51,9,51,38,1],[52,5,52,6,1],[63,5,63,6,1],[64,9,64,23,1],[65,9,65,10,1],[66,13,66,49,1],[68,9,68,49,1],[69,9,69,10,0],[70,13,70,53,0],[73,9,73,36,1],[76,9,76,10,1],[77,13,77,44,1],[79,9,79,28,0],[80,9,80,10,0],[81,13,81,33,0],[83,5,83,6,1],[94,5,94,6,1],[95,9,95,49,1],[96,9,96,10,0],[97,13,97,53,0],[100,9,100,36,1],[103,9,103,10,1],[104,13,104,45,1],[106,9,106,28,0],[107,9,107,10,0],[108,13,108,33,0],[110,5,110,6,1],[121,5,121,6,1],[122,9,122,49,1],[123,9,123,10,1],[124,13,124,53,1],[127,9,127,36,1],[130,9,130,10,1],[131,13,131,37,1],[132,13,132,25,1],[134,9,134,28,0],[135,9,135,10,0],[136,13,136,33,0],[138,5,138,6,1],[148,5,148,6,1],[149,9,149,23,1],[150,9,150,10,1],[151,13,151,48,1],[154,9,154,10,1],[155,13,155,52,1],[156,13,156,48,1],[158,9,158,28,0],[159,9,159,10,0],[160,13,160,63,0],[162,5,162,6,1]]);
+    </script>
+  </body>
+</html>

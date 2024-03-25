@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server\Program.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Add db context with SQL Server
+builder.Services.AddDbContext&lt;DocunotesDbContext&gt;(options =&gt;
+    options.UseSqlServer(builder.Configuration.GetConnectionString(&quot;DefaultConnection&quot;))
+);
+
+// Add Dal classes
+builder.Services
+    .AddTransient&lt;IDbDal&lt;User&gt;, UserDal&gt;()
+    .AddTransient&lt;IDbDal&lt;Source&gt;, SourceDal&gt;()
+    .AddTransient&lt;IDbDal&lt;Note&gt;, NotesDal&gt;()
+    .AddTransient&lt;IDbDal&lt;Tag&gt;, TagDal&gt;();
+
+var app = builder.Build();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.MapControllers();
+
+app.MapFallbackToFile(&quot;/index.html&quot;);
+
+app.Run();
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[5,1,5,50,0],[9,1,9,35,0],[11,1,11,44,0],[12,1,12,34,0],[15,1,16,5,0],[16,5,16,89,0],[16,89,17,3,0],[20,1,24,42,0],[26,1,26,27,0],[28,1,28,23,0],[29,1,29,22,0],[32,1,32,37,0],[33,1,33,2,0],[34,5,34,22,0],[35,5,35,24,0],[36,1,36,2,0],[38,1,38,27,0],[40,1,40,22,0],[42,1,42,38,0],[44,1,44,11,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Model\Note_TagTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Model;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CapstoneGroup2.Server.UnitTests.Model
+{
+    [TestFixture]
+    public class Note_TagTests
+    {
+        [Test]
+        public void Note_Tag_PropertiesSetCorrectly()
+        {
+            // Arrange
+            var noteTag = new Note_Tag();
+
+            // Act &amp; Assert
+            Assert.AreEqual(0, noteTag.NoteID); // By default, NoteID should be 0
+            Assert.AreEqual(0, noteTag.TagID); // By default, TagID should be 0
+        }
+    }
+
+    [TestFixture]
+    public class NoteTagConfigurationTests
+    {
+        [Test]
+        public void NoteTagConfiguration_CorrectlyConfiguresEntity()
+        {
+            // Arrange
+            var modelBuilder = new ModelBuilder();
+            var entityBuilder = modelBuilder.Entity&lt;Note_Tag&gt;();
+            var configuration = new NoteTagConfiguration();
+
+            // Act
+            configuration.Configure(entityBuilder);
+
+            // Assert
+            var entityType = modelBuilder.Model.FindEntityType(typeof(Note_Tag));
+            Assert.AreEqual(&quot;Note_Tag&quot;, entityType.GetTableName()); // Ensure table name is set correctly
+            var primaryKey = entityType.FindPrimaryKey();
+            Assert.AreEqual(2, primaryKey.Properties.Count); // Ensure composite primary key is set
+            Assert.IsTrue(primaryKey.Properties[0].Name == &quot;TagID&quot; &amp;&amp; primaryKey.Properties[1].Name == &quot;NoteID&quot;); // Ensure primary key properties are correctly set
+            var tagIdProperty = entityType.FindProperty(&quot;TagID&quot;);
+            Assert.IsTrue(tagIdProperty != null); // Ensure TagID property is configured
+            Assert.AreEqual(&quot;tag_id&quot;, tagIdProperty.GetColumnName()); // Ensure column name for TagID is set correctly
+            var noteIdProperty = entityType.FindProperty(&quot;NoteID&quot;);
+            Assert.IsTrue(noteIdProperty != null); // Ensure NoteID property is configured
+            Assert.AreEqual(&quot;note_id&quot;, noteIdProperty.GetColumnName()); // Ensure column name for NoteID is set correctly
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,5,13,6,1],[15,9,19,11,1],[22,9,22,44,1],[23,9,23,44,1],[24,5,24,6,1],[36,5,36,6,1],[38,9,38,47,1],[39,9,39,61,1],[40,9,40,56,1],[43,9,43,48,1],[46,9,46,78,1],[47,9,47,64,1],[48,9,48,54,1],[49,9,49,57,1],[50,9,51,66,1],[52,9,52,62,1],[53,9,53,46,1],[54,9,54,66,1],[55,9,55,64,1],[56,9,56,47,1],[57,9,57,68,1],[58,5,58,6,1]]);
+    </script>
+  </body>
+</html>

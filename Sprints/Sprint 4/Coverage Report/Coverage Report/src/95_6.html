@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Server.UnitTests\Controllers\UserControllerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CapstoneGroup2.Server.Controllers;
+using CapstoneGroup2.Server.Dal;
+using CapstoneGroup2.Server.Model;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+
+namespace CapstoneGroup2.Server.UnitTests.Controllers;
+
+/* dotcover disable */
+[TestFixture]
+public class UserControllerTests
+{
+    #region Data members
+
+    private readonly List&lt;User&gt; _users =
+    [
+        new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot;, Token = &quot;testToken&quot; },
+        new User { Username = &quot;testUser2&quot;, Password = &quot;testPassword2&quot;, Token = &quot;testToken2&quot; }
+    ];
+
+    private DbContextOptions&lt;DocunotesDbContext&gt; _options;
+    private DocunotesDbContext _context;
+
+    private UserDal _userDal;
+
+    #endregion
+
+    #region Methods
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        this._options = new DbContextOptionsBuilder&lt;DocunotesDbContext&gt;()
+            .UseInMemoryDatabase(&quot;Docunotes&quot;)
+            .EnableSensitiveDataLogging()
+            .Options;
+        this._context = new DocunotesDbContext(this._options);
+
+        this._context.Database.EnsureDeleted();
+        this._context.Database.EnsureCreated();
+
+        this._context.Users.AddRange(this._users);
+        this._context.SaveChanges();
+
+        this._userDal = new UserDal(this._context);
+    }
+
+    [Test]
+    public void ConstructorTest()
+    {
+        // Arrange
+        var userDal = new UserController(this._userDal);
+
+        // Assert
+        Assert.IsNotNull(userDal);
+    }
+
+    [Test]
+    public void LoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = &quot;testUser&quot;,
+            Password = &quot;testPassword&quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        var okResult = (result as OkObjectResult).Value as User;
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkObjectResult&gt;(result);
+        Assert.AreEqual(&quot;testUser&quot;, okResult.Username);
+        Assert.IsNull(okResult.Password);
+    }
+
+    [Test]
+    public void NullUserLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var result = userController.Login(null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    public void NullUsernameLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Password = &quot;testPassword&quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    public void EmptyUsernameLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = &quot;&quot;,
+            Password = &quot;testPassword&quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    public void WhitespaceUsernameLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = &quot;    &quot;,
+            Password = &quot;testPassword&quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    public void NullPasswordLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = &quot;testUser&quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    public void EmptyPasswordLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = &quot;testUser&quot;,
+            Password = &quot;&quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    public void WhitespacePasswordLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = &quot;testUser&quot;,
+            Password = &quot;    &quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    [Test]
+    public void InvalidUsernameLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = &quot;invalidUser&quot;,
+            Password = &quot;testPassword&quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;NotFoundResult&gt;(result);
+    }
+
+    [Test]
+    public void InvalidPasswordLoginTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var user = new User
+        {
+            Username = &quot;testUser&quot;,
+            Password = &quot;invalidPassword&quot;
+        };
+        var result = userController.Login(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;UnauthorizedResult&gt;(result);
+    }
+
+    [Test]
+    public void AddUserTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+        var user = new User { Username = &quot;testUser3&quot;, Password = &quot;test&quot; };
+
+        // Act
+        var result = userController.AddUser(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;OkObjectResult&gt;(result);
+
+        Assert.AreEqual(3, this._context.Users.Count());
+        Assert.Contains(user, this._context.Users.ToList());
+    }
+
+    [Test]
+    public void DuplicateUsernameAddUserTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+        var user = new User { Username = &quot;testUser&quot;, Password = &quot;testPassword&quot; };
+
+        // Act
+        var result = userController.AddUser(user);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;ConflictResult&gt;(result);
+    }
+
+    [Test]
+    public void NullAddUserTest()
+    {
+        // Arrange
+        var userController = new UserController(this._userDal);
+
+        // Act
+        var result = userController.AddUser(null);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOf&lt;NoContentResult&gt;(result);
+    }
+
+    [Test]
+    public void AddUser_ExceptionThrown_ReturnsBadRequest()
+    {
+        // Arrange
+        var mockDbDal = new Mock&lt;IDbDal&lt;User&gt;&gt;();
+        mockDbDal.Setup(x =&gt; x.Add(It.IsAny&lt;User&gt;())).Throws&lt;Exception&gt;();
+
+        var controller = new UserController(mockDbDal.Object);
+        var newUser = new User { Username = &quot;testuser&quot;, Password = &quot;testpassword&quot; };
+
+        // Act
+        var result = controller.AddUser(newUser);
+
+        // Assert
+        Assert.IsInstanceOf&lt;BadRequestResult&gt;(result);
+    }
+
+    #endregion
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,5,20,7,1],[33,5,33,6,1],[34,9,37,22,1],[38,9,38,63,1],[40,9,40,48,1],[41,9,41,48,1],[43,9,43,51,1],[44,9,44,37,1],[46,9,46,52,1],[47,5,47,6,1],[51,5,51,6,1],[53,9,53,57,1],[56,9,56,35,1],[57,5,57,6,1],[61,5,61,6,1],[63,9,63,64,1],[66,9,70,11,1],[71,9,71,49,1],[74,9,74,65,1],[75,9,75,34,1],[76,9,76,53,1],[77,9,77,56,1],[78,9,78,42,1],[79,5,79,6,1],[83,5,83,6,1],[85,9,85,64,1],[88,9,88,49,1],[91,9,91,34,1],[92,9,92,55,1],[93,5,93,6,1],[97,5,97,6,1],[99,9,99,64,1],[102,9,105,11,1],[106,9,106,49,1],[109,9,109,34,1],[110,9,110,55,1],[111,5,111,6,1],[115,5,115,6,1],[117,9,117,64,1],[120,9,124,11,1],[125,9,125,49,1],[128,9,128,34,1],[129,9,129,55,1],[130,5,130,6,1],[134,5,134,6,1],[136,9,136,64,1],[139,9,143,11,1],[144,9,144,49,1],[147,9,147,34,1],[148,9,148,55,1],[149,5,149,6,1],[153,5,153,6,1],[155,9,155,64,1],[158,9,161,11,1],[162,9,162,49,1],[165,9,165,34,1],[166,9,166,55,1],[167,5,167,6,1],[171,5,171,6,1],[173,9,173,64,1],[176,9,180,11,1],[181,9,181,49,1],[184,9,184,34,1],[185,9,185,55,1],[186,5,186,6,1],[190,5,190,6,1],[192,9,192,64,1],[195,9,199,11,1],[200,9,200,49,1],[203,9,203,34,1],[204,9,204,55,1],[205,5,205,6,1],[209,5,209,6,1],[211,9,211,64,1],[214,9,218,11,1],[219,9,219,49,1],[222,9,222,34,1],[223,9,223,53,1],[224,5,224,6,1],[228,5,228,6,1],[230,9,230,64,1],[233,9,237,11,1],[238,9,238,49,1],[241,9,241,34,1],[242,9,242,57,1],[243,5,243,6,1],[247,5,247,6,1],[249,9,249,64,1],[250,9,250,75,1],[253,9,253,51,1],[256,9,256,34,1],[257,9,257,53,1],[259,9,259,57,1],[260,9,260,61,1],[261,5,261,6,1],[265,5,265,6,1],[267,9,267,64,1],[268,9,268,82,1],[271,9,271,51,1],[274,9,274,34,1],[275,9,275,53,1],[276,5,276,6,1],[280,5,280,6,1],[282,9,282,64,1],[285,9,285,51,1],[288,9,288,34,1],[289,9,289,54,1],[290,5,290,6,1],[294,5,294,6,1],[296,9,296,50,1],[297,9,297,75,1],[299,9,299,63,1],[300,9,300,85,1],[303,9,303,50,1],[306,9,306,55,1],[307,5,307,6,1]]);
+    </script>
+  </body>
+</html>

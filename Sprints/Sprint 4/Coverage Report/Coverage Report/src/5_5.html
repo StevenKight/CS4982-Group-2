@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\sgk07\Documents\Class Work\Spring 2024\CS4982\Project\Code\CapstoneGroup2\CapstoneGroup2.Desktop\ViewModel\NotesViewModel.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.Storage;
+using CapstoneGroup2.Desktop.Library.Dal;
+using CapstoneGroup2.Desktop.Library.Model;
+using Microsoft.Toolkit.Uwp.Helpers;
+using Newtonsoft.Json;
+
+namespace CapstoneGroup2.Desktop.ViewModel
+{
+    /// &lt;summary&gt;
+    ///     Viewmodel for Notes interactions
+    /// &lt;/summary&gt;
+    public class NotesViewModel
+    {
+        #region Data members
+
+        /// &lt;summary&gt;
+        ///     The application storage helper
+        /// &lt;/summary&gt;
+        private readonly ApplicationDataStorageHelper _applicationStorageHelper;
+
+        /// &lt;summary&gt;
+        ///     The notes dal
+        /// &lt;/summary&gt;
+        private readonly NotesDal notesDal;
+
+        #endregion
+
+        #region Constructors
+
+        /// &lt;summary&gt;
+        ///     Initializes a new instance of the &lt;see cref=&quot;NotesViewModel&quot; /&gt; class.
+        /// &lt;/summary&gt;
+        public NotesViewModel()
+        {
+            this._applicationStorageHelper = new ApplicationDataStorageHelper(ApplicationData.Current);
+            this.notesDal = new NotesDal();
+        }
+
+        /// &lt;summary&gt;
+        ///     Initializes a new instance of the &lt;see cref=&quot;NotesViewModel&quot; /&gt; class.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;notesDal&quot;&gt;The notes dal.&lt;/param&gt;
+        public NotesViewModel(NotesDal notesDal)
+        {
+            this.notesDal = notesDal;
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// &lt;summary&gt;
+        ///     Gets the source notes.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;source&quot;&gt;The source.&lt;/param&gt;
+        /// &lt;returns&gt;
+        ///     notes if success, null otherwise
+        /// &lt;/returns&gt;
+        public async Task&lt;IEnumerable&lt;Note&gt;&gt; GetSourceNotes(Source source)
+        {
+            var userSerialized = this._applicationStorageHelper.Read&lt;string&gt;(&quot;user&quot;);
+
+            if (userSerialized == null)
+            {
+                return null;
+            }
+
+            var user = JsonConvert.DeserializeObject&lt;User&gt;(userSerialized);
+            return await this.notesDal.GetUserSourceNotes(user, source);
+        }
+
+        /// &lt;summary&gt;
+        ///     Adds the new note.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;note&quot;&gt;The note.&lt;/param&gt;
+        /// &lt;returns&gt;
+        ///     True if success, null if no user, False otherwise
+        /// &lt;/returns&gt;
+        public async Task&lt;bool?&gt; AddNewNote(Note note)
+        {
+            var userSerialized = this._applicationStorageHelper.Read&lt;string&gt;(&quot;user&quot;);
+
+            if (userSerialized == null)
+            {
+                return null;
+            }
+
+            var user = JsonConvert.DeserializeObject&lt;User&gt;(userSerialized);
+
+            return await this.notesDal.createNewNote(user, note);
+        }
+
+        /// &lt;summary&gt;
+        ///     Updates the note.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;note&quot;&gt;The note.&lt;/param&gt;
+        /// &lt;returns&gt;
+        ///     True if success, null if no user, False otherwise
+        /// &lt;/returns&gt;
+        public async Task&lt;bool?&gt; updateNote(Note note)
+        {
+            var userSerialized = this._applicationStorageHelper.Read&lt;string&gt;(&quot;user&quot;);
+
+            if (userSerialized == null)
+            {
+                return null;
+            }
+
+            if (note != null)
+            {
+                try
+                {
+                    var user = JsonConvert.DeserializeObject&lt;User&gt;(userSerialized);
+                    return await this.notesDal.UpdateNote(note, user);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($&quot;Error updating note: {ex.Message}&quot;);
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        /// &lt;summary&gt;
+        ///     Deletes the note.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;note&quot;&gt;The note.&lt;/param&gt;
+        /// &lt;returns&gt;
+        ///     True if success, null if no user, False otherwise
+        /// &lt;/returns&gt;
+        public async Task&lt;bool&gt; DeleteNote(Note note)
+        {
+            if (note != null)
+            {
+                try
+                {
+                    return await this.notesDal.DeleteNote(note);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($&quot;Error deleting note: {ex.Message}&quot;);
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[36,9,36,32,0],[37,9,37,10,0],[38,13,38,104,0],[39,13,39,44,0],[40,9,40,10,0],[46,9,46,49,0],[47,9,47,10,0],[48,13,48,38,0],[49,9,49,10,0],[63,9,63,10,0],[64,13,64,86,0],[66,13,66,40,0],[67,13,67,14,0],[68,17,68,29,0],[71,13,71,76,0],[72,13,72,73,0],[73,9,73,10,0],[83,9,83,10,0],[84,13,84,86,0],[86,13,86,40,0],[87,13,87,14,0],[88,17,88,29,0],[91,13,91,76,0],[93,13,93,66,0],[94,9,94,10,0],[104,9,104,10,0],[105,13,105,86,0],[107,13,107,40,0],[108,13,108,14,0],[109,17,109,29,0],[112,13,112,30,0],[113,13,113,14,0],[115,17,115,18,0],[116,21,116,84,0],[117,21,117,71,0],[119,17,119,37,0],[120,17,120,18,0],[121,21,121,77,0],[122,21,122,34,0],[126,13,126,26,0],[127,9,127,10,0],[137,9,137,10,0],[138,13,138,30,0],[139,13,139,14,0],[141,17,141,18,0],[142,21,142,65,0],[144,17,144,37,0],[145,17,145,18,0],[146,21,146,77,0],[147,21,147,34,0],[151,13,151,26,0],[152,9,152,10,0]]);
+    </script>
+  </body>
+</html>
