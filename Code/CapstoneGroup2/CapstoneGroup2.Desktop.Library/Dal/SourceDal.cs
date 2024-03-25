@@ -78,12 +78,12 @@ namespace CapstoneGroup2.Desktop.Library.Dal
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<IEnumerable<Source>> GetSourcesForTags(User user, Tag[] tags)
+        public async Task<IEnumerable<Source>> GetSourcesForTags(User user, List<Tag> tags)
         {
             var sources = new List<Source>();
             foreach (var tag in tags)
             {
-                var response = await this.client.GetAsync($"/Source/{tag}-{user.Username}");
+                var response = await this.client.GetAsync($"/Source/Tag/{tag.TagID}-{user.Username}");
                 if (response.IsSuccessStatusCode)
                 {
                     var sourcesForTag = await response.Content.ReadFromJsonAsync<IEnumerable<Source>>();
@@ -95,6 +95,18 @@ namespace CapstoneGroup2.Desktop.Library.Dal
                 }
             }
             
+            return null;
+        }
+
+        public async Task<IEnumerable<Tag>> GetTags(User user)
+        {
+            var response = await this.client.GetAsync($"/Tag/{user.Username}");
+            if (response.IsSuccessStatusCode)
+            {
+                var tags = await response.Content.ReadFromJsonAsync<IEnumerable<Tag>>();
+                return tags;
+            }
+
             return null;
         }
 

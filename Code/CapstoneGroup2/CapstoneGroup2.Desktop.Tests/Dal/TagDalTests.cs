@@ -72,7 +72,7 @@ namespace CapstoneGroup2.Desktop.Tests.Dal
                                   .ReturnsAsync(httpResponseMessage);
 
             // Act
-            var result = await _tagDal.createNewNote(user, tag);
+            var result = await _tagDal.CreateNewTag(user, tag);
 
             // Assert
             Assert.IsTrue(result);
@@ -89,7 +89,7 @@ namespace CapstoneGroup2.Desktop.Tests.Dal
                                   .ReturnsAsync(httpResponseMessage);
 
             // Act
-            var result = await _tagDal.createNewNote(user, tag);
+            var result = await _tagDal.CreateNewTag(user, tag);
 
             // Assert
             Assert.IsFalse(result);

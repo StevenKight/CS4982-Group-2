@@ -98,6 +98,32 @@ namespace CapstoneGroup2.Desktop.ViewModel
             return await this._sourceDal.AddSourceForUser(user, newSource);
         }
 
+        public async Task<IEnumerable<Source>> GetSourcesByTags(List<Tag> tags)
+        {
+            var userSerialized = this._applicationStorageHelper.Read<string>("user");
+
+            if (userSerialized == null)
+            {
+                return null; // TODO: Throw exception
+            }
+
+            var user = JsonConvert.DeserializeObject<User>(userSerialized);
+            return await this._sourceDal.GetSourcesForTags(user, tags);
+        }
+
+        public async Task<IEnumerable<Tag>> GetTags()
+        {
+            var userSerialized = this._applicationStorageHelper.Read<string>("user");
+
+            if (userSerialized == null)
+            {
+                return null;
+            }
+
+            var user = JsonConvert.DeserializeObject<User>(userSerialized);
+            return await this._sourceDal.GetTags(user);
+        }
+
         #endregion
     }
 }

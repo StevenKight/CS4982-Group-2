@@ -21,5 +21,14 @@ namespace CapstoneGroup2.Desktop.Library.Model
         /// The name of the tag.
         /// </value>
         public string TagName { get; set; }
+
+        /// <summary>
+        /// Returns the name of the tag.
+        /// </summary>
+        /// <returns>The name of the tag.</returns>
+        public override string ToString()
+        {
+            return TagName;
+        }
     }
 }

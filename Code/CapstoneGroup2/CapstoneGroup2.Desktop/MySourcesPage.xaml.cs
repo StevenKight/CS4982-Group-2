@@ -23,6 +23,8 @@ namespace CapstoneGroup2.Desktop
 
         private readonly SourceViewModel _sourceViewModel;
 
+        private List<Tag> _tags;
+
         #endregion
 
         #region Constructors
@@ -32,6 +34,7 @@ namespace CapstoneGroup2.Desktop
             this.InitializeComponent();
 
             this._sourceViewModel = new SourceViewModel();
+            this._tags = new List<Tag>();
         }
 
         #endregion
@@ -41,8 +44,10 @@ namespace CapstoneGroup2.Desktop
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
+            this.SearchButton.Visibility = Visibility.Collapsed;
+            this.ClearButton.Visibility = Visibility.Collapsed;
             await this.loadSources();
+            await this.loadTags();
         }
 
         private async Task loadSources()
@@ -51,6 +56,13 @@ namespace CapstoneGroup2.Desktop
             this._sources = sourcesEnumerable.ToList();
 
             this.sourcesListBox.ItemsSource = this._sources; // TODO: Order by date
+        }
+
+        private async Task loadTags()
+        {
+            var tagsEnumerable = await this._sourceViewModel.GetTags();
+            this._tags = tagsEnumerable.ToList();
+            this.TagsComboBox.ItemsSource = this._tags;
         }
 
         private void sharedSourcesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -73,5 +85,35 @@ namespace CapstoneGroup2.Desktop
         }
 
         #endregion
+
+        private async void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.TagsComboBox.SelectedValue != null)
+            {
+                var tags = new List<Tag>();
+                tags.Add(TagsComboBox.SelectedValue as Tag);
+                var sourcesEnumerable =  await this._sourceViewModel.GetSourcesByTags(tags);
+                this.sourcesListBox.ItemsSource = sourcesEnumerable.ToList();
+                this.ClearButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            this.sourcesListBox.ItemsSource = this._sources;
+            this.ClearButton.Visibility = Visibility.Collapsed;
+        }
+        private void TagsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.TagsComboBox.SelectedValue != null)
+            {
+                this.SearchButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.SearchButton.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
