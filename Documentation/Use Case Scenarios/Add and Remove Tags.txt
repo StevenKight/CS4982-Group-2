@@ -1,0 +1,25 @@
+Add a tag to note
+
+Context:
+The user is currently logged in and viewing a source with notes attached.
+
+Primary:
+	1. The user selects a note
+	2. The user enters a name for the tag
+	3. The tag is added to the note
+    Alternative:
+	User adds empty tag name
+	    a2) User enters empty tag name
+	    a3) The user is notified that the note is empty and it is not added
+	    Return to step 2
+		
+Remove a tag from note
+
+Context:
+The user is currently logged in and viewing a source with notes attached.
+
+Primary:
+	1. The user selects a note that has tags
+	2. The user selects a tag to remove
+	3. The user selects remove
+	4. The tag is removed from the note
