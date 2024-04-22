@@ -49,6 +49,7 @@ namespace CapstoneGroup2.Desktop
             this._viewModel = new UserViewModel();
 
             this.InitializeComponent();
+            this.requirementsToolTip.Content = "Password needs 8 characters with one letter, number, and special character";
         }
 
         #endregion
@@ -107,7 +108,10 @@ namespace CapstoneGroup2.Desktop
                     this.confirmPasswordToolTip.Margin = new Thickness(375, 375, 0, 0);
                 }
 
-                this.confirmPasswordToolTip.Content = "Passwords do not match";
+                if (this.passwordToolTip.Visibility != Visibility.Visible)
+                {
+                    this.confirmPasswordToolTip.Content = "Passwords do not match";
+                }
                 return false;
             }
 
@@ -128,6 +132,7 @@ namespace CapstoneGroup2.Desktop
             if (string.IsNullOrEmpty(this.Password))
             {
                 this.passwordToolTip.Visibility = Visibility.Visible;
+                this.requirementsToolTip.Visibility = Visibility.Collapsed;
                 this.passwordToolTip.Content = "Password cannot be empty";
                 valid = false;
             }

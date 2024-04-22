@@ -22,6 +22,8 @@
         <PasswordBox Name="passwordTextBox" HorizontalAlignment="Center"
                      PlaceholderText="Password" VerticalAlignment="Top" Height="64" Width="317"
                      FontSize="30" Margin="0,300,0,0" IsPasswordRevealButtonEnabled="True" />
+        <ToolTip x:Name="requirementsToolTip" Content="ToolTip" Margin="375,300,0,0" 
+                 VerticalAlignment="Top" HorizontalAlignment="Center"/>
         <ToolTip x:Name="passwordToolTip" Content="ToolTip" Margin="375,300,0,0" 
                  VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Collapsed" Foreground="#FFFF4D4F"/>
         <PasswordBox x:Name="confirmPasswordTextBox" HorizontalAlignment="Center"
