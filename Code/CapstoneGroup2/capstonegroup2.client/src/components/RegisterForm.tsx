@@ -107,6 +107,9 @@ export default function RegisterForm() {
                 <input type='text' value={username} onChange={(e) => setUsername(e.target.value)} />
                 {error.username ? <span className='authorize-form-error'>{error.username}</span> : null}
             </div>
+            <div className='password-requirement-label'>
+                <label>Password needs 8 or more characters with at least one letter, number, and special character</label>
+            </div>
             <div className='authorize-form-input'>
                 <label htmlFor='password'>Password</label>
                 <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />

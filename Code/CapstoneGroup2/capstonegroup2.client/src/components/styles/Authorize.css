@@ -12,3 +12,9 @@
     display: flex;
     flex-direction: column;
 }
+
+.password-requirement-label {
+    text-align: center;
+    font-size: 10px;
+    flex-direction: column;
+}
