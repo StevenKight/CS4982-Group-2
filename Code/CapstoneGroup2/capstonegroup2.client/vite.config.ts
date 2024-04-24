@@ -61,6 +61,10 @@ export default defineConfig({
             '^/source': {
                 target: 'https://localhost:7048/',
                 secure: false
+            },
+            '^/tag': {
+                target: 'https://localhost:7048/',
+                secure: false
             }
         },
         port: 5173,

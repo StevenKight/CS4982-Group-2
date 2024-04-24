@@ -121,8 +121,8 @@ public class SourceController : ControllerBase
     }
 
     // GET <SourceController>/5-username
-    [HttpGet("Tag/{tagId}-{username}")]
-    public IActionResult GetByTagId(int tagId, string username)
+    [HttpPost("Tag/{username}")]
+    public IActionResult GetByTagId(string username, [FromBody] List<Tag> tags)
     {
         if (string.IsNullOrWhiteSpace(username))
         {
@@ -133,7 +133,7 @@ public class SourceController : ControllerBase
 
         try
         {
-            return Ok((this.dal as SourceDal).getSourcesByTag(tagId));
+            return Ok((this.dal as SourceDal).GetSourcesByTags(tags));
         }
         catch (Exception e)
         {
