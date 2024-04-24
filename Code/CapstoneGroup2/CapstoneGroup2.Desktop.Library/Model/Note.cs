@@ -48,7 +48,7 @@ namespace CapstoneGroup2.Desktop.Library.Model
         /// <value>
         ///     The tags.
         /// </value>
-        public List<Tag> Tags { get; set; }
+        public List<Tag>? Tags { get; set; }
 
         /// <summary>
         ///     Gets or sets the note date.

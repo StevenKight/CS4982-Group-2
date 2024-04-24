@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
@@ -35,6 +36,7 @@ namespace CapstoneGroup2.Desktop
 
             this._sourceViewModel = new SourceViewModel();
             this._tags = new List<Tag>();
+            
         }
 
         #endregion
@@ -62,7 +64,7 @@ namespace CapstoneGroup2.Desktop
         {
             var tagsEnumerable = await this._sourceViewModel.GetTags();
             this._tags = tagsEnumerable.ToList();
-            this.TagsComboBox.ItemsSource = this._tags;
+            this.TagsListView.ItemsSource = this._tags;
         }
 
         private void sharedSourcesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -88,10 +90,14 @@ namespace CapstoneGroup2.Desktop
 
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.TagsComboBox.SelectedValue != null)
+            if (this.TagsListView.SelectedItems.Count > 0)
             {
                 var tags = new List<Tag>();
-                tags.Add(TagsComboBox.SelectedValue as Tag);
+                foreach (var tag in this.TagsListView.SelectedItems)
+                {
+                    tags.Add(tag as Tag);
+                }
+                tags.Add(TagsListView.SelectedValue as Tag);
                 var sourcesEnumerable =  await this._sourceViewModel.GetSourcesByTags(tags);
                 this.sourcesListBox.ItemsSource = sourcesEnumerable.ToList();
                 this.ClearButton.Visibility = Visibility.Visible;
@@ -100,15 +106,15 @@ namespace CapstoneGroup2.Desktop
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
-            this.TagsComboBox.SelectedValue = null;
-            this.TagsComboBox.SelectedIndex = -1;
+            this.TagsListView.SelectedItems.Clear();
+            this.TagsListView.SelectedIndex = -1;
             this.sourcesListBox.ItemsSource = this._sources;
             this.ClearButton.Visibility = Visibility.Collapsed;
             this.SearchButton.Visibility = Visibility.Collapsed;
         }
         private void TagsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.TagsComboBox.SelectedValue != null)
+            if (this.TagsListView.SelectedItems.Count > 0)
             {
                 this.SearchButton.Visibility = Visibility.Visible;
             }

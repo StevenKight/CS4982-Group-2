@@ -50,7 +50,7 @@ public class Note
     ///     The tags.
     /// </value>
     [NotMapped]
-    public List<Tag> Tags { get; set; }
+    public List<Tag>? Tags { get; set; }
 
     /// <summary>
     ///     Gets or sets the note date.

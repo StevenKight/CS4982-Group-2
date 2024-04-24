@@ -291,7 +291,6 @@ namespace CapstoneGroup2.Desktop
             }
 
             var note = (Note)this.notesListView.SelectedItem;
-
             if (note == null)
             {
                 var flyout = new Flyout
@@ -306,7 +305,11 @@ namespace CapstoneGroup2.Desktop
             }
 
             var textBlock = (TextBox)sender;
-            note.NoteText = textBlock.Text;
+            if (textBlock.Text != null && note != null)
+            {
+                note.NoteText = textBlock.Text;
+            }
+           
 
             if (string.IsNullOrEmpty(note.NoteText))
             {

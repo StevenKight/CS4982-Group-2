@@ -4,11 +4,11 @@ type Note = {
     username: string;
     noteText: string;
     noteDate: Date;
-    tags: Tag[];
+    tags: Tag[] | null;
 }
 
 type Tag = {
-    tagId: number;
+    tagID: number;
     tagName: string;
 }
 

@@ -83,7 +83,8 @@ namespace CapstoneGroup2.Desktop.Library.Dal
             var sources = new List<Source>();
             foreach (var tag in tags)
             {
-                var response = await this.client.GetAsync($"/Source/Tag/{tag.TagID}-{user.Username}");
+                var response = await this.client.PostAsync($"/Source/Tag/{user.Username}",
+                    new StringContent(JsonSerializer.Serialize(tags), Encoding.UTF8, "application/json"));
                 if (response.IsSuccessStatusCode)
                 {
                     var sourcesForTag = await response.Content.ReadFromJsonAsync<IEnumerable<Source>>();

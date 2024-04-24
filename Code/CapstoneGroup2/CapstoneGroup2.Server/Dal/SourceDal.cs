@@ -169,20 +169,23 @@ public class SourceDal : IDbDal<Source>
         throw new InvalidOperationException();
     }
 
-    public IEnumerable<Source> getSourcesByTag( int tagID)
+    public IEnumerable<Source> GetSourcesByTags(List<Tag> tags)
     {
-        if (tagID <= 0)
+        if (tags == null || !tags.Any())
         {
-            throw new ArgumentException("Invalid tag ID provided.", nameof(tagID));
+            throw new ArgumentException("Invalid tags provided", nameof(tags));
         }
-        var sourcesWithNotes = from source in context.Sources
-            join note in context.Notes on source.SourceId equals note.SourceId
-            join noteTag in context.Notes_Tags on note.NoteId equals noteTag.NoteID
-            where noteTag.TagID == tagID
+
+        var tagIds = tags.Select(t => t.TagID).ToList();
+
+
+
+        var sources = from source in this.context.Sources
+            join note in this.context.Notes on source.SourceId equals note.SourceId
+            join noteTag in this.context.Notes_Tags on note.NoteId equals noteTag.NoteID
+            where tagIds.Contains(noteTag.TagID)
             select source;
-
-        return sourcesWithNotes;
+        return sources.Distinct();
     }
-
     #endregion
 }
