@@ -46,18 +46,18 @@ namespace CapstoneGroup2.Desktop
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.SearchButton.Visibility = Visibility.Collapsed;
-            this.ClearButton.Visibility = Visibility.Collapsed;
+            this.SearchButton.IsEnabled = false;
+            this.ClearButton.IsEnabled = false;
             await this.loadSources();
             await this.loadTags();
         }
 
         private async Task loadSources()
         {
-            var sourcesEnumerable = await this._sourceViewModel.GetSources(); // TODO: Add the shared sources
+            var sourcesEnumerable = await this._sourceViewModel.GetSources();
             this._sources = sourcesEnumerable.ToList();
 
-            this.sourcesListBox.ItemsSource = this._sources; // TODO: Order by date
+            this.sourcesListBox.ItemsSource = this._sources;
         }
 
         private async Task loadTags()
@@ -100,7 +100,7 @@ namespace CapstoneGroup2.Desktop
                 tags.Add(TagsListView.SelectedValue as Tag);
                 var sourcesEnumerable =  await this._sourceViewModel.GetSourcesByTags(tags);
                 this.sourcesListBox.ItemsSource = sourcesEnumerable.ToList();
-                this.ClearButton.Visibility = Visibility.Visible;
+                this.ClearButton.IsEnabled = true;
             }
         }
 
@@ -109,18 +109,18 @@ namespace CapstoneGroup2.Desktop
             this.TagsListView.SelectedItems.Clear();
             this.TagsListView.SelectedIndex = -1;
             this.sourcesListBox.ItemsSource = this._sources;
-            this.ClearButton.Visibility = Visibility.Collapsed;
-            this.SearchButton.Visibility = Visibility.Collapsed;
+            this.SearchButton.IsEnabled = false;
+            this.ClearButton.IsEnabled = false;
         }
         private void TagsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.TagsListView.SelectedItems.Count > 0)
             {
-                this.SearchButton.Visibility = Visibility.Visible;
+                this.SearchButton.IsEnabled = true;
             }
             else
             {
-                this.SearchButton.Visibility = Visibility.Collapsed;
+                this.SearchButton.IsEnabled = false;
             }
         }
 
