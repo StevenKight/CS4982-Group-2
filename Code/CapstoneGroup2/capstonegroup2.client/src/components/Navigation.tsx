@@ -38,7 +38,6 @@ export default function Navigation() {
             <div className='postauthorize-navigation-group'>
                 <Link to='/'>Dashboard</Link>
                 <Link to='/my-sources'>My Sources</Link>
-                <Link to='/shared'>Shared with Me</Link>
             </div>
             <div className='postauthorize-navigation-group'>
                 <Link to='/profile'>{username}</Link>
