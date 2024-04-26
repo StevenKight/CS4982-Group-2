@@ -23,7 +23,7 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
     const [file, setFile] = useState(null as File | null);
     const [fileBytes, setFileBytes] = useState(null as string | null);
 
-    const [sourceType, setSourceType] = useState(SourceType.Pdf);
+    const [sourceType, setSourceType] = useState(null as SourceType | null);
     const [authors, setAuthors] = useState([] as string[]);
     const [selectedAuthor, setSelectedAuthor] = useState(null as string | null);
 
@@ -79,6 +79,15 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                 data[input.id] = input.value;
             }
         });
+
+        if (sourceType == null){
+            alert("Please select a file type.");
+            return;
+        }
+
+        if (data['accessedAt'] == "") {
+            data['accessedAt'] = null;
+        }
 
         const source = {
             type: getSourceTypeName(sourceType),
@@ -238,33 +247,37 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                 <label htmlFor='description'>Description</label>
                 <input type='text' id='description' placeholder='Enter a description...' />
 
-                <div className='add-source-dialog-linkable-row'>
-                    <div>
-                        <label htmlFor='isLinkLink'>Link</label>
-                        <input type="radio" id="isLinkLink" name="isLink" value="Link"
-                            required onClick={() => { setIsLink(true); setFile(null); }} />
+                <div className='add-source-dialog-row'>
+                    <div className='add-source-dialog-column'>
+                        <div>
+                            <label htmlFor='isLinkLink'>Linked File</label>
+                            <input type="radio" id="isLinkLink" name="isLink" value="Link"
+                                required onClick={() => { setIsLink(true); setFile(null); }} />
+                        </div>
+    
+                        <div>
+                            <label htmlFor='isLinkUpload'>Upload File</label>
+                            <input type="radio" id="isLinkUpload" name="isLink" value="Upload"
+                                onClick={() => setIsLink(false)} defaultChecked />
+                        </div>
                     </div>
-
-                    <div>
-                        <label htmlFor='isLinkUpload'>Upload</label>
-                        <input type="radio" id="isLinkUpload" name="isLink" value="Upload"
-                            onClick={() => setIsLink(false)} defaultChecked />
+    
+                    <div className='add-source-dialog-column'>
+                        <label htmlFor='filetype'>File type:</label>
+                        <select name="filetype" id="filetype" required
+                            onChange={
+                                (e) => {
+                                    const selectedType = parseInt(e.currentTarget.value);
+                                    setSourceType(selectedType);
+                                }
+                            }>
+                            <option selected disabled>Select a file type...</option>
+                            <option value={SourceType.Pdf}>PDF</option>
+                            <option value={SourceType.Vid}>Video</option>
+                        </select>
                     </div>
                 </div>
 
-                <div className='add-source-dialog-sourceType-row'>
-                    <div>
-                        <label htmlFor='isPdfPdf'>PDF</label>
-                        <input type="radio" id="isPdfPdf" name="isPdf" value="PDF"
-                            onClick={() => { setSourceType(SourceType.Pdf) }} defaultChecked />
-                    </div>
-
-                    <div>
-                        <label htmlFor='isPdfVideo'>Video</label>
-                        <input type="radio" id="isPdfVideo" name="isPdf" value="Video"
-                            required onClick={() => setSourceType(SourceType.Vid)} />
-                    </div>
-                </div>
                 {
                     isLink ?
                         <>
@@ -283,28 +296,34 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                         </>
                 }
 
-                <div className='add-source-dialog-author-heading'>
-                    <label>Authors:</label>
-                    <div style={{ display: 'flex' }}>
-                        <button onClick={handleAddAuthor}>+</button>
-                        <button onClick={handleRemoveAuthor} disabled={selectedAuthor === null}>-</button>
+                <div className='add-source-dialog-row'>
+                    <div className='add-source-dialog-column'>
+                        <div className='add-source-dialog-author-heading'>
+                            <label>Authors:</label>
+                            <div style={{ display: 'flex' }}>
+                                <button onClick={handleAddAuthor}>+</button>
+                                <button onClick={handleRemoveAuthor} disabled={selectedAuthor === null}>-</button>
+                            </div>
+                        </div>
+                        <div className='add-source-dialog-author-selector'>
+                            {
+                                authors.map((author, index) => {
+                                    return (
+                                        <input key={index} type='text' id={'author-' + index} onClick={handleAuthorClick} value={author} />
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+    
+                    <div className='add-source-dialog-column'>
+                        <label htmlFor='publisher'>Publisher</label>
+                        <input type='text' id='publisher' placeholder='Enter the publisher...' />
+        
+                        <label htmlFor='accessedAt'>Accessed At</label>
+                        <input type='date' id='accessedAt' />
                     </div>
                 </div>
-                <div className='add-source-dialog-author-selector'>
-                    {
-                        authors.map((author, index) => {
-                            return (
-                                <input key={index} type='text' id={'author-' + index} onClick={handleAuthorClick} value={author} />
-                            );
-                        })
-                    }
-                </div>
-
-                <label htmlFor='publisher'>Publisher</label>
-                <input type='text' id='publisher' placeholder='Enter the publisher...' />
-
-                <label htmlFor='accessedAt'>Accessed At</label>
-                <input type='date' id='accessedAt' />
 
                 <div className='add-source-dialog-finish-row'>
                     <input type='submit' value='Add' />
