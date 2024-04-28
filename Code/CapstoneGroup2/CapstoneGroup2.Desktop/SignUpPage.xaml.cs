@@ -50,6 +50,7 @@ namespace CapstoneGroup2.Desktop
 
             this.InitializeComponent();
             this.requirementsToolTip.Content = "Password needs 8 characters with one letter, number, and special character";
+            this.passwordTextBox.PasswordChanged += passwordTextBox_PasswordChanged;
         }
 
         #endregion
@@ -98,7 +99,6 @@ namespace CapstoneGroup2.Desktop
             {
                 this.confirmPasswordToolTip.Visibility = Visibility.Visible;
 
-                // If the password tooltip is visible, move confirm password tooltip to down
                 if (this.passwordToolTip.Visibility == Visibility.Visible)
                 {
                     this.confirmPasswordToolTip.Margin = new Thickness(375, 405, 0, 0);
@@ -117,6 +117,20 @@ namespace CapstoneGroup2.Desktop
 
             return true;
         }
+
+        private void passwordTextBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            const string passwordRegex = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$";
+            if (!string.IsNullOrEmpty(this.passwordTextBox.Password) && Regex.IsMatch(this.passwordTextBox.Password, passwordRegex))
+            {
+                this.requirementsToolTip.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.requirementsToolTip.Visibility = Visibility.Visible;
+            }
+        }
+
 
         private bool blankCheck()
         {
@@ -139,9 +153,14 @@ namespace CapstoneGroup2.Desktop
             else if (!Regex.IsMatch(this.Password, passwordRegex))
             {
                 this.passwordToolTip.Visibility = Visibility.Visible;
+                this.requirementsToolTip.Visibility = Visibility.Visible;
                 this.passwordToolTip.Content =
                     "Password must contain at least 8 characters, one letter, one number and one special character";
                 valid = false;
+            }
+            else
+            {
+                this.requirementsToolTip.Visibility = Visibility.Collapsed;
             }
 
             if (string.IsNullOrEmpty(this.ConfirmPassword))
@@ -153,6 +172,7 @@ namespace CapstoneGroup2.Desktop
 
             return valid;
         }
+
 
         private void loginButton_Click(object sender, RoutedEventArgs e)
         {
