@@ -18,10 +18,13 @@
         <TextBox Name="sourceDescriptionTextBox" HorizontalAlignment="Center" Margin="0,100,0,0"
                  VerticalAlignment="Top" Width="300" Height="50" PlaceholderText="Source Description" />
 
-        <CheckBox Name="sourceIsLinkCheckBox" Content="Is Link"  Margin="135,165,0,0" VerticalAlignment="Top"
+        <CheckBox Name="sourceIsLinkCheckBox" Content="Is Link" Margin="20,165,0,0" VerticalAlignment="Top"
                   Width="30" Height="25" Unchecked="sourceIsLinkCheckBox_Unchecked" Checked="sourceIsLinkCheckBox_Checked"/>
-        <CheckBox Name="sourceIsVideoCheckBox" Content="Is Video" HorizontalAlignment="Center" Margin="0,165,165,0" VerticalAlignment="Top"
-                  Width="30" Height="25"/>
+        <ComboBox Margin="120,165,0,0" VerticalAlignment="Top"
+                  Width="165" Height="30" PlaceholderText="Select a file type..." SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem>Pdf</ComboBoxItem>
+            <ComboBoxItem>Video</ComboBoxItem>
+        </ComboBox>
 
         <Grid Name="linkOptionsGrid" Visibility="Collapsed">
             <TextBox Name="sourceLinkTextBox" HorizontalAlignment="Center" Margin="0,205,0,0" VerticalAlignment="Top"

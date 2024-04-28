@@ -23,6 +23,8 @@ namespace CapstoneGroup2.Desktop
 
         private StorageFile storageFile;
 
+        private bool? isPdf;
+
         #endregion
 
         #region Properties
@@ -53,42 +55,41 @@ namespace CapstoneGroup2.Desktop
                 !string.IsNullOrWhiteSpace(user.Username));
             var authorsNames = authorsObjects?.Select(x => ((User)x).Username).ToList();
 
-            Source source;
-
-            switch (this.sourceIsVideoCheckBox.IsChecked)
+            var selectedDateTime = this.sourceAccessedDatePicker.SelectedDate;
+            DateTime? dateTime = this.sourceAccessedDatePicker.Date.DateTime;
+            if (selectedDateTime == null)
             {
-                case null:
+                dateTime = null;
+            }
+
+            var source = new Source
+            {
+                Name = this.sourceNameTextBox.Text,
+                Description = this.sourceDescriptionTextBox.Text,
+                IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
+                AuthorsString = string.Join("|", authorsNames),
+                Publisher = this.sourcePublisherTextBox.Text,
+                AccessedAt = dateTime
+            };
+
+            switch (this.isPdf)
+            {
+                case true:
                 {
-                    return;
+                    source.Type = SourceType.Pdf.ToString();
+                    break;
                 }
                 case false:
                 {
-                    source = new Source
-                    {
-                        Type = SourceType.Pdf.ToString(), // TODO: Add type selection to UI for other types
-                        Name = this.sourceNameTextBox.Text,
-                        Description = this.sourceDescriptionTextBox.Text,
-                        IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
-                        AuthorsString = string.Join("|", authorsNames),
-                        Publisher = this.sourcePublisherTextBox.Text,
-                        AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
-                    };
+                    source.Type = SourceType.Vid.ToString();
                     break;
                 }
                 default:
                 {
-                    source = new Source
-                    {
-                        Type = SourceType.Vid.ToString(), // TODO: Add type selection to UI for other types
-                        Name = this.sourceNameTextBox.Text,
-                        Description = this.sourceDescriptionTextBox.Text,
-                        IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
-                        AuthorsString = string.Join("|", authorsNames),
-                        Publisher = this.sourcePublisherTextBox.Text,
-                        AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
-                    };
-                    break;
-                    }
+                    var messageDialog = new MessageDialog("Please select a file type.");
+                    await messageDialog.ShowAsync();
+                    return;
+                }
             }
 
             var isChecked = this.sourceIsLinkCheckBox.IsChecked;
@@ -126,24 +127,26 @@ namespace CapstoneGroup2.Desktop
         private async void sourceUploadButton_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
-            switch (this.sourceIsVideoCheckBox.IsChecked)
+
+            switch (this.isPdf)
             {
-                case null:
-                {
-                    return;
-                }
-                case false:
+                case true:
                 {
                     picker.FileTypeFilter.Add(".pdf");
                     break;
                 }
-                default:
+                case false:
                 {
                     picker.FileTypeFilter.Add(".mp4");
                     break;
                 }
+                default:
+                {
+                    var messageDialog = new MessageDialog("Please select a file type.");
+                    await messageDialog.ShowAsync();
+                    return;
+                }
             }
-            picker.FileTypeFilter.Add(".pdf");
             var file = await picker.PickSingleFileAsync();
 
             if (file != null)
@@ -186,6 +189,14 @@ namespace CapstoneGroup2.Desktop
             var textBox = (TextBox)sender;
             var selectedItemTextBox = (User)textBox.DataContext;
             selectedItemTextBox.Username = textBox.Text;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = (ComboBox)sender;
+            var selectedItem = comboBox.SelectedIndex;
+
+            this.isPdf = selectedItem == 0;
         }
 
         #endregion
