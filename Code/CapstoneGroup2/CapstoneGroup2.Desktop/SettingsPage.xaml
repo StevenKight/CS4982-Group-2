@@ -8,9 +8,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock Margin="15,40,0,0" TextWrapping="Wrap" Text="Current User:"  FontSize="24" VerticalAlignment="Top"></TextBlock>
-        <TextBlock Margin="170,43,0,0" FontSize="22" Name="CurrentUserTextBlock" Text="Current User"></TextBlock>
-        <Button Name="LogoutButton" Content="Logout" Margin="550,39,0,0" FontSize="24" VerticalAlignment="Top" Click="Button_Click"/>
-
+        <Button Name="LogoutButton" Content="Logout" Margin="50,50,0,0" FontSize="24" VerticalAlignment="Top" Click="Button_Click"/>
     </Grid>
 </Page>
