@@ -263,10 +263,11 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                 <form className='add-source-dialog-form' onSubmit={handleSubmit}>
                     <div className='add-source-dialog-heading'>
                         <h2>Add a source</h2>
+                        <p className='add-source-dialog-info'>* - Required Field</p>
                         <button onClick={closeDialog}>Close</button>
                     </div>
-    
-                    <label htmlFor='name'>Name</label>
+
+                    <label htmlFor='name'>* Name</label>
                     <input type='text' id='name' placeholder='Enter a name for the source...' required />
     
                     <label htmlFor='description'>Description</label>
@@ -275,20 +276,20 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                     <div className='add-source-dialog-row'>
                         <div className='add-source-dialog-column'>
                             <div>
-                                <label htmlFor='isLinkLink'>Linked File</label>
+                                <label htmlFor='isLinkLink'>* Linked File</label>
                                 <input type="radio" id="isLinkLink" name="isLink" value="Link"
                                     required onClick={() => { setIsLink(true); setFile(null); }} />
                             </div>
         
                             <div>
-                                <label htmlFor='isLinkUpload'>Upload File</label>
+                                <label htmlFor='isLinkUpload'>* Upload File</label>
                                 <input type="radio" id="isLinkUpload" name="isLink" value="Upload"
                                     onClick={() => setIsLink(false)} defaultChecked />
                             </div>
                         </div>
         
                         <div className='add-source-dialog-column'>
-                            <label htmlFor='filetype'>File type:</label>
+                            <label htmlFor='filetype'>* File type:</label>
                             <select name="filetype" id="filetype" required
                                 onChange={
                                     (e) => {
@@ -306,11 +307,11 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
                     {
                         isLink ?
                             <>
-                                <label htmlFor='link'>Link</label>
+                                <label htmlFor='link'>* Link</label>
                                 <input type='text' id='link' placeholder='Enter a link...' required={isLink} />
                             </> :
                             <>
-                                <label htmlFor='file'>File</label>
+                                <label htmlFor='file'>* File</label>
                                 <input
                                     type='file'
                                     id='file'

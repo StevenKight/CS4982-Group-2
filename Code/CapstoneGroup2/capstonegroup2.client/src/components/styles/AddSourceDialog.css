@@ -38,6 +38,11 @@
     font-size: x-large;
 }
 
+.add-source-dialog-info {
+    margin-top: 2.5em;
+    font-size: small;
+}
+
 .add-source-dialog input {
     margin-bottom: 1em;
 }
