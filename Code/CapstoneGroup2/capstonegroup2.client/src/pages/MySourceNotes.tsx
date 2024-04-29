@@ -290,7 +290,7 @@ function NoteDisplay({ selectedNote, onChange }: { selectedNote: Note | null, on
 
 
     function addTag() {
-        if (!selectedNote) {
+        if (!selectedNote ||selectedNote == null) {
             alert('Please select a note to add a tag');
             return;
         }
@@ -313,6 +313,7 @@ function NoteDisplay({ selectedNote, onChange }: { selectedNote: Note | null, on
         });
 
         updateNote();
+        forceUpdate();
     }
 
     function deleteTag() {
@@ -328,7 +329,7 @@ function NoteDisplay({ selectedNote, onChange }: { selectedNote: Note | null, on
         }
 
         selectedNote.tags = selectedNote?.tags.filter(tag => tag.tagName !== selectedTag?.tagName) || [];
-
+        console.log(selectedNote.tags);
         updateNote();
     }
 
@@ -341,7 +342,7 @@ function NoteDisplay({ selectedNote, onChange }: { selectedNote: Note | null, on
         }
 
         selectedNote.noteText = noteText;
-
+        
         fetch(`/notes/${username}`, {
                 method: 'PUT',
                 headers: {

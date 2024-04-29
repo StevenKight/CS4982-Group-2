@@ -33,8 +33,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <TextBlock Text="Shared With Me" FontSize="32" Margin="0,350,0,0" />
-
         <ListBox x:Name="sharedSourcesListBox" SelectionChanged="sharedSourcesListBox_SelectionChanged"
                  Margin="25,400, 50,0" Height="200" VerticalAlignment="Top">
             <ListBox.ItemsPanel>

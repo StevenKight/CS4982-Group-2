@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Navigation;
 using CapstoneGroup2.Desktop.Data;
 using CapstoneGroup2.Desktop.Library.Model;
 using CapstoneGroup2.Desktop.ViewModel;
+using System.Linq;
+using Windows.UI.Popups;
 
 namespace CapstoneGroup2.Desktop
 {
@@ -369,9 +371,25 @@ namespace CapstoneGroup2.Desktop
                     TagName = ((TextBox)dialog.Content).Text
                 };
 
-                note.Tags.Add(tag);
-                this.tagsListView.Items?.Add(tag);
+                if (!note.Tags.Any(existingTag => existingTag.TagName == tag.TagName) && tag.TagName.Trim().Length != 0)
+                {
+                    note.Tags.Add(tag);
+                    this.tagsListView.Items?.Add(tag);
+                } else
+                {
+                    var dialogText = "";
+                    if (tag.TagName.Trim().Length == 0)
+                    {
+                        dialogText = "Tag name cannot be empty! Please enter a valid tag name.";
+                    }
+                    else
+                    {
+                        dialogText = "Duplicate tag found!";
+                    }
 
+                    var messageDialog = new MessageDialog(dialogText, "Error");
+                    await messageDialog.ShowAsync();
+                }
                 await this._notesViewModel.updateNote(note);
             }
         }
