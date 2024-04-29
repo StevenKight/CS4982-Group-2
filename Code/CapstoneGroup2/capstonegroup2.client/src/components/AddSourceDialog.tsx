@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import './styles/AddSourceDialog.css';
 
@@ -26,6 +26,29 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
     const [sourceType, setSourceType] = useState(null as SourceType | null);
     const [authors, setAuthors] = useState([] as string[]);
     const [selectedAuthor, setSelectedAuthor] = useState(null as string | null);
+
+    useEffect(() => {
+        const dialog = document.getElementById(id) as HTMLDialogElement;
+        const dialogBackground = document.getElementsByClassName('add-source-dialog-background')[0] as HTMLElement;
+        
+        // Create a new MutationObserver instance
+        const observer = new MutationObserver((mutationsList, observer) => {
+            if (mutationsList.length > 0 
+                && mutationsList.some((mutation) => mutation.type === 'attributes') 
+                && mutationsList.some((mutation) => mutation.attributeName === 'open')) {
+                
+                    dialogBackground.classList.toggle('open');
+            }
+        });
+
+        // Start observing the dialog element
+        observer.observe(dialog, { attributes: true, childList: true, subtree: true });
+
+        // Stop observing when the component unmounts
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
 
     /**
      * Closes the dialog and resets the form state.
@@ -233,104 +256,107 @@ export default function AddSourceDialog({ id, onAdd }: { id: string, onAdd: () =
     }
 
     return (
-        <dialog id={id} className='add-source-dialog'>
+        <>
+            <div className='add-source-dialog-background'/>
 
-            <form className='add-source-dialog-form' onSubmit={handleSubmit}>
-                <div className='add-source-dialog-heading'>
-                    <h2>Add a source</h2>
-                    <button onClick={closeDialog}>Close</button>
-                </div>
-
-                <label htmlFor='name'>Name</label>
-                <input type='text' id='name' placeholder='Enter a name for the source...' required />
-
-                <label htmlFor='description'>Description</label>
-                <input type='text' id='description' placeholder='Enter a description...' />
-
-                <div className='add-source-dialog-row'>
-                    <div className='add-source-dialog-column'>
-                        <div>
-                            <label htmlFor='isLinkLink'>Linked File</label>
-                            <input type="radio" id="isLinkLink" name="isLink" value="Link"
-                                required onClick={() => { setIsLink(true); setFile(null); }} />
-                        </div>
-    
-                        <div>
-                            <label htmlFor='isLinkUpload'>Upload File</label>
-                            <input type="radio" id="isLinkUpload" name="isLink" value="Upload"
-                                onClick={() => setIsLink(false)} defaultChecked />
-                        </div>
+            <dialog id={id} className='add-source-dialog'>
+                <form className='add-source-dialog-form' onSubmit={handleSubmit}>
+                    <div className='add-source-dialog-heading'>
+                        <h2>Add a source</h2>
+                        <button onClick={closeDialog}>Close</button>
                     </div>
     
-                    <div className='add-source-dialog-column'>
-                        <label htmlFor='filetype'>File type:</label>
-                        <select name="filetype" id="filetype" required
-                            onChange={
-                                (e) => {
-                                    const selectedType = parseInt(e.currentTarget.value);
-                                    setSourceType(selectedType);
-                                }
-                            }>
-                            <option selected disabled>Select a file type...</option>
-                            <option value={SourceType.Pdf}>PDF</option>
-                            <option value={SourceType.Vid}>Video</option>
-                        </select>
-                    </div>
-                </div>
-
-                {
-                    isLink ?
-                        <>
-                            <label htmlFor='link'>Link</label>
-                            <input type='text' id='link' placeholder='Enter a link...' required={isLink} />
-                        </> :
-                        <>
-                            <label htmlFor='file'>File</label>
-                            <input
-                                type='file'
-                                id='file'
-                                accept={getFileAcceptAttribute()}
-                                required={!isLink}
-                                onChange={(e) => handleFileChange(e)}
-                            />
-                        </>
-                }
-
-                <div className='add-source-dialog-row'>
-                    <div className='add-source-dialog-column'>
-                        <div className='add-source-dialog-author-heading'>
-                            <label>Authors:</label>
-                            <div style={{ display: 'flex' }}>
-                                <button onClick={handleAddAuthor}>+</button>
-                                <button onClick={handleRemoveAuthor} disabled={selectedAuthor === null}>-</button>
+                    <label htmlFor='name'>Name</label>
+                    <input type='text' id='name' placeholder='Enter a name for the source...' required />
+    
+                    <label htmlFor='description'>Description</label>
+                    <input type='text' id='description' placeholder='Enter a description...' />
+    
+                    <div className='add-source-dialog-row'>
+                        <div className='add-source-dialog-column'>
+                            <div>
+                                <label htmlFor='isLinkLink'>Linked File</label>
+                                <input type="radio" id="isLinkLink" name="isLink" value="Link"
+                                    required onClick={() => { setIsLink(true); setFile(null); }} />
+                            </div>
+        
+                            <div>
+                                <label htmlFor='isLinkUpload'>Upload File</label>
+                                <input type="radio" id="isLinkUpload" name="isLink" value="Upload"
+                                    onClick={() => setIsLink(false)} defaultChecked />
                             </div>
                         </div>
-                        <div className='add-source-dialog-author-selector'>
-                            {
-                                authors.map((author, index) => {
-                                    return (
-                                        <input key={index} type='text' id={'author-' + index} onClick={handleAuthorClick} value={author} />
-                                    );
-                                })
-                            }
+        
+                        <div className='add-source-dialog-column'>
+                            <label htmlFor='filetype'>File type:</label>
+                            <select name="filetype" id="filetype" required
+                                onChange={
+                                    (e) => {
+                                        const selectedType = parseInt(e.currentTarget.value);
+                                        setSourceType(selectedType);
+                                    }
+                                }>
+                                <option selected disabled>Select a file type...</option>
+                                <option value={SourceType.Pdf}>PDF</option>
+                                <option value={SourceType.Vid}>Video</option>
+                            </select>
                         </div>
                     </div>
     
-                    <div className='add-source-dialog-column'>
-                        <label htmlFor='publisher'>Publisher</label>
-                        <input type='text' id='publisher' placeholder='Enter the publisher...' />
+                    {
+                        isLink ?
+                            <>
+                                <label htmlFor='link'>Link</label>
+                                <input type='text' id='link' placeholder='Enter a link...' required={isLink} />
+                            </> :
+                            <>
+                                <label htmlFor='file'>File</label>
+                                <input
+                                    type='file'
+                                    id='file'
+                                    accept={getFileAcceptAttribute()}
+                                    required={!isLink}
+                                    onChange={(e) => handleFileChange(e)}
+                                />
+                            </>
+                    }
+    
+                    <div className='add-source-dialog-row'>
+                        <div className='add-source-dialog-column'>
+                            <div className='add-source-dialog-author-heading'>
+                                <label>Authors:</label>
+                                <div style={{ display: 'flex' }}>
+                                    <button onClick={handleAddAuthor}>+</button>
+                                    <button onClick={handleRemoveAuthor} disabled={selectedAuthor === null}>-</button>
+                                </div>
+                            </div>
+                            <div className='add-source-dialog-author-selector'>
+                                {
+                                    authors.map((author, index) => {
+                                        return (
+                                            <input key={index} type='text' id={'author-' + index} onClick={handleAuthorClick} value={author} />
+                                        );
+                                    })
+                                }
+                            </div>
+                        </div>
         
-                        <label htmlFor='accessedAt'>Accessed At</label>
-                        <input type='date' id='accessedAt' />
+                        <div className='add-source-dialog-column'>
+                            <label htmlFor='publisher'>Publisher</label>
+                            <input type='text' id='publisher' placeholder='Enter the publisher...' />
+            
+                            <label htmlFor='accessedAt'>Accessed At</label>
+                            <input type='date' id='accessedAt' />
+                        </div>
                     </div>
-                </div>
-
-                <div className='add-source-dialog-finish-row'>
-                    <input type='submit' value='Add' />
-                    <input type='reset' value='Cancel' onClick={closeDialog} />
-                </div>
-            </form>
-
-        </dialog>
+    
+                    <div className='add-source-dialog-finish-row'>
+                        <input type='submit' value='Add' />
+                        <input type='reset' value='Cancel' onClick={closeDialog} />
+                    </div>
+                </form>
+    
+            </dialog>
+        </>
     );
 }

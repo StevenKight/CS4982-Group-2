@@ -1,3 +1,19 @@
+.add-source-dialog-background {
+    display: none;
+}
+
+.add-source-dialog-background.open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+}
+
 .add-source-dialog {
     border: none;
     box-shadow: 0 0 5px rgb(0 0 0 / 0.2);
