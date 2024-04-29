@@ -36,13 +36,41 @@ namespace CapstoneGroup2.Desktop
         public AddSourceDialog()
         {
             this.InitializeComponent();
-
+            this.AttachEventListeners();
+            this.IsPrimaryButtonEnabled = false;
             this.sourceIsLinkCheckBox.IsChecked = true;
         }
 
         #endregion
 
         #region Methods
+        private void AttachEventListeners()
+        {
+            this.sourceNameTextBox.TextChanged += SourceNameTextBox_TextChanged;
+            this.sourceAccessedDatePicker.DateChanged += DateTimePicker_DateChanged;
+        }
+
+        private void SourceNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string text = this.sourceNameTextBox.Text.Trim();
+            var dateValid = this.sourceAccessedDatePicker.Date.Year >= 2018 ;
+            if (text.Length == 0 || dateValid)
+            {
+                this.IsPrimaryButtonEnabled = false;
+            }
+            else
+            {
+                this.IsPrimaryButtonEnabled = true;
+            }
+        }
+
+        private void DateTimePicker_DateChanged(object sender, DatePickerValueChangedEventArgs e)
+        {
+            string text = this.sourceNameTextBox.Text.Trim();
+            DatePicker dateTimePicker = (DatePicker)sender;
+            DateTimeOffset selectedDate = dateTimePicker.Date;
+            this.IsPrimaryButtonEnabled = selectedDate.Year >= 2018 && text.Length != 0;
+        }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender,
             ContentDialogButtonClickEventArgs args)

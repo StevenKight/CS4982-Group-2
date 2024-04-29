@@ -72,6 +72,12 @@ namespace CapstoneGroup2.Desktop.ViewModel
             return validUser;
         }
 
+        public async Task<bool> Lgout()
+        {
+            this._applicationStorageHelper.Clear();
+            return true;
+        }
+
         /// <summary>
         ///     Creates a new account using given user.
         /// </summary>

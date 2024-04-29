@@ -52,9 +52,6 @@ namespace CapstoneGroup2.Desktop
                 case "My Sources":
                     this.contentFrame.Navigate(typeof(MySourcesPage));
                     break;
-                case "Shared With Me":
-                    this.contentFrame.Navigate(typeof(SharedPage)); // TODO: Add the shared sources
-                    break;
                 case "Settings":
                     this.contentFrame.Navigate(typeof(SettingsPage));
                     break;
@@ -67,7 +64,6 @@ namespace CapstoneGroup2.Desktop
             {
                 { } when e.SourcePageType == typeof(DashboardPage) => this.navigationView.MenuItems[0],
                 { } when e.SourcePageType == typeof(MySourcesPage) => this.navigationView.MenuItems[1],
-                { } when e.SourcePageType == typeof(SharedPage) => this.navigationView.MenuItems[2],
                 { } when e.SourcePageType == typeof(SettingsPage) => this.navigationView.SelectedItem,
                 _ => null
             };

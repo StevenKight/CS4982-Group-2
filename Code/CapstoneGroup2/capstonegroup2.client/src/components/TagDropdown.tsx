@@ -38,7 +38,7 @@ const TagDropdown: React.FC<Props> = ({ tags, getSources }) => {
 
   return (
     <div style={{borderStyle:"solid", padding:"10px", marginRight:"30%", borderRadius:"4px",marginBottom:"1%"}}>
-      <h2>Filter by Tags:</h2>
+      <h2>Search by Tags:</h2>
     <div style={{ maxHeight:"120px",display:"grid", gridTemplateColumns: "auto auto"}}>
       <div 
       style={{ maxHeight: '50%', overflowY: 'auto', display:"grid", background:"grey", borderRadius:"4px"}}>
@@ -55,8 +55,8 @@ const TagDropdown: React.FC<Props> = ({ tags, getSources }) => {
         ))}
       </div>
       <div style={{ width:"80%",marginLeft:"3%",display:"flex", justifyContent:"center"}}>
-      <button style={{ width:"50%",maxHeight:"40px",marginTop:"2%", marginBottom:"1%"}} onClick={handleSearch}>Search</button>
-      <button style={{width:"50%",maxHeight:"40px", marginLeft:"3%",marginTop:"2%"}} onClick={handleClearSelection}>Clear Selection</button>
+      <button disabled={selectedTags.length == 0} style={{ width:"50%",maxHeight:"40px",marginTop:"2%", marginBottom:"1%"}} onClick={handleSearch}>Search</button>
+      <button disabled={selectedTags.length == 0} style={{width:"50%",maxHeight:"40px", marginLeft:"3%",marginTop:"2%"}} onClick={handleClearSelection}>Clear Selection</button>
         </div>
     </div>
     </div>

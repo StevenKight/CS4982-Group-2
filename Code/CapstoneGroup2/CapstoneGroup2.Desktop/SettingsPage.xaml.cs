@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using CapstoneGroup2.Desktop.ViewModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -25,5 +26,12 @@ namespace CapstoneGroup2.Desktop
         }
 
         #endregion
+
+        private void Button_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            this._viewModel.Lgout();
+            (Window.Current.Content as Frame)?.Navigate(typeof(LoginPage));
+
+        }
     }
 }

@@ -24,12 +24,6 @@
                         <FontIcon Glyph="&#xE8B7;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-
-                <NavigationViewItem Content="Shared With Me" Tag="shared">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE1A6;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <Frame x:Name="contentFrame" Navigated="contentFrame_Navigated" />
