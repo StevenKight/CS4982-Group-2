@@ -20,7 +20,7 @@
 
         <CheckBox Name="sourceIsLinkCheckBox" Content="Is Link" Margin="20,165,0,0" VerticalAlignment="Top"
                   Width="30" Height="25" Unchecked="sourceIsLinkCheckBox_Unchecked" Checked="sourceIsLinkCheckBox_Checked"/>
-        <ComboBox Margin="120,165,0,0" VerticalAlignment="Top"
+        <ComboBox Name="fileTypeComboBox" Margin="120,165,0,0" VerticalAlignment="Top"
                   Width="165" Height="30" PlaceholderText="Select a file type..." SelectionChanged="ComboBox_SelectionChanged">
             <ComboBoxItem>Pdf</ComboBoxItem>
             <ComboBoxItem>Video</ComboBoxItem>
@@ -28,11 +28,11 @@
 
         <Grid Name="linkOptionsGrid" Visibility="Collapsed">
             <TextBox Name="sourceLinkTextBox" HorizontalAlignment="Center" Margin="0,205,0,0" VerticalAlignment="Top"
-                     Width="300" Height="50" PlaceholderText="Source Link" />
+                     Width="300" Height="50" PlaceholderText="Source Link"/>
         </Grid>
         <Grid Name="uploadOptionsGrid" Visibility="Visible">
             <Button Name="sourceUploadButton" HorizontalAlignment="Center" Margin="0,205,0,0" VerticalAlignment="Top"
-                    Width="300" Height="50" Content="Upload Source" Click="sourceUploadButton_Click" />
+                    Width="300" Height="50" Content="Upload Source" Click="sourceUploadButton_Click"/>
         </Grid>
         <Button x:Name="addAuthorButton" HorizontalAlignment="Center" Margin="100,265,0,0" VerticalAlignment="Top"
                 Width="30" Height="30" Content="+" FontSize="14" Click="AddAuthor_Click" Padding="0" Canvas.ZIndex="3"/>

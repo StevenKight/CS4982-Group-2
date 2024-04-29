@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
@@ -21,6 +22,12 @@ namespace CapstoneGroup2.Desktop
     {
         #region Data members
 
+        private static MessageDialog FileTypeDialog = new MessageDialog("Please select a file type.");
+
+        private static MessageDialog FileLinkDialog = new MessageDialog("Please enter a link.");
+
+        private static MessageDialog FileUploadDialog = new MessageDialog("Please select a file to upload.");
+
         private StorageFile storageFile;
 
         private bool? isPdf;
@@ -39,7 +46,7 @@ namespace CapstoneGroup2.Desktop
         {
             this.InitializeComponent();
             this.AttachEventListeners();
-            this.IsPrimaryButtonEnabled = false;
+            IsPrimaryButtonEnabled = false;
             this.sourceIsLinkCheckBox.IsChecked = true;
         }
 
@@ -48,8 +55,8 @@ namespace CapstoneGroup2.Desktop
         #region Methods
         private void AttachEventListeners()
         {
-            this.sourceNameTextBox.TextChanged += SourceNameTextBox_TextChanged;
-            this.sourceAccessedDatePicker.DateChanged += DateTimePicker_DateChanged;
+            this.sourceNameTextBox.TextChanged += this.SourceNameTextBox_TextChanged;
+            this.sourceAccessedDatePicker.DateChanged += this.DateTimePicker_DateChanged;
         }
 
         private void SourceNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -58,11 +65,11 @@ namespace CapstoneGroup2.Desktop
             var dateValid = this.sourceAccessedDatePicker.Date.Year >= 2018 ;
             if (text.Length == 0 || dateValid)
             {
-                this.IsPrimaryButtonEnabled = false;
+                IsPrimaryButtonEnabled = false;
             }
             else
             {
-                this.IsPrimaryButtonEnabled = true;
+                IsPrimaryButtonEnabled = true;
             }
         }
 
@@ -71,11 +78,18 @@ namespace CapstoneGroup2.Desktop
             string text = this.sourceNameTextBox.Text.Trim();
             DatePicker dateTimePicker = (DatePicker)sender;
             DateTimeOffset selectedDate = dateTimePicker.Date;
-            this.IsPrimaryButtonEnabled = selectedDate.Year >= 2018 && text.Length != 0;
+            IsPrimaryButtonEnabled = selectedDate.Year >= 2018 && text.Length != 0;
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender,
             ContentDialogButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+            args.Cancel = await this.createSource();
+            deferral.Complete();
+        }
+
+        private async Task<bool> createSource()
         {
             var authorsCollection = this.sourceAuthorsListView.Items.ToList();
             var authorsObjects = authorsCollection?.Where(x =>
@@ -114,30 +128,42 @@ namespace CapstoneGroup2.Desktop
                 }
                 default:
                 {
-                    var messageDialog = new MessageDialog("Please select a file type.");
-                    await messageDialog.ShowAsync();
-                    return;
+                    await FileTypeDialog.ShowAsync();
+                    return true;
                 }
             }
 
             var isChecked = this.sourceIsLinkCheckBox.IsChecked;
-            
+
             switch (isChecked)
             {
                 case null:
                 {
-                    return;
+                    return true;
                 }
                 case false:
+                    if (this.storageFile == null)
+                    {
+                        await FileUploadDialog.ShowAsync();
+                        return true;
+                    }
+
                     source.Link = "";
                     source.Content = await DataManager.FileToBinary(this.storageFile);
                     break;
                 default:
+                    if (string.IsNullOrWhiteSpace(this.sourceLinkTextBox.Text))
+                    {
+                        await FileLinkDialog.ShowAsync();
+                        return true;
+                    }
+
                     source.Link = this.sourceLinkTextBox.Text;
                     break;
             }
 
             this.NewSource = source;
+            return false;
         }
 
         private void sourceIsLinkCheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -170,8 +196,7 @@ namespace CapstoneGroup2.Desktop
                 }
                 default:
                 {
-                    var messageDialog = new MessageDialog("Please select a file type.");
-                    await messageDialog.ShowAsync();
+                    await FileTypeDialog.ShowAsync();
                     return;
                 }
             }
