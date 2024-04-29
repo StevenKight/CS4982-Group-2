@@ -197,7 +197,7 @@ export default function MySourceNotes() {
                             </div>
                         </div>
                     </div>
-                    <NotesDisplay notes={notes} />
+                    <NotesDisplay notes={notes} onDelete={getNotes} />
                 </div>
                 </div>
             </div>
@@ -205,7 +205,7 @@ export default function MySourceNotes() {
     );
 }
 
-function NotesDisplay({ notes }: { notes: Note[] }) {
+function NotesDisplay({ notes, onDelete }: { notes: Note[], onDelete: () => void}) {
     
     const forceUpdate = useForceUpdate();
 
@@ -222,18 +222,44 @@ function NotesDisplay({ notes }: { notes: Note[] }) {
         forceUpdate();
     }
 
+    function deleteNote() {
+        setSelectedNote(null);
+        onDelete();
+    }
+
     return (
         <div>
             <h2>Notes</h2>
             <div className='notes-display'>
-                <NotesList notes={notes} setSelectedNote={setSelectedNote} />
-                <NoteDisplay selectedNote={selectedNote} onChange={selectedNoteHandler}/>
+                <NotesList notes={notes} selectedNote={selectedNote} setSelectedNote={setSelectedNote} />
+                <NoteDisplay selectedNote={selectedNote} 
+                    onChange={selectedNoteHandler} onDelete={deleteNote}/>
             </div>
         </div>
     );
 }
 
-function NotesList({ notes, setSelectedNote }: { notes: Note[], setSelectedNote: (note: Note) => void }) {
+function NotesList({ notes, selectedNote, setSelectedNote }: { notes: Note[], selectedNote: Note | null, setSelectedNote: (note: Note) => void }) {
+
+    useEffect(() => {
+        clearSelected();
+
+        if (selectedNote) {
+            const selectedElement = document.getElementById(`note-${selectedNote.noteId}`);
+            if (selectedElement) {
+                selectedElement.classList.add('selected');
+            }
+        }
+    }, [selectedNote]);
+
+    function clearSelected() {
+        const selectedElements = document.getElementsByClassName('selected');
+        for (let i = 0; i < selectedElements.length; i++) {
+            if (selectedElements[i].nodeName === 'P') {
+                selectedElements[i].classList.remove('selected');
+            }
+        }
+    }
 
     function selectNote(event: React.MouseEvent<HTMLParagraphElement>, note: Note) {
         setSelectedNote(note);
@@ -241,13 +267,7 @@ function NotesList({ notes, setSelectedNote }: { notes: Note[], setSelectedNote:
         event.preventDefault();
         event.stopPropagation();
 
-        const selected = document.getElementsByClassName('selected');
-        for (let i = 0; i < selected.length; i++) {
-            if (selected[i].nodeName === 'P') {
-                selected[i].classList.remove('selected');
-            }
-        }
-
+        clearSelected();
         event.currentTarget.classList.add('selected');
     }
 
@@ -256,7 +276,8 @@ function NotesList({ notes, setSelectedNote }: { notes: Note[], setSelectedNote:
             <ul>
                 {
                     notes.map((note: Note) => (
-                        <p key={note.noteId} onClick={(e) => selectNote(e, note)}>
+                        <p key={note.noteId} id={`note-${note.noteId}`}
+                            onClick={(e) => selectNote(e, note)}>
                             {note.noteText}
                         </p>
                     ))
@@ -266,7 +287,7 @@ function NotesList({ notes, setSelectedNote }: { notes: Note[], setSelectedNote:
     );
 }
 
-function NoteDisplay({ selectedNote, onChange }: { selectedNote: Note | null, onChange: () => void}) {
+function NoteDisplay({ selectedNote, onChange, onDelete }: { selectedNote: Note | null, onChange: () => void, onDelete: () => void}) {
 
     const forceUpdate = useForceUpdate();
 
@@ -288,16 +309,36 @@ function NoteDisplay({ selectedNote, onChange }: { selectedNote: Note | null, on
         return selectedTag !== null;
     }
 
+    function deleteNote() {
+        if (!selectedNote || selectedNote == null) {
+            alert('Please select a note to remove');
+            return;
+        }
+
+        fetch(`/notes/${selectedNote.noteId}`, {
+            method: 'DELETE'
+        })
+            .then((response) => {
+                if (response.ok) {
+                    console.log('Note deleted');
+                    setSelectedTag(null);
+                    onDelete();
+                }
+                else {
+                    throw new Error('Error deleting source');
+                }
+            });
+    }
 
     function addTag() {
-        if (!selectedNote ||selectedNote == null) {
+        if (!selectedNote || selectedNote == null) {
             alert('Please select a note to add a tag');
             return;
         }
 
         var tagName = prompt('Enter tag name');
         
-        if (tagName === null || tagName === '') {
+        if (tagName === null || tagName === '' || /^\s*$/.test(tagName)) {
             alert('Tag name cannot be empty');
             return;
         }
@@ -382,6 +423,10 @@ function NoteDisplay({ selectedNote, onChange }: { selectedNote: Note | null, on
 
     return (
         <div className='note-display'>
+            <button disabled={!selectedNote}
+                onClick={deleteNote} style={{marginTop: '-2em', marginBottom: '1em'}}>
+                Delete Note
+            </button>
             <textarea value={
                     selectedNote ? noteText : 'Please select a note to view its content.'
                 } readOnly={!selectedNote} onChange={(e) => setNoteText(e.target.value)} 

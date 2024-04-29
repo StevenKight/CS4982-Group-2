@@ -76,7 +76,7 @@ public class Source
     /// <value>
     ///     The description.
     /// </value>
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether this instance is link.

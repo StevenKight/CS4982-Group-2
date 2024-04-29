@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
@@ -21,7 +22,15 @@ namespace CapstoneGroup2.Desktop
     {
         #region Data members
 
+        private static MessageDialog FileTypeDialog = new MessageDialog("Please select a file type.");
+
+        private static MessageDialog FileLinkDialog = new MessageDialog("Please enter a link.");
+
+        private static MessageDialog FileUploadDialog = new MessageDialog("Please select a file to upload.");
+
         private StorageFile storageFile;
+
+        private bool? isPdf;
 
         #endregion
 
@@ -37,7 +46,7 @@ namespace CapstoneGroup2.Desktop
         {
             this.InitializeComponent();
             this.AttachEventListeners();
-            this.IsPrimaryButtonEnabled = false;
+            IsPrimaryButtonEnabled = false;
             this.sourceIsLinkCheckBox.IsChecked = true;
         }
 
@@ -46,8 +55,8 @@ namespace CapstoneGroup2.Desktop
         #region Methods
         private void AttachEventListeners()
         {
-            this.sourceNameTextBox.TextChanged += SourceNameTextBox_TextChanged;
-            this.sourceAccessedDatePicker.DateChanged += DateTimePicker_DateChanged;
+            this.sourceNameTextBox.TextChanged += this.SourceNameTextBox_TextChanged;
+            this.sourceAccessedDatePicker.DateChanged += this.DateTimePicker_DateChanged;
         }
 
         private void SourceNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -56,11 +65,11 @@ namespace CapstoneGroup2.Desktop
             var dateValid = this.sourceAccessedDatePicker.Date.Year >= 2018 ;
             if (text.Length == 0 || dateValid)
             {
-                this.IsPrimaryButtonEnabled = false;
+                IsPrimaryButtonEnabled = false;
             }
             else
             {
-                this.IsPrimaryButtonEnabled = true;
+                IsPrimaryButtonEnabled = true;
             }
         }
 
@@ -69,11 +78,18 @@ namespace CapstoneGroup2.Desktop
             string text = this.sourceNameTextBox.Text.Trim();
             DatePicker dateTimePicker = (DatePicker)sender;
             DateTimeOffset selectedDate = dateTimePicker.Date;
-            this.IsPrimaryButtonEnabled = selectedDate.Year >= 2018 && text.Length != 0;
+            IsPrimaryButtonEnabled = selectedDate.Year >= 2018 && text.Length != 0;
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender,
             ContentDialogButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+            args.Cancel = await this.createSource();
+            deferral.Complete();
+        }
+
+        private async Task<bool> createSource()
         {
             var authorsCollection = this.sourceAuthorsListView.Items.ToList();
             var authorsObjects = authorsCollection?.Where(x =>
@@ -81,62 +97,73 @@ namespace CapstoneGroup2.Desktop
                 !string.IsNullOrWhiteSpace(user.Username));
             var authorsNames = authorsObjects?.Select(x => ((User)x).Username).ToList();
 
-            Source source;
-
-            switch (this.sourceIsVideoCheckBox.IsChecked)
+            var selectedDateTime = this.sourceAccessedDatePicker.SelectedDate;
+            DateTime? dateTime = this.sourceAccessedDatePicker.Date.DateTime;
+            if (selectedDateTime == null)
             {
-                case null:
+                dateTime = null;
+            }
+
+            var source = new Source
+            {
+                Name = this.sourceNameTextBox.Text,
+                Description = this.sourceDescriptionTextBox.Text,
+                IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
+                AuthorsString = string.Join("|", authorsNames),
+                Publisher = this.sourcePublisherTextBox.Text,
+                AccessedAt = dateTime
+            };
+
+            switch (this.isPdf)
+            {
+                case true:
                 {
-                    return;
+                    source.Type = SourceType.Pdf.ToString();
+                    break;
                 }
                 case false:
                 {
-                    source = new Source
-                    {
-                        Type = SourceType.Pdf.ToString(), // TODO: Add type selection to UI for other types
-                        Name = this.sourceNameTextBox.Text,
-                        Description = this.sourceDescriptionTextBox.Text,
-                        IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
-                        AuthorsString = string.Join("|", authorsNames),
-                        Publisher = this.sourcePublisherTextBox.Text,
-                        AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
-                    };
+                    source.Type = SourceType.Vid.ToString();
                     break;
                 }
                 default:
                 {
-                    source = new Source
-                    {
-                        Type = SourceType.Vid.ToString(), // TODO: Add type selection to UI for other types
-                        Name = this.sourceNameTextBox.Text,
-                        Description = this.sourceDescriptionTextBox.Text,
-                        IsLink = this.sourceIsLinkCheckBox.IsChecked ?? true,
-                        AuthorsString = string.Join("|", authorsNames),
-                        Publisher = this.sourcePublisherTextBox.Text,
-                        AccessedAt = this.sourceAccessedDatePicker.Date.DateTime
-                    };
-                    break;
-                    }
+                    await FileTypeDialog.ShowAsync();
+                    return true;
+                }
             }
 
             var isChecked = this.sourceIsLinkCheckBox.IsChecked;
-            
+
             switch (isChecked)
             {
                 case null:
                 {
-                    return;
+                    return true;
                 }
                 case false:
+                    if (this.storageFile == null)
+                    {
+                        await FileUploadDialog.ShowAsync();
+                        return true;
+                    }
+
                     source.Link = "";
                     source.Content = await DataManager.FileToBinary(this.storageFile);
                     break;
                 default:
+                    if (string.IsNullOrWhiteSpace(this.sourceLinkTextBox.Text))
+                    {
+                        await FileLinkDialog.ShowAsync();
+                        return true;
+                    }
+
                     source.Link = this.sourceLinkTextBox.Text;
                     break;
             }
 
             this.NewSource = source;
+            return false;
         }
 
         private void sourceIsLinkCheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -154,24 +181,25 @@ namespace CapstoneGroup2.Desktop
         private async void sourceUploadButton_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
-            switch (this.sourceIsVideoCheckBox.IsChecked)
+
+            switch (this.isPdf)
             {
-                case null:
-                {
-                    return;
-                }
-                case false:
+                case true:
                 {
                     picker.FileTypeFilter.Add(".pdf");
                     break;
                 }
-                default:
+                case false:
                 {
                     picker.FileTypeFilter.Add(".mp4");
                     break;
                 }
+                default:
+                {
+                    await FileTypeDialog.ShowAsync();
+                    return;
+                }
             }
-            picker.FileTypeFilter.Add(".pdf");
             var file = await picker.PickSingleFileAsync();
 
             if (file != null)
@@ -214,6 +242,14 @@ namespace CapstoneGroup2.Desktop
             var textBox = (TextBox)sender;
             var selectedItemTextBox = (User)textBox.DataContext;
             selectedItemTextBox.Username = textBox.Text;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = (ComboBox)sender;
+            var selectedItem = comboBox.SelectedIndex;
+
+            this.isPdf = selectedItem == 0;
         }
 
         #endregion
