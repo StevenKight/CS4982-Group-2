@@ -248,7 +248,7 @@ namespace CapstoneGroup2.Desktop
         {
             var note = new Note
             {
-                NoteText = "Enter Note...",
+                NoteText = "",
                 SourceId = this._sourceViewModel.currentSource.SourceId
             };
 
