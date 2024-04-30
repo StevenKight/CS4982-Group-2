@@ -32,26 +32,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-
-        <ListBox x:Name="sharedSourcesListBox" SelectionChanged="sharedSourcesListBox_SelectionChanged"
-                 Margin="25,400, 50,0" Height="200" VerticalAlignment="Top">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Vertical" Width="150" VerticalAlignment="Top">
-                        <TextBlock Text="{Binding Name}" FontSize="16" />
-                        <TextBlock Text="{Binding Type}" FontSize="12" Margin="0,10,0,0" />
-                        <TextBlock Text="{Binding Username}" FontSize="12" Margin="0,10,0,0" />
-                        <TextBlock Text="{Binding Description}" FontSize="10"
-                                   Margin="0,10,0,0" TextWrapping="WrapWholeWords" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
         <!--<Popup Name="sourcePopup"  Height="472" Margin="-21,25,0,0" VerticalAlignment="Top" Width="576">
             <StackPanel>
                 <TextBlock TextWrapping="Wrap" Text="Upload a New Source" FontSize="40" VerticalAlignment="Top"/>
