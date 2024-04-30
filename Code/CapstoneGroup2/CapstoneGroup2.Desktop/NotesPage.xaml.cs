@@ -248,15 +248,13 @@ namespace CapstoneGroup2.Desktop
         {
             var note = new Note
             {
-                NoteText = "",
+                NoteText = "Enter a note...",
                 SourceId = this._sourceViewModel.currentSource.SourceId
             };
 
             await this._notesViewModel.AddNewNote(note);
 
             this.LoadNotes();
-
-            this.notesListView.SelectedIndex = this.notesListView.Items.Count - 1;
         }
 
         private async void RemoveNoteItem_Click(object sender, RoutedEventArgs e)
@@ -304,6 +302,9 @@ namespace CapstoneGroup2.Desktop
                 };
 
                 flyout.ShowAt(this.notesListView);
+
+                this.selectedItemTextBox.Text = "";
+                return;
             }
 
             var textBlock = (TextBox)sender;
@@ -319,6 +320,10 @@ namespace CapstoneGroup2.Desktop
             }
 
             await this._notesViewModel.updateNote(note);
+
+            note.NoteText = this.selectedItemTextBox.Text;
+            this.notesListView.Items[this.notesListView.SelectedIndex] = note;
+            this.notesListView.SelectedItem = note;
         }
 
         private void notesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -328,7 +333,15 @@ namespace CapstoneGroup2.Desktop
             this.addTag.IsEnabled = true;
             this.removeTag.IsEnabled = true;
 
-            this.selectedItemTextBox.Text = note.NoteText ?? "Enter a new note...";
+            if (string.IsNullOrWhiteSpace(note.NoteText) || note.NoteText.Equals("Enter a note..."))
+            {
+                this.selectedItemTextBox.Text = "";
+                this.selectedItemTextBox.PlaceholderText = "Enter a Note...";
+            }
+            else
+            {
+                this.selectedItemTextBox.Text = note.NoteText;
+            }
 
             this.tagsListView.Items?.Clear();
             foreach (var tag in note.Tags ?? new List<Tag>())

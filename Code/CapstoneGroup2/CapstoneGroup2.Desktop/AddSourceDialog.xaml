@@ -13,31 +13,39 @@
     Height="650" PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
 
     <Grid>
+        <TextBlock Text="* - Required Field" FontSize="12" Margin="0,0,0,0" HorizontalAlignment="Center"/>
         <TextBox Name="sourceNameTextBox" HorizontalAlignment="Center" Margin="0,25,0,0" VerticalAlignment="Top"
-                 Width="300" Height="50" PlaceholderText="Source Name" />
+                 Width="275" Height="50" PlaceholderText="Source Name" />
+        <TextBlock Text="*" FontSize="25" Margin="0,25,0,0"/>
         <TextBox Name="sourceDescriptionTextBox" HorizontalAlignment="Center" Margin="0,100,0,0"
-                 VerticalAlignment="Top" Width="300" Height="50" PlaceholderText="Source Description" />
+                 VerticalAlignment="Top" Width="275" Height="50" PlaceholderText="Source Description" />
 
-        <CheckBox Name="sourceIsLinkCheckBox" Content="Is Link"  Margin="135,165,0,0" VerticalAlignment="Top"
+        <TextBlock Text="*" FontSize="25" Margin="0,165,0,0"/>
+        <CheckBox Name="sourceIsLinkCheckBox" Content="Is Link" Margin="25,165,0,0" VerticalAlignment="Top"
                   Width="30" Height="25" Unchecked="sourceIsLinkCheckBox_Unchecked" Checked="sourceIsLinkCheckBox_Checked"/>
-        <CheckBox Name="sourceIsVideoCheckBox" Content="Is Video" HorizontalAlignment="Center" Margin="0,165,165,0" VerticalAlignment="Top"
-                  Width="30" Height="25"/>
+        <TextBlock Text="*" FontSize="25" Margin="120,165,0,0"/>
+        <ComboBox Name="fileTypeComboBox" Margin="135,165,0,0" VerticalAlignment="Top"
+                  Width="165" Height="30" PlaceholderText="Select a file type..." SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem>Pdf</ComboBoxItem>
+            <ComboBoxItem>Video</ComboBoxItem>
+        </ComboBox>
 
+        <TextBlock Text="*" FontSize="25" Margin="0,210,0,0"/>
         <Grid Name="linkOptionsGrid" Visibility="Collapsed">
             <TextBox Name="sourceLinkTextBox" HorizontalAlignment="Center" Margin="0,205,0,0" VerticalAlignment="Top"
-                     Width="300" Height="50" PlaceholderText="Source Link" />
+                     Width="275" Height="50" PlaceholderText="Source Link"/>
         </Grid>
         <Grid Name="uploadOptionsGrid" Visibility="Visible">
             <Button Name="sourceUploadButton" HorizontalAlignment="Center" Margin="0,205,0,0" VerticalAlignment="Top"
-                    Width="300" Height="50" Content="Upload Source" Click="sourceUploadButton_Click" />
+                    Width="275" Height="50" Content="Upload Source" Click="sourceUploadButton_Click"/>
         </Grid>
         <Button x:Name="addAuthorButton" HorizontalAlignment="Center" Margin="100,265,0,0" VerticalAlignment="Top"
                 Width="30" Height="30" Content="+" FontSize="14" Click="AddAuthor_Click" Padding="0" Canvas.ZIndex="3"/>
         <Button x:Name="removeAuthorButton" HorizontalAlignment="Center" Margin="180,265,0,0" VerticalAlignment="Top"
                 Width="30" Height="30" Content="-" FontSize="14" Click="RemoveAuthor_Click" Padding="0" Canvas.ZIndex="3" />
-        <TextBlock Text="Authors:" HorizontalAlignment="Center" Margin="0,270,0,0" VerticalAlignment="Top" Width="300" />
+        <TextBlock Text="Authors:" HorizontalAlignment="Center" Margin="25,270,0,0" VerticalAlignment="Top" Width="300" />
         <ListView Name="sourceAuthorsListView" HorizontalAlignment="Center" Margin="0,290,0,0" VerticalAlignment="Top"
-                  Width="300" Height="75" RightTapped="sourceAuthorsListView_RightTapped">
+                  Width="275" Height="75" RightTapped="sourceAuthorsListView_RightTapped">
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem Text="Add Author" Click="AddAuthor_Click" />
@@ -54,11 +62,11 @@
         </ListView>
 
         <TextBox Name="sourcePublisherTextBox" HorizontalAlignment="Center" Margin="0,375,0,0" VerticalAlignment="Top"
-                 Width="300" Height="50" PlaceholderText="Source Publisher" />
+                 Width="275" Height="50" PlaceholderText="Source Publisher" />
 
         <TextBlock Text="Date Accessed:" HorizontalAlignment="Center" Margin="0,435,0,0" VerticalAlignment="Top"
-                   Width="300" />
+                   Width="275" />
         <DatePicker Name="sourceAccessedDatePicker" HorizontalAlignment="Center" Margin="0,455,0,0"
-                    VerticalAlignment="Top" Width="300" Height="30" />
+                    VerticalAlignment="Top" Width="275" Height="30" />
     </Grid>
 </ContentDialog>

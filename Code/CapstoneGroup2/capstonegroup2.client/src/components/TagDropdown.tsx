@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import './styles/TagDropdown.css';
+
 type Tag = {
   tagID: number;
   tagName: string;
@@ -37,28 +39,29 @@ const TagDropdown: React.FC<Props> = ({ tags, getSources }) => {
   };
 
   return (
-    <div style={{borderStyle:"solid", padding:"10px", marginRight:"30%", borderRadius:"4px",marginBottom:"1%"}}>
-      <h2>Search by Tags:</h2>
-    <div style={{ maxHeight:"120px",display:"grid", gridTemplateColumns: "auto auto"}}>
-      <div 
-      style={{ maxHeight: '50%', overflowY: 'auto', display:"grid", background:"grey", borderRadius:"4px"}}>
-        {tags.map(tag => (
-          <label key={tag.tagID}>
-            <input
-              type="checkbox"
-              value={String(tag.tagID)}
-              checked={selectedTags.includes(tag.tagID)}
-              onChange={() => toggleTagSelection(tag.tagID)}
-            />
-            {tag.tagName}
-          </label>
-        ))}
-      </div>
-      <div style={{ width:"80%",marginLeft:"3%",display:"flex", justifyContent:"center"}}>
-      <button disabled={selectedTags.length == 0} style={{ width:"50%",maxHeight:"40px",marginTop:"2%", marginBottom:"1%"}} onClick={handleSearch}>Search</button>
-      <button disabled={selectedTags.length == 0} style={{width:"50%",maxHeight:"40px", marginLeft:"3%",marginTop:"2%"}} onClick={handleClearSelection}>Clear Selection</button>
+    <div className='tag-search'>
+      <h2 className='tag-search-heading'>Search by Tags:</h2>
+      <div className='tag-search-options'>
+        <div className='tag-search-tags'>
+          {
+            tags.map(tag => (
+              <label key={tag.tagID}>
+                <input
+                  type="checkbox"
+                  value={String(tag.tagID)}
+                  checked={selectedTags.includes(tag.tagID)}
+                  onChange={() => toggleTagSelection(tag.tagID)}
+                />
+                {tag.tagName}
+              </label>
+            ))
+          }
         </div>
-    </div>
+        <div>
+          <button disabled={selectedTags.length == 0} onClick={handleSearch}>Search</button>
+          <button disabled={selectedTags.length == 0} onClick={handleClearSelection}>Clear Selection</button>
+        </div>
+      </div>
     </div>
   );
 };
